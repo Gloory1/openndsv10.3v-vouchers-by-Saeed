@@ -228,10 +228,12 @@ check_voucher() {
         upload_quota=$voucher_quota_up
         download_quota=$voucher_quota_down
         ######################################################################
-        # Added by Saeed 
-        # check if there more devices want to connected by same voucer
-        # this is the file i use to check 
+        # Added by Saeed Muhammed
+        # Check if more than one device is trying to connect using the same voucher
+        
+        # This is the file used to perform the check
         mac_log="$logdir""mac_used.log" 
+        
         # check method
         if grep -q "^$voucher," "$mac_log"; then
             saved_mac=$(grep "^$voucher," "$mac_log" | cut -d',' -f2)
