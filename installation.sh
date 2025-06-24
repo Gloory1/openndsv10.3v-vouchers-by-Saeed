@@ -32,6 +32,7 @@ uci set opennds.@opennds[0].authidletimeout='60'
 uci set opennds.@opennds[0].sessiontimeout='360'
 uci set opennds.@opennds[0].checkinterval='15'
 uci add_list opennds.@opennds[0].trustedmac='d8:43:ae:3d:1a:ee'
+uci add_list opennds.@opennds[0].fas_custom_parameters_list='voucher_max_days=2'
 uci commit opennds
 
 # Done
