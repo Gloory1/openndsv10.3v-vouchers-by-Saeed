@@ -14,12 +14,12 @@ touch /mnt/usb/ndslog/vouchers.txt
 
 # Download theme_voucher.sh from GitHub repository
 # TODO: add theme_voucer_by_SaeedMuhammed
-wget -O /usr/lib/opennds/theme_voucher.sh https://raw.githubusercontent.com/YOUR_USERNAME/YOUR_REPO/main/theme_voucher.sh
+wget -O /usr/lib/opennds/theme_voucher.sh https://github.com/Gloory1/openndsv10.3v-vouchers-by-Saeed/blob/53b3fb9784500d923d38a1310948546df86e156d/theme_voucher.sh
 chmod +x /usr/lib/opennds/theme_voucher.sh
 
 # Download logo image to correct location
 mkdir -p /etc/opennds/htdocs/images
-wget -O /etc/opennds/htdocs/images/logo.png "https://raw.githubusercontent.com/YOUR_USERNAME/YOUR_REPO/main/logo.png"
+wget -O /etc/opennds/htdocs/images/logo.png "https://github.com/Gloory1/openndsv10.3v-vouchers-by-Saeed/blob/53b3fb9784500d923d38a1310948546df86e156d/logo.png"
 
 # Configure openNDS
 uci set opennds.@opennds[0].enabled='1'
