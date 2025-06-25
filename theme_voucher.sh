@@ -6,6 +6,15 @@
 
 # Title of this theme:
 title="theme_voucher"
+#-----------------------------------------------------------------------#
+####################################################################
+# Added by Saeed Muhammed
+# you will use it at check_voucher()
+
+voucher_max_days=${voucher_max_days:-30}
+####################################################################
+#-----------------------------------------------------------------------#
+
 
 # functions:
 
@@ -55,8 +64,8 @@ header() {
             text-align: center;
         }
         .logo {
-            width: 80px;
-            height: 80px;
+            width: 100px;
+            height: 100px;
             float: left;
             margin: 0 auto 10px;
             border-radius: 50%;
@@ -210,7 +219,6 @@ check_voucher() {
     fi
 
     voucher_roll="$logdir""vouchers.txt"
-       mac_log="$logdir""mac_used.log" #added by Saeed
     output=$(grep $voucher $voucher_roll | head -n 1)
     
     if [ $(echo -n $output | wc -w) -ge 1 ]; then 
@@ -227,14 +235,18 @@ check_voucher() {
         download_rate=$voucher_rate_down
         upload_quota=$voucher_quota_up
         download_quota=$voucher_quota_down
-        ######################################################################
+#--------------------------------------------------------------------------------------#
+        ################################# Frist ################################# 
+        # Voucher MAC Check #
+                #####################
+        #
         # Added by Saeed Muhammed
-        # Check if more than one device is trying to connect using the same voucher
-        
-        # This is the file used to perform the check
-        mac_log="$logdir""mac_used.log" 
-        
-        # check method
+        # This section ensures that each voucher is only used by one device (one MAC address).
+        # When a voucher is used for the first time, the script saves the MAC address of that device
+        # in a log file (mac_check.log).
+        # On the next login attempt with the same voucher, the script checks if the MAC matches the saved one.
+                # If it's a different MAC address, access is denied to prevent sharing the same voucher across devices.
+
         if grep -q "^$voucher," "$mac_log"; then
             saved_mac=$(grep "^$voucher," "$mac_log" | cut -d',' -f2)
             if [ "$saved_mac" != "$clientmac" ]; then
@@ -243,7 +255,8 @@ check_voucher() {
         else
             echo "$voucher,$clientmac" >> "$mac_log"  # first use
         fi
-        ######################################################################
+        ################################# Frist ################################# 
+#--------------------------------------------------------------------------------------#
         if [ $voucher_first_punched -eq 0 ]; then
             voucher_expiration=$(($current_time + $voucher_time_limit * 60))
             sessiontimeout=$voucher_time_limit
@@ -255,6 +268,30 @@ check_voucher() {
             if [ $current_time -le $voucher_expiration ]; then
                 time_remaining=$(( ($voucher_expiration - $current_time) / 60 ))
                 sessiontimeout=$time_remaining
+#--------------------------------------------------------------------------------------------------------#
+                ################################# Second ################################# 
+                # Days Expiry Check #
+                #####################
+                #
+                # Added by Saeed Muhammed
+                # This section checks if the voucher has exceeded its maximum allowed active period in days,
+                # regardless of how many minutes/hours of usage are left.
+                # The maximum number of allowed days is passed from the openNDS config as a custom parameter
+                # (e.g., 'voucher_max_days=2').
+                #
+                # The expiration is calculated from the first time the voucher was used (first punched).
+                # If the current time exceeds the first usage time plus the allowed number of days,
+                # the voucher is considered expired and will be removed from the voucher list.
+                        #
+                max_lifetime_seconds=$((voucher_max_days * 24 * 60 * 60))
+                expiration_limit=$((voucher_first_punched + max_lifetime_seconds))
+                if [ $current_time -gt $expiration_limit ]; then
+                    echo "Voucher expired after maximum $voucher_max_days-day limit"
+                    sed -i "/$voucher/"d $voucher_roll
+                    return 1
+                fi
+                ################################# Second ################################# 
+#--------------------------------------------------------------------------------------------------------#
                 return 0
             else
                 sed -i "/$voucher/"d $voucher_roll
