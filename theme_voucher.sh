@@ -3,16 +3,17 @@
 #Copyright (C) BlueWave Projects and Services 2015-2024
 #Copyright (C) Francesco Servida 2023
 #This software is released under the GNU GPL license.
-
+#Edited by Saeed Muhammed
 # Title of this theme:
-title="theme_voucher"
-#-----------------------------------------------------------------------#
-####################################################################
-# Added by Saeed Muhammed
-# you will use it at check_voucher()
 
-voucher_max_days=${voucher_max_days:-30}
-####################################################################
+#-----------------------------------------------------------------------#
+#
+# init variables 
+#
+
+title="theme_voucher"
+multiple_devices=${multiple_devices:-0}
+
 #-----------------------------------------------------------------------#
 
 
@@ -183,7 +184,7 @@ header() {
     <body>
     <div class=\"card\">
     <img class=\"logo\" src=\"$gatewayurl""$imagepath\" alt=\"Splash Page: For access to the Internet.\">
-    <h1>إنترنت كافيه</h1>
+    <h1>الشحات كافيه</h1>
     <h2>أهلا وسهلا بكم 🤍</h2>
     "
 }
@@ -212,97 +213,128 @@ login_with_voucher() {
 }
 
 check_voucher() {
+    # To show result in HTML (EN - AR)
+    check_result_ar=""
+    check_result_en=""
+
+    # Strict Voucher Validation for shell escape prevention - Only alphanumeric (and dash character) allowed.
     if validation=$(echo -n $voucher | grep -E "^[a-zA-Z0-9-]{9}$"); then
-        : 
+        #echo "Voucher Validation successful, proceeding"
+        : #no-op
     else
-        return 1
+        #echo "Invalid Voucher - Voucher must be alphanumeric (and dash) of 9 chars."
+        check_result_en="Invalid voucher code <br> must be 9 alphanumeric characters"
+        check_result_ar="كود الكوبون يجب أن يكون 9 أحرف<br> (أحرف أو أرقام أو شرطات)"
+                return 1
     fi
 
+    ##############################################################################################################################
+    # WARNING
+    # The voucher roll is written to on every login
+    # If its location is on router flash, this **WILL** result in non-repairable failure of the flash memory
+    # and therefore the router itself. This will happen, most likely within several months depending on the number of logins.
+    #------------------------------------
+    # MAC check Added by Saeed Muhammed
+    # This section ensures that each voucher is only used by one device (one MAC address).
+    # When a voucher is used for the first time, the script saves the MAC address of that device
+    # at 9th column in vouchers file.
+    # On the next login attempt with the same voucher, the script checks if the MAC matches the saved one.
+    # If it's a different MAC address, access is denied to prevent sharing the same voucher across devices.
+    #------------------------------------
+
+    # The location is set here to be the same location as the openNDS log (logdir)
+    # By default this will be on the tmpfs (ramdisk) of the operating system.
+    # Files stored here will not survive a reboot.
+
     voucher_roll="$logdir""vouchers.txt"
-    output=$(grep $voucher $voucher_roll | head -n 1)
-    
+    [ -f "$voucher_roll" ] || touch "$voucher_roll"
+
+    #
+    # In a production system, the mountpoint for logdir should be changed to the mount point of some external storage
+    # eg a usb stick, an external drive, a network shared drive etc.
+    #
+    # See "Customise the Logfile location" at the end of this file
+    #
+    ##############################################################################################################################
+
+    output=$(grep $voucher $voucher_roll | head -n 1) # Store first occurence of voucher as variable
+    #echo "$output <br>" #Matched line
     if [ $(echo -n $output | wc -w) -ge 1 ]; then 
+        #echo "Voucher Found - Checking Validity <br>"
         current_time=$(date +%s)
-        voucher_token=$(echo -n $output | sed -r "s#([a-zA-Z0-9-]+),([0-9]+),([0-9]+),([0-9]+),([0-9]+),([0-9]+),([0-9]+)#\1#")
-        voucher_rate_down=$(echo -n $output | sed -r "s#([a-zA-Z0-9-]+),([0-9]+),([0-9]+),([0-9]+),([0-9]+),([0-9]+),([0-9]+)#\2#")
-        voucher_rate_up=$(echo -n $output | sed -r "s#([a-zA-Z0-9-]+),([0-9]+),([0-9]+),([0-9]+),([0-9]+),([0-9]+),([0-9]+)#\3#")
-        voucher_quota_down=$(echo -n $output | sed -r "s#([a-zA-Z0-9-]+),([0-9]+),([0-9]+),([0-9]+),([0-9]+),([0-9]+),([0-9]+)#\4#")
-        voucher_quota_up=$(echo -n $output | sed -r "s#([a-zA-Z0-9-]+),([0-9]+),([0-9]+),([0-9]+),([0-9]+),([0-9]+),([0-9]+)#\5#")
-        voucher_time_limit=$(echo -n $output | sed -r "s#([a-zA-Z0-9-]+),([0-9]+),([0-9]+),([0-9]+),([0-9]+),([0-9]+),([0-9]+)#\6#")
-        voucher_first_punched=$(echo -n $output | sed -r "s#([a-zA-Z0-9-]+),([0-9]+),([0-9]+),([0-9]+),([0-9]+),([0-9]+),([0-9]+)#\7#")
-        
+        voucher_token=$(echo -n "$output" | cut -d, -f1)
+        voucher_rate_down=$(echo -n "$output" | cut -d, -f2)
+        voucher_rate_up=$(echo -n "$output" | cut -d, -f3)
+        voucher_quota_down=$(echo -n "$output" | cut -d, -f4)
+        voucher_quota_up=$(echo -n "$output" | cut -d, -f5)
+        voucher_time_limit=$(echo -n "$output" | cut -d, -f6)
+        voucher_first_punched=$(echo -n "$output" | cut -d, -f7)
+        voucher_mac=$(echo -n "$output" | cut -d, -f8)
+
+        # Set limits according to voucher
         upload_rate=$voucher_rate_up
         download_rate=$voucher_rate_down
         upload_quota=$voucher_quota_up
         download_quota=$voucher_quota_down
-#--------------------------------------------------------------------------------------#
-        ################################# Frist ################################# 
-        # Voucher MAC Check #
-                #####################
-        #
-        # Added by Saeed Muhammed
-        # This section ensures that each voucher is only used by one device (one MAC address).
-        # When a voucher is used for the first time, the script saves the MAC address of that device
-        # in a log file (mac_check.log).
-        # On the next login attempt with the same voucher, the script checks if the MAC matches the saved one.
-                # If it's a different MAC address, access is denied to prevent sharing the same voucher across devices.
-
-        if grep -q "^$voucher," "$mac_log"; then
-            saved_mac=$(grep "^$voucher," "$mac_log" | cut -d',' -f2)
-            if [ "$saved_mac" != "$clientmac" ]; then
-                return 1  # used by another device
-            fi
-        else
-            echo "$voucher,$clientmac" >> "$mac_log"  # first use
-        fi
-        ################################# Frist ################################# 
-#--------------------------------------------------------------------------------------#
+        
         if [ $voucher_first_punched -eq 0 ]; then
+            # First Voucher Use
+            # "Punch" the voucher by setting the timestamp to now
+            # Override session length according to voucher
+
             voucher_expiration=$(($current_time + $voucher_time_limit * 60))
             sessiontimeout=$voucher_time_limit
-            sed -i -r "s/($voucher.*,)(0)/\1$current_time/" $voucher_roll
-            return 0
+
+            new_line="$voucher_token,$voucher_rate_down,$voucher_rate_up,$voucher_quota_down,$voucher_quota_up,$voucher_time_limit,$current_time,$clientmac"
+            sed -i "s/^$voucher,.*/$new_line/" "$voucher_roll"
+
+
+            check_result_en="Voucher activated successfully! <br>Session duration: ${voucher_time_limit} minutes"
+            check_result_ar="تم تفعيل الكوبون بنجاح!<br> مدة الجلسة: ${voucher_time_limit} دقيقة"
+                        return 0
         else
+            # Current timestamp <= than Punch Timestamp + Validity (minutes) * 60 secs/minute
             voucher_expiration=$(($voucher_first_punched + $voucher_time_limit * 60))
 
             if [ $current_time -le $voucher_expiration ]; then
+                # Before connention
+                # This section ensures that each voucher is only used by one device (one MAC address).
+                # This [ "$voucher_mac" != "0" ] condition to avoid errors
+
                 time_remaining=$(( ($voucher_expiration - $current_time) / 60 ))
+                # Override session length according to voucher
                 sessiontimeout=$time_remaining
-#--------------------------------------------------------------------------------------------------------#
-                ################################# Second ################################# 
-                # Days Expiry Check #
-                #####################
-                #
-                # Added by Saeed Muhammed
-                # This section checks if the voucher has exceeded its maximum allowed active period in days,
-                # regardless of how many minutes/hours of usage are left.
-                # The maximum number of allowed days is passed from the openNDS config as a custom parameter
-                # (e.g., 'voucher_max_days=2').
-                #
-                # The expiration is calculated from the first time the voucher was used (first punched).
-                # If the current time exceeds the first usage time plus the allowed number of days,
-                # the voucher is considered expired and will be removed from the voucher list.
-                        #
-                max_lifetime_seconds=$((voucher_max_days * 24 * 60 * 60))
-                expiration_limit=$((voucher_first_punched + max_lifetime_seconds))
-                if [ $current_time -gt $expiration_limit ]; then
-                    echo "Voucher expired after maximum $voucher_max_days-day limit"
-                    sed -i "/$voucher/"d $voucher_roll
-                    return 1
+                # Nothing to change in the roll
+
+                if [ "$voucher_mac" != "0" ] && [ "$voucher_mac" != "$clientmac" ] && [ "$multiple_devices" != "1" ]; then
+                    check_result_en="Voucher is linked to another device"
+                    check_result_ar="هذا الكوبون مرتبط بجهاز آخر.<br> لا يمكن استخدامه من هذا الجهاز"
+                                        return 1
                 fi
-                ################################# Second ################################# 
-#--------------------------------------------------------------------------------------------------------#
-                return 0
+
+                check_result_en="Session renewed! <br>Time remaining: ${time_remaining} minutes"
+                check_result_ar="تم تجديد الجلسة!<br> الوقت المتبقي: ${time_remaining} دقيقة"
+                                return 0
             else
+                #echo "Voucher has expired, please try another one <br>"
+                # Delete expired voucher from roll
                 sed -i "/$voucher/"d $voucher_roll
-                return 1
+                check_result_en="Voucher expired"
+                check_result_ar="انتهت صلاحية الكوبون<br>في المرة القادمة سيخبرك أن الكوبون غير موجود"
+                                return 1
             fi
         fi
     else
-        return 1
+        check_result_en="Voucher not found"
+        check_result_ar="كود الكوبون غير صحيح أو غير موجود"
+                return 1
     fi
     
+    # Should not get here
+    check_result_en="Unknown error"
+    check_result_ar="خطأ غير معلوم"
     return 1
+
 }
 
 voucher_validation() {
@@ -315,16 +347,16 @@ voucher_validation() {
 
         if [ "$ndsstatus" = "authenticated" ]; then
             echo "<div class='status success'>
-                <h2>تم التحقق  بنجاح</h2>
-                <p>أنت الآن متصل بالإنترنت</p>
+                <h2>عملية ناجحة</h2>
+                <p>$check_result_ar</p>
             </div>
             <form>
                 <input type=\"button\" class=\"btn\" value=\"تم\" onClick=\"location.href='$originurl'\">
             </form>"
         else
             echo "<div class='status error'>
-                <h2>فشل الاتصال</h2>
-                 <p>إذا كان الكارت قد استخدم على جهاز من قبل فلن يعمل على أي جهاز آخر.</p>
+                <h2>عملية فاشلة</h2>
+                 <p>$check_result_ar</p>
             </div>
             <p>Click Continue to try again</p>
             <form>
@@ -333,8 +365,8 @@ voucher_validation() {
         fi
     else
         echo "<div class='status error'>
-            <h2>رقم الكارت خاطئ</h2>
-            <p>إذا كان الكارت قد استخدم على جهاز من قبل فلن يعمل على أي جهاز آخر.</p>
+            <h2>عملية فاشلة</h2>
+            <p>$check_result_ar</p>
 
         </div>
         <form>
