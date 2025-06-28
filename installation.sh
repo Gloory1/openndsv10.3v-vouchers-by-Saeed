@@ -33,6 +33,7 @@ uci set opennds.@opennds[0].preauthidletimeout='10'
 uci set opennds.@opennds[0].authidletimeout='60'
 uci set opennds.@opennds[0].sessiontimeout='360'
 uci set opennds.@opennds[0].checkinterval='30'
+uci set opennds.@opennds[0].allow_preemptive_authentication='0'
 uci add_list opennds.@opennds[0].trustedmac="$CURRENT_MAC"
 uci add_list opennds.@opennds[0].fas_custom_variables_list='multiple_devices=0'
 uci add_list opennds.@opennds[0].fas_custom_images_list='logo_png=file:///etc/opennds/htdocs/images/logo.png'
