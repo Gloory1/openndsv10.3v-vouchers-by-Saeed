@@ -20,17 +20,32 @@ touch /mnt/usb/ndslog/debug.log
 # Download theme voucher script from GitHub repository
 wget -O /usr/lib/opennds/accum_theme_voucher.sh "https://raw.githubusercontent.com/Gloory1/openndsv10.3v-vouchers-by-Saeed/main/usr/lib/opennds/accum_theme_voucher.sh"
 chmod +x /usr/lib/opennds/accum_theme_voucher.sh
-
+echo "⏳ Waiting for 3 seconds..."
+sleep 3
 # Download authentication script from GitHub repository
 wget -O /usr/lib/opennds/accum_binauth_script.sh "https://raw.githubusercontent.com/Gloory1/openndsv10.3v-vouchers-by-Saeed/main/usr/lib/opennds/accum_binauth_script.sh"
 chmod +x /usr/lib/opennds/accum_binauth_script.sh
-
+echo "⏳ Waiting for 3 seconds..."
+sleep 3
 # Download logo image to the correct location
 mkdir -p /etc/opennds/htdocs/images
 wget -O /etc/opennds/htdocs/images/logo.png "https://raw.githubusercontent.com/Gloory1/openndsv10.3v-vouchers-by-Saeed/main/logo.png"
+echo "⏳ Waiting for 3 seconds..."
+sleep 3
 
-# Remove old MAC and add the current MAC address automatically
-CURRENT_MAC=$(ip link show br-lan | awk '/ether/ {print $2}')
+echo "🛠️ Preparing openNDS in 15 seconds..."
+echo -n "⏳ Progress: ["
+for i in $(seq 1 15); do
+    echo -n "#"
+    sleep 1
+done
+echo "] ✅ Now It's ready..."
+
+# Get the interface OpenNDS is using, fallback to br-lan if undefined
+INTERFACE=$(uci get opennds.@opennds[0].gatewayinterface 2>/dev/null)
+[ -z "$INTERFACE" ] && INTERFACE="br-lan"
+
+CURRENT_MAC=$(ip link show "$INTERFACE" | awk '/ether/ {print $2}')
 
 # Configure openNDS
 uci set opennds.@opennds[0].enabled='1'
@@ -50,5 +65,10 @@ uci add_list opennds.@opennds[0].fas_custom_images_list='logo_png=file:///etc/op
 
 uci commit opennds
 
+# Restart opennds service to apply changes
+/etc/init.d/opennds restart
+
+echo "✅ Setup complete. OpenNDS - Accum Theme Voucher by Saeed Muhammed is installed successfully."
 # Done
-echo "Setup complete. Reboot the router or restart opennds to apply changes."
+echo "Reboot the router or restart opennds to apply changes."
+reboot
