@@ -192,13 +192,8 @@ else
 	# $7 client token
 	# $8 custom data string
 
-#---------------------------#---------------------------------------#
-        # Added by Saeed Muhammed
-        # This fun for accum tracking  
-        . /mnt/usb/ndslog/voucher_utils.sh && update_voucher_accum "$1" "$8" "$3"
 
-#---------------------------#---------------------------------------#
-
+	customdata=$8
 	# Build the log entry:
 	loginfo="method=$1, clientmac=$2, bytes_incoming=$3, bytes_outgoing=$4, session_start=$5, session_end=$6, token=$7, custom=$customdata"
 
@@ -206,9 +201,14 @@ else
 
 	# Send the deauth log to FAS if fas_secure_enabled = 3, if not =3 library call does nothing
 	if [ "$action" = "deauth" ]; then
+        	#---------------------------#---------------------------------------#
+        	# Added by Saeed Muhammed
+        	# This fun for accum tracking  
+        	. /mnt/usb/ndslog/voucher_utils.sh && update_voucher_accum "$1" "$8" "$3"
+        	#---------------------------#---------------------------------------#
 		returned=$(/usr/lib/opennds/libopennds.sh "send_to_fas_deauthed" "$loginfo")
 	fi
-	customdata=$8
+
 
 fi
 
