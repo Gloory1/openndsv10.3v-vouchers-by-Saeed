@@ -12,7 +12,7 @@
 #
 
 # Title of this theme:
-title="theme_voucher"
+title="accum_theme_voucher"
 
 # If multiple_devices is 0 
 # by disable this maybe it causes problem with accum tracking 
