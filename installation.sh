@@ -41,11 +41,9 @@ for i in $(seq 1 15); do
 done
 echo "] ✅ Now It's ready..."
 
-# Get the interface OpenNDS is using, fallback to br-lan if undefined
-INTERFACE=$(uci get opennds.@opennds[0].gatewayinterface 2>/dev/null)
-[ -z "$INTERFACE" ] && INTERFACE="br-lan"
 
-CURRENT_MAC=$(ip link show "$INTERFACE" | awk '/ether/ {print $2}')
+# Get MAC address from br-lan interface
+CURRENT_MAC=$(ip link show br-lan | awk '/ether/ {print $2}')
 
 # Configure openNDS
 uci set opennds.@opennds[0].enabled='1'
