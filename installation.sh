@@ -7,25 +7,31 @@ opkg install opennds block-mount kmod-usb-storage kmod-fs-ext4 kmod-fs-vfat kmod
 # Make sure USB is mounted at /mnt/usb
 mkdir -p /mnt/usb
 mount -o rw /dev/sda1 /mnt/usb
+if ! mount | grep -q '/mnt/usb'; then
+    echo "USB mount failed. Please check if /dev/sda1 is correct."
+    exit 1
+fi
 
 # Create log directory and voucher file on USB
 mkdir -p /mnt/usb/ndslog
 touch /mnt/usb/ndslog/vouchers.txt
 touch /mnt/usb/ndslog/debug.log
 
-# Download theme_voucher.sh from GitHub repository
-# TODO: add theme_voucer_by_SaeedMuhammed
-wget -O /usr/lib/opennds/accum_theme_voucher.sh https://github.com/Gloory1/openndsv10.3v-vouchers-by-Saeed/blob/6ce887bf707a714e4fc824f443299c21022b60e7/usr/lib/opennds/accum_theme_voucher.sh
+# Download theme voucher script from GitHub repository
+wget -O /usr/lib/opennds/accum_theme_voucher.sh "https://raw.githubusercontent.com/Gloory1/openndsv10.3v-vouchers-by-Saeed/main/usr/lib/opennds/accum_theme_voucher.sh"
 chmod +x /usr/lib/opennds/accum_theme_voucher.sh
 
-wget -O /usr/lib/opennds/accum_binauth_script.sh https://github.com/Gloory1/openndsv10.3v-vouchers-by-Saeed/blob/6ce887bf707a714e4fc824f443299c21022b60e7/usr/lib/opennds/accum_binauth_script.sh
+# Download authentication script from GitHub repository
+wget -O /usr/lib/opennds/accum_binauth_script.sh "https://raw.githubusercontent.com/Gloory1/openndsv10.3v-vouchers-by-Saeed/main/usr/lib/opennds/accum_binauth_script.sh"
 chmod +x /usr/lib/opennds/accum_binauth_script.sh
-# Download logo image to correct location
-mkdir -p /etc/opennds/htdocs/images
-wget -O /etc/opennds/htdocs/images/logo.png "https://github.com/Gloory1/openndsv10.3v-vouchers-by-Saeed/blob/53b3fb9784500d923d38a1310948546df86e156d/logo.png"
 
-# حذف الماك القديم وإضافة الماك الجديد تلقائياً
+# Download logo image to the correct location
+mkdir -p /etc/opennds/htdocs/images
+wget -O /etc/opennds/htdocs/images/logo.png "https://raw.githubusercontent.com/Gloory1/openndsv10.3v-vouchers-by-Saeed/main/logo.png"
+
+# Remove old MAC and add the current MAC address automatically
 CURRENT_MAC=$(ip link show br-lan | awk '/ether/ {print $2}')
+
 # Configure openNDS
 uci set opennds.@opennds[0].enabled='1'
 uci set opennds.@opennds[0].gatewayinterface='br-lan'
