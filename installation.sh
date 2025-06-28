@@ -2,7 +2,7 @@
 
 # Check and install required packages
 opkg update
-opkg install opennds block-mount kmod-usb-storage kmod-fs-ext4 kmod-fs-vfat kmod-fs-ntfs usbutils
+opkg install opennds block-mount kmod-usb-storage kmod-fs-ext4 kmod-fs-vfat kmod-fs-ntfs usbutils perl coreutils-base64
 
 # Make sure USB is mounted at /mnt/usb
 mkdir -p /mnt/usb
