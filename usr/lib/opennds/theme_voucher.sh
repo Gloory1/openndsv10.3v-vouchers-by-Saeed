@@ -189,7 +189,7 @@ header() {
     <body>
     <div class=\"card\">
     <img class=\"logo\" src=\"$gatewayurl""$imagepath\" alt=\"Splash Page: For access to the Internet.\">
-    <h1>الشحات كافيه</h1>
+    <h1>إنترنت كافيه</h1>
     <h2>أهلا وسهلا بكم 🤍</h2>
     "
 }
@@ -279,30 +279,28 @@ check_voucher() {
 
 
         # Set limits according to voucher
+
         upload_rate=$voucher_rate_up
         download_rate=$voucher_rate_down
         upload_quota=$voucher_quota_up
         download_quota=$voucher_quota_down
 
+        voucher_expiration=$((current_time + voucher_time_limit * 60))
+
 #----------------------------------------------------------------------------------------------------------------------------#
 
         if [ "$voucher_first_punched" -eq 0 ]; then
-            voucher_expiration=$((current_time + voucher_time_limit * 60))
-            sessiontimeout=$voucher_time_limit
 
+            sessiontimeout=$voucher_time_limit
+            # Prepare new line after edit
             new_line="$voucher_token,$voucher_rate_down,$voucher_rate_up,$voucher_quota_down,$voucher_quota_up,$voucher_time_limit,$current_time,$clientmac,$voucher_accum"
+            # Replace old data
             sed -i "s/^$voucher,.*/$new_line/" "$voucher_roll"
             qouta_mb=$((voucher_quota_down / 1024))
 
             check_result_en="Voucher activated successfully! <br>Session duration: ${voucher_time_limit} minutes"
-            check_result_ar="تم تفعيل الكوبون بنجاح!<br> الوقت المتبقي: ${voucher_time_limit} دقيقة <br> البينات المتبقية: ${qouta_mb} ميجا"            return 0
-
-#----------------------------------------------------------------------------------------------------------------------------#
-
-        elif [ "$voucher_accum" -ge "$voucher_quota_down" ] && [ "$voucher_quota_down" != "0" ]; then
-            check_result_en="Voucher data expired"
-            check_result_ar="تم استهلاك بيانات الكوبون"
-            return 1
+            check_result_ar="تم تفعيل الكوبون بنجاح!<br> الوقت المتبقي: ${voucher_time_limit} دقيقة <br> البينات المتبقية: ${qouta_mb} ميجا"
+                        return 0
 
 #----------------------------------------------------------------------------------------------------------------------------#
 
@@ -312,33 +310,36 @@ check_voucher() {
             return 1
 
 #----------------------------------------------------------------------------------------------------------------------------#
+        
+        elif [ "$voucher_quota_down" != "0" ] && [ "$voucher_accum" -ge "$voucher_quota_down" ]; then
+            check_result_en="Voucher used up. No data remaining."
+            check_result_ar="تم استهلاك بينات الكود بالكامل، لا توجد بيانات متبقية."
+                        return 1
+
+#----------------------------------------------------------------------------------------------------------------------------#
+        
+                elif [ "$voucher_time_limit" != "0" ] && [ "$current_time" -ge "$voucher_expiration" ]; then
+                check_result_en="Voucher expired. Time is over."
+                check_result_ar="انتهت صلاحية الكود. الوقت انتهى."
+                    return 1
+
+#----------------------------------------------------------------------------------------------------------------------------#
 
         else
-            voucher_expiration=$((voucher_first_punched + voucher_time_limit * 60))
+            # set qouta parameters
 
-            if [ "$voucher_quota_down" != "0" ]; then
-                voucher_quota_down=$((voucher_quota_down - voucher_accum))
+                if [ "$voucher_quota_down" != "0" ];then
+                 voucher_quota_down=$((voucher_quota_down - voucher_accum))
             fi
 
-#----------------------------------------------------------------------------------------------------------------------------#
+            time_remaining=$(( (voucher_expiration - current_time) / 60 ))
+            sessiontimeout=$time_remaining
 
-            if [ "$current_time" -le "$voucher_expiration" ]; then
-                time_remaining=$(( (voucher_expiration - current_time) / 60 ))
-                sessiontimeout=$time_remaining
-                qouta_mb=$((voucher_quota_down / 1024))
+            qouta_mb=$((voucher_quota_down / 1024))
 
-                check_result_en="Session renewed! <br>Time remaining: ${time_remaining} minutes"
-                check_result_ar="تم تجديد الجلسة <br> الوقت المتبقي: ${time_remaining} دقيقة <br> البينات المتبقية: ${qouta_mb} ميجا"
-                return 0
-
-#----------------------------------------------------------------------------------------------------------------------------#
-
-            else
-                sed -i "/$voucher/d" "$voucher_roll"
-                check_result_en="Voucher expired"
-                check_result_ar="انتهت صلاحية الكوبون<br>في المرة القادمة سيخبرك أن الكوبون غير موجود"
-                return 1
-            fi
+            check_result_en="Session renewed! <br>Time remaining: ${time_remaining} minutes"
+            check_result_ar="تم تجديد الجلسة <br> الوقت المتبقي: ${time_remaining} دقيقة <br> البينات المتبقية: ${qouta_mb} ميجا"
+            return 0
         fi
 
 #----------------------------------------------------------------------------------------------------------------------------#
@@ -346,14 +347,14 @@ check_voucher() {
     else
         check_result_en="Voucher not found"
         check_result_ar="كود الكوبون غير صحيح أو غير موجود"
-        return 1
+                return 1
     fi
 
 #----------------------------------------------------------------------------------------------------------------------------#
 
     check_result_en="Unknown error"
     check_result_ar="خطأ غير معلوم"
-    return 1
+        return 1
 }
 
 
@@ -363,8 +364,8 @@ voucher_validation() {
     if check_voucher; then
         quotas="$sessiontimeout $upload_rate $download_rate $upload_quota $download_quota"
 
-        userinfo="$voucher"
-        binauth_custom="voucher=$voucher"
+        userinfo="$title - $voucher"
+        binauth_custom="$voucher"
         encode_custom 
 
         auth_log
@@ -375,12 +376,12 @@ voucher_validation() {
                 <p>$check_result_ar</p>
             </div>
             <form>
-                <input type=\"button\" class=\"btn\" value=\"تم\" onClick=\"location.href='$originurl'\">
+                <input type=\"button\" class=\"btn\" value=\"متابعة\" onClick=\"location.href='$originurl'\">
             </form>"
         else
 
-            check_result_ar="جرب مرة أخري"
-            check_result_en="Try again"
+            check_result_ar="تم رض المصادقة"
+            check_result_en="Denied access"
 
             echo "<div class='status error'>
                 <h2>عملية فاشلة</h2>
@@ -614,13 +615,13 @@ fasvarlist="$fasvarlist $additionalthemevars"
 
 # Set the variable $binauth_custom to the desired value.
 # Values set here can be overridden by the themespec file
-binauth_custom="voucher=$voucher_token"
+# binauth_custom="voucher=$voucher_token"
 
 # Encode and activate the custom string
-encode_custom
+# encode_custom
 
 # Set the user info string for logs (this can contain any useful information)
-userinfo="$voucher_token"
+#userinfo="$voucher_token"
 
 ##############################################################################################################################
 # Customise the Logfile location.
