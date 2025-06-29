@@ -16,6 +16,7 @@ fi
 mkdir -p /mnt/usb/ndslog
 touch /mnt/usb/ndslog/vouchers.txt
 touch /mnt/usb/ndslog/debug.log
+touch /mnt/usb/ndslog/attempts.txt
 
 # Download theme voucher script from GitHub repository
 wget -O /usr/lib/opennds/accum_theme_voucher.sh "https://raw.githubusercontent.com/Gloory1/openndsv10.3v-vouchers-by-Saeed/main/usr/lib/opennds/accum_theme_voucher.sh"
