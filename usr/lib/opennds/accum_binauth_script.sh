@@ -10,6 +10,12 @@
 #
 # If BinAuth is enabled, NDS will call this script as soon as it has received an authentication, deauthentication or shutdown request
 #
+
+#
+vouchers_file="/mnt/usb/ndslog/vouchers.txt"
+vouchers_seasons_file="/mnt/usb/ndslog/vouchers_seasons.txt"
+#
+
 ##################
 # functions:
 #---------------------------#---------------------------------------#
@@ -346,6 +352,14 @@ download_rate=0
 upload_quota=0
 download_quota=0
 exitlevel=0
+
+# Include custom binauth script
+custombinauthpath="/usr/lib/opennds/custombinauth.sh"
+
+if [ -e "$custombinauthpath" ]; then
+	. $custombinauthpath
+fi
+
 
 # Finally before exiting, output the session length, upload rate, download rate, upload quota and download quota (only effective for auth_client).
 # The custom binauth script migh change these values
