@@ -22,24 +22,24 @@ touch /mnt/usb/ndslog/attempts.txt
 wget -O /usr/lib/opennds/accum_theme_voucher.sh "https://raw.githubusercontent.com/Gloory1/openndsv10.3v-vouchers-by-Saeed/main/usr/lib/opennds/accum_theme_voucher.sh"
 chmod +x /usr/lib/opennds/accum_theme_voucher.sh
 echo "⏳ Waiting for 3 seconds..."
-sleep 3
+sleep 1
 # Download authentication script from GitHub repository
 wget -O /usr/lib/opennds/accum_binauth_script.sh "https://raw.githubusercontent.com/Gloory1/openndsv10.3v-vouchers-by-Saeed/main/usr/lib/opennds/accum_binauth_script.sh"
 chmod +x /usr/lib/opennds/accum_binauth_script.sh
 echo "⏳ Waiting for 3 seconds..."
-sleep 3
+sleep 1
 
 # Download css script from GitHub repository
 mkdir -p /etc/opennds/htdocs
-wget -O /etc/opennds/htdocs/splash.css "https://github.com/Gloory1/openndsv10.3v-vouchers-by-Saeed/blob/99b3d4497617e5e087bda8cdd2ea17fbafef322a/etc/opennds/htdocs/splash.css"
+wget -O /etc/opennds/htdocs/splash.css "https://raw.githubusercontent.com/Gloory1/openndsv10.3v-vouchers-by-Saeed/99b3d4497617e5e087bda8cdd2ea17fbafef322a/etc/opennds/htdocs/splash.css"
 echo "⏳ Waiting for 3 seconds..."
-sleep 3
+sleep 1
 
 # Download logo image to the correct location
 mkdir -p /etc/opennds/htdocs/images
 wget -O /etc/opennds/htdocs/images/splash.jpg "https://raw.githubusercontent.com/Gloory1/openndsv10.3v-vouchers-by-Saeed/059ef23863922fee52f37de7dc13a29d2e4817f4/etc/opennds/htdocs/images/splash.jpg"
 echo "⏳ Waiting for 3 seconds..."
-sleep 3
+sleep 1
 
 echo "🛠️ Preparing openNDS in 15 seconds..."
 echo -n "⏳ Progress: ["
