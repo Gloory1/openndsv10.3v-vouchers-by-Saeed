@@ -30,7 +30,7 @@ echo "⏳ Waiting for 3 seconds..."
 sleep 3
 # Download logo image to the correct location
 mkdir -p /etc/opennds/htdocs/images
-wget -O /etc/opennds/htdocs/images/splash.jpg "https://github.com/Gloory1/openndsv10.3v-vouchers-by-Saeed/blob/059ef23863922fee52f37de7dc13a29d2e4817f4/etc/opennds/htdocs/images/splash.jpg"
+wget -O /etc/opennds/htdocs/images/splash.jpg "https://raw.githubusercontent.com/Gloory1/openndsv10.3v-vouchers-by-Saeed/059ef23863922fee52f37de7dc13a29d2e4817f4/etc/opennds/htdocs/images/splash.jpg"
 echo "⏳ Waiting for 3 seconds..."
 sleep 3
 
