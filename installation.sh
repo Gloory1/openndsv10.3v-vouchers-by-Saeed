@@ -31,7 +31,7 @@ sleep 3
 
 # Download css script from GitHub repository
 mkdir -p /etc/opennds/htdocs
-wget -O /etc/opennds/htdocs/splash.css "https://github.com/Gloory1/openndsv10.3v-vouchers-by-Saeed/blob/5cf508958620e926f945f9468b408d3da84fcbcb/etc/opennds/htdocs/splash.css"
+wget -O /etc/opennds/htdocs/splash.css "https://raw.githubusercontent.com/Gloory1/openndsv10.3v-vouchers-by-Saeed/blob/5cf508958620e926f945f9468b408d3da84fcbcb/etc/opennds/htdocs/splash.css"
 echo "⏳ Waiting for 3 seconds..."
 sleep 3
 
