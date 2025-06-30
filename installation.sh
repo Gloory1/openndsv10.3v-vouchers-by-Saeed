@@ -48,19 +48,18 @@ CURRENT_MAC=$(ip link show br-lan | awk '/ether/ {print $2}')
 
 # Configure openNDS
 uci set opennds.@opennds[0].enabled='1'
-uci set opennds.@opennds[0].gatewayinterface='br-lan'
 uci set opennds.@opennds[0].login_option_enabled='3'
+uci set opennds.@opennds[0].allow_preemptive_authentication='0'
+uci set opennds.@opennds[0].gatewayinterface='br-lan'
 uci set opennds.@opennds[0].themespec_path='/usr/lib/opennds/accum_theme_voucher.sh'
 uci set opennds.@opennds[0].binauth='/usr/lib/opennds/accum_binauth_script.sh'
 uci set opennds.@opennds[0].log_mountpoint='/mnt/usb'
-uci set opennds.@opennds[0].allow_preemptive_authentication='0'
 uci set opennds.@opennds[0].preauthidletimeout='10'
 uci set opennds.@opennds[0].authidletimeout='60'
 uci set opennds.@opennds[0].sessiontimeout='360'
 uci set opennds.@opennds[0].checkinterval='30'
 uci add_list opennds.@opennds[0].trustedmac="$CURRENT_MAC"
 uci add_list opennds.@opennds[0].fas_custom_variables_list='multiple_devices=0'
-uci add_list opennds.@opennds[0].fas_custom_images_list='logo_png=file:///etc/opennds/htdocs/images/logo.png'
 
 uci commit opennds
 
