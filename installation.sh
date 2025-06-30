@@ -28,6 +28,13 @@ wget -O /usr/lib/opennds/accum_binauth_script.sh "https://raw.githubusercontent.
 chmod +x /usr/lib/opennds/accum_binauth_script.sh
 echo "⏳ Waiting for 3 seconds..."
 sleep 3
+
+# Download css script from GitHub repository
+mkdir -p /etc/opennds/htdocs
+wget -O /etc/opennds/htdocs/splash.css "https://github.com/Gloory1/openndsv10.3v-vouchers-by-Saeed/blob/5cf508958620e926f945f9468b408d3da84fcbcb/etc/opennds/htdocs/splash.css"
+echo "⏳ Waiting for 3 seconds..."
+sleep 3
+
 # Download logo image to the correct location
 mkdir -p /etc/opennds/htdocs/images
 wget -O /etc/opennds/htdocs/images/splash.jpg "https://raw.githubusercontent.com/Gloory1/openndsv10.3v-vouchers-by-Saeed/059ef23863922fee52f37de7dc13a29d2e4817f4/etc/opennds/htdocs/images/splash.jpg"
