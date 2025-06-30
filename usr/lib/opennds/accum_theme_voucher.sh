@@ -364,7 +364,7 @@ header() {
     <div class=\"logo-container floating\">
     <img class=\"logo\" src=\"$gatewayurl""$imagepath\" alt=\"Splash Page: For access to the Internet.\">
     </div>
-    <h1>الشحات كافيه</h1>
+    <h1>إنترنت كافيه</h1>
     <h2>🤍 أهلا وسهلا بكم في عالمنا </h2>"
 }
 
