@@ -12,14 +12,14 @@
 #
 
 # Title of this theme:
-title="theme_voucher"
+title="accum_theme_voucher"
 
-# If multiple_devices is 0 
-# by disable this maybe it causes problems with accum tracking 
 
-multiple_devices=${multiple_devices:-0}
+# by enable this maybe it causes problems with accum tracking 
+multiple_devices="0"
 
 #-----------------------------------------------------------------------#
+
 
 
 # functions:
