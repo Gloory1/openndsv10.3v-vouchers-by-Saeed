@@ -12,7 +12,7 @@
 #
 
 # Title of this theme:
-title="accum_theme_voucher"
+title="superwifi_theme"
 
 
 # by enable this maybe it causes problems with accum tracking 
