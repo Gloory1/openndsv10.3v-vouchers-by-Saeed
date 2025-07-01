@@ -22,13 +22,13 @@ touch /mnt/usb/ndslog/debug.log
 touch /mnt/usb/ndslog/attempts.txt
 
 # Download theme voucher script from GitHub repository
-wget -O /usr/lib/opennds/accum_theme_voucher.sh "https://raw.githubusercontent.com/Gloory1/openndsv10.3v-vouchers-by-Saeed/main/usr/lib/opennds/accum_theme_voucher.sh"
-chmod +x /usr/lib/opennds/accum_theme_voucher.sh
+wget -O /usr/lib/opennds/superwifi_theme.sh "https://raw.githubusercontent.com/Gloory1/openndsv10.3v-vouchers-by-Saeed/main/usr/lib/opennds/superwifi_theme.sh"
+chmod +x /usr/lib/opennds/superwifi_theme.sh
 echo "⏳ Waiting for 3 seconds..."
 sleep 3
 # Download authentication script from GitHub repository
-wget -O /usr/lib/opennds/accum_binauth_script.sh "https://raw.githubusercontent.com/Gloory1/openndsv10.3v-vouchers-by-Saeed/main/usr/lib/opennds/accum_binauth_script.sh"
-chmod +x /usr/lib/opennds/accum_binauth_script.sh
+wget -O /usr/lib/opennds/superwifi_binauth.sh "https://raw.githubusercontent.com/Gloory1/openndsv10.3v-vouchers-by-Saeed/main/usr/lib/opennds/superwifi_binauth.sh"
+chmod +x /usr/lib/opennds/superwifi_binauth.sh
 echo "⏳ Waiting for 3 seconds..."
 sleep 3
 
