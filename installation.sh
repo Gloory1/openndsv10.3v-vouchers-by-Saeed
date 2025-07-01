@@ -2,7 +2,7 @@
 
 # Check and install required packages
 opkg update
-opkg install opennds block-mount kmod-usb-storage kmod-fs-ext4 kmod-fs-vfat kmod-fs-ntfs usbutils coreutils-base64
+opkg install opennds block-mount kmod-usb-storage kmod-fs-ext4 kmod-fs-vfat kmod-fs-ntfs usbutils coreutils-base64 sqlite3-cli
 
 echo "⏳ Waiting for 10 seconds..."
 sleep 10
