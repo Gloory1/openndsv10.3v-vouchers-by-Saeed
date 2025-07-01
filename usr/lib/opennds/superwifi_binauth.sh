@@ -11,11 +11,6 @@
 # If BinAuth is enabled, NDS will call this script as soon as it has received an authentication, deauthentication or shutdown request
 #
 
-#
-vouchers_file="/mnt/usb/ndslog/vouchers.txt"
-vouchers_seasons_file="/mnt/usb/ndslog/vouchers_seasons.txt"
-#
-
 ##################
 # functions:
 #---------------------------#---------------------------------------#
