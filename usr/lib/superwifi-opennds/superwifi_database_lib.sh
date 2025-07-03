@@ -4,7 +4,6 @@ DB_PATH="/overlay/superwifi-opennds/superwifi_database.db"
 
 init_db() {
   if [ ! -f "$DB_PATH" ]; then
-    echo "Failed : $DB_PATH"
     exit 1
   fi
 }
