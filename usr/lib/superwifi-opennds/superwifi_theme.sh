@@ -12,7 +12,7 @@
 #
 
 # Including database lib
-. /usr/lib/superwifi-opennds/superwifi_database_lib.sh
+. /usr/lib/superwifi/superwifi_database_lib.sh
 
 
 # Title of this theme:
