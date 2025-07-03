@@ -27,6 +27,11 @@ echo "] ✅ Now It's ready..."
 # touch /mnt/usb/ndslog/debug.log
 # touch /mnt/usb/ndslog/attempts.txt
 
+Create log directory and voucher file on USB
+mkdir -p /usr/lib/superwifi
+mkdir -p /overlay/superwifi
+
+
 # Download theme voucher script from GitHub repository
 wget -O /usr/lib/superwifi/superwifi_theme.sh "https://raw.githubusercontent.com/Gloory1/openndsv10.3v-vouchers-by-Saeed/main/usr/lib/superwifi-opennds/superwifi_theme.sh"
 chmod +x /usr/lib/superwifi/superwifi_theme.sh
