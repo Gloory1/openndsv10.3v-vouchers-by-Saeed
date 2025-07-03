@@ -23,24 +23,24 @@ sleep 10
 # touch /mnt/usb/ndslog/attempts.txt
 
 # Download theme voucher script from GitHub repository
-wget -O /usr/lib/superwifi/superwifi_theme.sh "https://raw.githubusercontent.com/Gloory1/openndsv10.3v-vouchers-by-Saeed/main/usr/lib/superwifi/superwifi_theme.sh"
+wget -O /usr/lib/superwifi/superwifi_theme.sh "https://raw.githubusercontent.com/Gloory1/openndsv10.3v-vouchers-by-Saeed/main/usr/lib/superwifi-opennds/superwifi_theme.sh"
 chmod +x /usr/lib/superwifi/superwifi_theme.sh
 echo "⏳ Waiting for 3 seconds..."
 sleep 3
 # Download authentication script from GitHub repository
-wget -O /usr/lib/superwifi/superwifi_binauth.sh "https://raw.githubusercontent.com/Gloory1/openndsv10.3v-vouchers-by-Saeed/main/usr/lib/superwifi/superwifi_binauth.sh"
+wget -O /usr/lib/superwifi/superwifi_binauth.sh "https://raw.githubusercontent.com/Gloory1/openndsv10.3v-vouchers-by-Saeed/main/usr/lib/superwifi-opennds/superwifi_binauth.sh"
 chmod +x /usr/lib/superwifi/superwifi_binauth.sh
 echo "⏳ Waiting for 3 seconds..."
 sleep 3
 
 # Download database script from GitHub repository
-wget -O /usr/lib/superwifi/superwifi_database_lib.sh "https://raw.githubusercontent.com/Gloory1/openndsv10.3v-vouchers-by-Saeed/main/usr/lib/superwifi/superwifi_binauth.sh"
+wget -O /usr/lib/superwifi/superwifi_database_lib.sh "https://raw.githubusercontent.com/Gloory1/openndsv10.3v-vouchers-by-Saeed/main/usr/lib/superwifi-opennds/superwifi_binauth.sh"
 chmod +x /usr/lib/superwifi/superwifi_database_lib.sh
 echo "⏳ Waiting for 3 seconds..."
 sleep 3
 
 # Download database file from GitHub repository
-wget -O /usr/lib/superwifi/superwifi_database.db "https://raw.githubusercontent.com/Gloory1/openndsv10.3v-vouchers-by-Saeed/main/usr/lib/superwifi/superwifi_database.db"
+wget -O /usr/lib/superwifi/superwifi_database.db "https://raw.githubusercontent.com/Gloory1/openndsv10.3v-vouchers-by-Saeed/main/usr/lib/superwifi-opennds/superwifi_database.db"
 chmod +x /usr/lib/superwifi/superwifi_database.db
 echo "⏳ Waiting for 3 seconds..."
 sleep 3
