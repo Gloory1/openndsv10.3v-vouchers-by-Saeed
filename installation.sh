@@ -31,24 +31,24 @@ echo "] ✅ Now It's ready..."
 wget -O /usr/lib/superwifi/superwifi_theme.sh "https://raw.githubusercontent.com/Gloory1/openndsv10.3v-vouchers-by-Saeed/main/usr/lib/superwifi-opennds/superwifi_theme.sh"
 chmod +x /usr/lib/superwifi/superwifi_theme.sh
 echo "⏳ Waiting for second..."
-sleep 3
+sleep 1
 # Download authentication script from GitHub repository
 wget -O /usr/lib/superwifi/superwifi_binauth.sh "https://raw.githubusercontent.com/Gloory1/openndsv10.3v-vouchers-by-Saeed/main/usr/lib/superwifi-opennds/superwifi_binauth.sh"
 chmod +x /usr/lib/superwifi/superwifi_binauth.sh
 echo "⏳ Waiting for second..."
-sleep 3
+sleep 1
 
 # Download database script from GitHub repository
 wget -O /usr/lib/superwifi/superwifi_database_lib.sh "https://raw.githubusercontent.com/Gloory1/openndsv10.3v-vouchers-by-Saeed/main/usr/lib/superwifi-opennds/superwifi_database_lib.sh"
 chmod +x /usr/lib/superwifi/superwifi_database_lib.sh
 echo "⏳ Waiting for second..."
-sleep 3
+sleep 1
 
 # Download database file from GitHub repository
-wget -O /usr/lib/superwifi/superwifi_database.db "https://raw.githubusercontent.com/Gloory1/openndsv10.3v-vouchers-by-Saeed/main/usr/lib/superwifi-opennds/superwifi_database.db"
-chmod +x /usr/lib/superwifi/superwifi_database.db
+wget -O /overlay/superwifi/superwifi_database.db "https://raw.githubusercontent.com/Gloory1/openndsv10.3v-vouchers-by-Saeed/main/usr/lib/superwifi-opennds/superwifi_database.db"
+chmod 644 /overlay/superwifi/superwifi_database.db
 echo "⏳ Waiting for second..."
-sleep 3
+sleep 1
 
 # Download css script from GitHub repository
 mkdir -p /etc/opennds/htdocs
@@ -62,9 +62,9 @@ wget -O /etc/opennds/htdocs/images/splash.jpg "https://raw.githubusercontent.com
 echo "⏳ Waiting for second..."
 sleep 1
 
-echo "🛠️ Preparing openNDS in 15 seconds..."
+echo "🛠️ Preparing openNDS in 10 seconds..."
 echo -n "⏳ Progress: ["
-for i in $(seq 1 15); do
+for i in $(seq 1 10); do
     echo -n "#"
     sleep 1
 done
