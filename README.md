@@ -1,11 +1,13 @@
-# 🎯 Voucher Captive Portal by Saeed Muhammed  
+# 🎯 SuperWIFI Captive Portal by Saeed Muhammed  
 
 🔧 **Customized by:** Saeed Muhammed  
 🧱 **Based on:** OpenNDS v10.3.0  
 🎨 **Theme used:** ThemeSpec + Custimezed Voucher_Theme
 
 ### 📁 Files Locations
-- Default `superwifi_theme.sh` file path: `/usr/lib/superwifi-opennds/superwifi_theme.sh`  
+- Default `superwifi_theme.sh` file path: `/usr/lib/superwifi-opennds/superwifi_theme.sh`
+- Default `superwifi_binauth.sh` file path: `/usr/lib/superwifi-opennds/superwifi_binauth.sh`  
+- Default `superwifi_database_lib.sh` file path: `/usr/lib/superwifi-opennds/superwifi_database_lib.sh`  
 - Default `superwifi_database.db file` path: `/overlay/superwifi-opennds/superwifi_database.db`
 
 > ⚠️ You can change the paths - read `OpenNDS documentations`:
@@ -26,7 +28,6 @@ To prevent data loss during power outages or reboots.
 
 ### 📄 Voucher File Format (SQlite)
 
-- SQLite resopnse format  
 - No header row `|` separated 
 - Must contain 10 columns:
 
