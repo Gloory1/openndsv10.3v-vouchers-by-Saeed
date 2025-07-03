@@ -34,7 +34,7 @@ echo "⏳ Waiting for 3 seconds..."
 sleep 3
 
 # Download database script from GitHub repository
-wget -O /usr/lib/superwifi/superwifi_database_lib.sh "https://raw.githubusercontent.com/Gloory1/openndsv10.3v-vouchers-by-Saeed/main/usr/lib/superwifi-opennds/superwifi_binauth.sh"
+wget -O /usr/lib/superwifi/superwifi_database_lib.sh "https://raw.githubusercontent.com/Gloory1/openndsv10.3v-vouchers-by-Saeed/main/usr/lib/superwifi-opennds/superwifi_database_lib.sh"
 chmod +x /usr/lib/superwifi/superwifi_database_lib.sh
 echo "⏳ Waiting for 3 seconds..."
 sleep 3
