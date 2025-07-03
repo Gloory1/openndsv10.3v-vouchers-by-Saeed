@@ -1,6 +1,6 @@
 #!/bin/sh
 
-DB_PATH="/overlay/superwifi-opennds/superwifi_database.db"
+DB_PATH="/overlay/superwifi/superwifi_database.db"
 
 init_db() {
   if [ ! -f "$DB_PATH" ]; then
