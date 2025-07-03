@@ -14,7 +14,6 @@
 # Including database lib
 . /usr/lib/superwifi/superwifi_database_lib.sh
 
-
 # Title of this theme:
 title="Super wifi vouchers"
 
@@ -48,13 +47,11 @@ header() {
     <link rel=\"shortcut icon\" href=\"$gatewayurl""$imagepath\" type=\"image/x-icon\">
     <title>$gatewayname</title>
     <style>
-    @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap');
-
     * {
         margin: 0;
         padding: 0;
         box-sizing: border-box;
-        font-family: 'Cairo', sans-serif;
+        font-family: arial, sans-serif;
     }
 
     body {
@@ -90,7 +87,7 @@ header() {
         box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
         width: 100%;
         max-width: 500px;
-        padding: 35px 30px;
+        padding: 25px 15px;
         position: relative;
         overflow: hidden;
         backdrop-filter: blur(8px);
@@ -114,12 +111,14 @@ header() {
     .logo-container {
         position: relative;
         z-index: 2;
-        margin-bottom: 15px;
+        margin-top: 20px;
+        float: left; 
+        margin-right: 15px;
     }
 
     .logo {
-        width: 110px;
-        height: 110px;
+        width: 100px;
+        height: 100px;
         margin: 0 auto;
         border-radius: 50%;
         object-fit: cover;
@@ -129,13 +128,13 @@ header() {
     }
 
     .logo:hover {
-        transform: scale(1.05) rotate(5deg);
+        transform: scale(1.03) rotate(5deg);
     }
 
     h1 {
         font-size: 2.8rem;
         margin: 10px 0 5px;
-        background: linear-gradient(45deg, #ff6b6b, #ff8e53, #ffcc00);
+        background: linear-gradient(175deg,#ff8e53,#ffcc00, #ff8e53,#ffcc00,#ff8e53);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         position: relative;
@@ -148,38 +147,41 @@ header() {
         font-size: 1.5rem;
         margin-bottom: 25px;
         font-weight: 600;
-        color: #49B800;
+        color: #ff8e53;
         position: relative;
         z-index: 2;
-        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
     }
 
     h3 {
         font-size: 1.4rem;
         margin-bottom: 25px;
-        font-weight: 600;
+        font-weight: 500;
         color: #5a2a0c;
         position: relative;
         z-index: 2;
     }
 
     .info {
-        background: rgba(255, 255, 255, 0.75);
+        background: rgba(255, 255, 255, 0.3);
+        margin-top: 50px;
+        margin-bottom: 20px;
         padding: 15px;
         border-radius: 12px;
-        margin: 20px 0;
+
         text-align: center;
         position: relative;
         z-index: 2;
-        backdrop-filter: blur(5px);
-        border: 1.5px solid #ffd8cb;
+
+        border: 1.2px solid #ffd8cb;
     }
 
     .info p {
         margin: 8px 0;
         line-height: 1.6;
-        color: #5a2a0c;
+        color:  #e67e22;
         font-weight: 500;
+        font-size: 1.2rem;
     }
 
     .form-group {
@@ -202,7 +204,7 @@ header() {
 
     input[type='text'] {
         width: 100%;
-        padding: 15px 20px;
+        padding: 18px 20px;
         border: none;
         border-radius: 12px;
         background: rgba(255, 255, 255, 0.95);
@@ -228,7 +230,7 @@ header() {
         background: linear-gradient(45deg, #ff6b6b, #ff8e53);
         color: white;
         border: none;
-        padding: 18px;
+        padding: 15px;
         font-size: 1.2rem;
         border-radius: 12px;
         cursor: pointer;
@@ -236,7 +238,6 @@ header() {
         font-weight: 700;
         transition: all 0.3s ease;
         box-shadow: 0 7px 20px rgba(255, 107, 107, 0.3);
-        margin-top: 5px;
         position: relative;
         z-index: 2;
         overflow: hidden;
@@ -288,12 +289,14 @@ header() {
 
     .success {
         background: rgba(46, 204, 113, 0.7);
+        margin-top: 50px;
         border-left: 5px solid #27ae60;
         color: white;
     }
 
     .error {
         background: rgba(231, 76, 60, 0.7);
+        margin-top: 50px;
         border-left: 5px solid #c0392b;
         color: white;
     }
@@ -367,8 +370,9 @@ header() {
     <div class=\"logo-container floating\">
     <img class=\"logo\" src=\"$gatewayurl""$imagepath\" alt=\"Splash Page: For access to the Internet.\">
     </div>
-    <h1>سوبر وايفاي</h1>
-    <h2>🤍 أهلا وسهلا بكم في عالمنا </h2>"
+    <h1>السلطان كافيه</h1>
+    <h2>أهلا وسهلا </h2>
+"
 }
 
 # باقي الكود يفضل كما هو بدون تغيير...
@@ -713,8 +717,8 @@ voucher_form() {
 
     echo "
         <div class=\"info\">
-            <p><strong>Your IP:</strong> $clientip</p>
-            <p><strong>Your MAC:</strong> $clientmac</p>
+            <p><strong>بمجرد تسجيل الكارت على جهاز معين</p>
+            <p><strong>... فلن يعمل  على أي جهاز آخر</p>
         </div>
         
         
@@ -722,8 +726,7 @@ voucher_form() {
             <input type=\"hidden\" name=\"fas\" value=\"$fas\"> 
             
             <div class=\"form-group\">
-                <label for=\"voucher\">لن يعمل  الكارت إلا على جهاز واحد</label>
-                <input type=\"text\" id=\"voucher\" name=\"voucher\" value=\"$voucher_code\" placeholder=\"اكتب هنا\" required>
+            <input type=\"text\" id=\"voucher\" name=\"voucher\" value=\"$voucher_code\" placeholder=\"اكتب هنا\" required>
             </div>
             
             <input type=\"submit\" class=\"btn\" value=\"تحقق من الرقم\">
