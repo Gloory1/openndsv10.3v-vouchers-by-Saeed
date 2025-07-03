@@ -470,7 +470,7 @@ check_attempts() {
     local client="$clientmac"
     local db="${logdir}attempts.txt"
 
-    local max=3
+    local max=10
     local window=300  # 5 minutes
 
     [ ! -f "$db" ] && echo 0 && return 0
