@@ -367,7 +367,7 @@ header() {
     <div class=\"logo-container floating\">
     <img class=\"logo\" src=\"$gatewayurl""$imagepath\" alt=\"Splash Page: For access to the Internet.\">
     </div>
-    <h1>سوبر وايفاي </h1>
+    <h1>سوبر وايفاي</h1>
     <h2>🤍 أهلا وسهلا بكم في عالمنا </h2>"
 }
 
@@ -411,7 +411,7 @@ footer() {
         <div class=\"footer\">
             <hr>
             <div>
-                &copy; BlueWave Projects and Services 2015 - $year
+                &copy; Saeed & BlueWave Projects and Services 2015 - $year
                 <div>Portal Version: $version</div>
             </div>
         </div>
