@@ -23,13 +23,25 @@ sleep 10
 # touch /mnt/usb/ndslog/attempts.txt
 
 # Download theme voucher script from GitHub repository
-wget -O /usr/lib/superwifi-opennds/superwifi_theme.sh "https://raw.githubusercontent.com/Gloory1/openndsv10.3v-vouchers-by-Saeed/main/usr/lib/opennds/superwifi_theme.sh"
-chmod +x /usr/lib/superwifi-opennds/superwifi_theme.sh
+wget -O /usr/lib/superwifi/superwifi_theme.sh "https://raw.githubusercontent.com/Gloory1/openndsv10.3v-vouchers-by-Saeed/main/usr/lib/superwifi/superwifi_theme.sh"
+chmod +x /usr/lib/superwifi/superwifi_theme.sh
 echo "⏳ Waiting for 3 seconds..."
 sleep 3
 # Download authentication script from GitHub repository
-wget -O /usr/lib/superwifi-opennds/superwifi_binauth.sh "https://raw.githubusercontent.com/Gloory1/openndsv10.3v-vouchers-by-Saeed/main/usr/lib/opennds/superwifi_binauth.sh"
-chmod +x /usr/lib/superwifi-opennds/superwifi_binauth.sh
+wget -O /usr/lib/superwifi/superwifi_binauth.sh "https://raw.githubusercontent.com/Gloory1/openndsv10.3v-vouchers-by-Saeed/main/usr/lib/superwifi/superwifi_binauth.sh"
+chmod +x /usr/lib/superwifi/superwifi_binauth.sh
+echo "⏳ Waiting for 3 seconds..."
+sleep 3
+
+# Download database script from GitHub repository
+wget -O /usr/lib/superwifi/superwifi_database_lib.sh "https://raw.githubusercontent.com/Gloory1/openndsv10.3v-vouchers-by-Saeed/main/usr/lib/superwifi/superwifi_binauth.sh"
+chmod +x /usr/lib/superwifi/superwifi_database_lib.sh
+echo "⏳ Waiting for 3 seconds..."
+sleep 3
+
+# Download database file from GitHub repository
+wget -O /usr/lib/superwifi/superwifi_database.db "https://raw.githubusercontent.com/Gloory1/openndsv10.3v-vouchers-by-Saeed/main/usr/lib/superwifi/superwifi_database.db"
+chmod +x /usr/lib/superwifi/superwifi_database.db
 echo "⏳ Waiting for 3 seconds..."
 sleep 3
 
@@ -61,8 +73,8 @@ CURRENT_MAC=$(ip link show br-lan | awk '/ether/ {print $2}')
 uci set opennds.@opennds[0].enabled='1'
 uci set opennds.@opennds[0].login_option_enabled='3'
 uci set opennds.@opennds[0].fas_secure_enabled='3'
-uci set opennds.@opennds[0].themespec_path='/usr/lib/superwifi-opennds/accum_theme_voucher.sh'
-uci set opennds.@opennds[0].binauth='/usr/lib/superwifi-opennds/accum_binauth_script.sh'
+uci set opennds.@opennds[0].themespec_path='/usr/lib/superwifi/accum_theme_voucher.sh'
+uci set opennds.@opennds[0].binauth='/usr/lib/superwifi/accum_binauth_script.sh'
 # uci set opennds.@opennds[0].log_mountpoint='/mnt/usb'
 uci set opennds.@opennds[0].preauthidletimeout='10'
 uci set opennds.@opennds[0].authidletimeout='30'
