@@ -2,33 +2,34 @@
 
 # Check and install required packages
 opkg update
-opkg install opennds block-mount kmod-usb-storage kmod-fs-ext4 kmod-fs-vfat kmod-fs-ntfs usbutils coreutils-base64 sqlite3-cli
+# opkg install opennds block-mount kmod-usb-storage kmod-fs-ext4 kmod-fs-vfat kmod-fs-ntfs usbutils coreutils-base64 sqlite3-cli
+opkg install opennds coreutils-base64 sqlite3-cli sqlite3-cli
 
 echo "⏳ Waiting for 10 seconds..."
 sleep 10
 
 # Make sure USB is mounted at /mnt/usb
-mkdir -p /mnt/usb
-mount -o rw /dev/sda1 /mnt/usb
-if ! mount | grep -q '/mnt/usb'; then
-    echo "USB mount failed. Please check if /dev/sda1 is correct."
-    exit 1
-fi
+# mkdir -p /mnt/usb
+# mount -o rw /dev/sda1 /mnt/usb
+# if ! mount | grep -q '/mnt/usb'; then
+#     echo "USB mount failed. Please check if /dev/sda1 is correct."
+#     exit 1
+# fi
 
 # Create log directory and voucher file on USB
-mkdir -p /mnt/usb/ndslog
-touch /mnt/usb/ndslog/vouchers.txt
-touch /mnt/usb/ndslog/debug.log
-touch /mnt/usb/ndslog/attempts.txt
+# mkdir -p /mnt/usb/ndslog
+# touch /mnt/usb/ndslog/vouchers.txt
+# touch /mnt/usb/ndslog/debug.log
+# touch /mnt/usb/ndslog/attempts.txt
 
 # Download theme voucher script from GitHub repository
-wget -O /usr/lib/opennds/superwifi_theme.sh "https://raw.githubusercontent.com/Gloory1/openndsv10.3v-vouchers-by-Saeed/main/usr/lib/opennds/superwifi_theme.sh"
-chmod +x /usr/lib/opennds/superwifi_theme.sh
+wget -O /usr/lib/superwifi-opennds/superwifi_theme.sh "https://raw.githubusercontent.com/Gloory1/openndsv10.3v-vouchers-by-Saeed/main/usr/lib/opennds/superwifi_theme.sh"
+chmod +x /usr/lib/superwifi-opennds/superwifi_theme.sh
 echo "⏳ Waiting for 3 seconds..."
 sleep 3
 # Download authentication script from GitHub repository
-wget -O /usr/lib/opennds/superwifi_binauth.sh "https://raw.githubusercontent.com/Gloory1/openndsv10.3v-vouchers-by-Saeed/main/usr/lib/opennds/superwifi_binauth.sh"
-chmod +x /usr/lib/opennds/superwifi_binauth.sh
+wget -O /usr/lib/superwifi-opennds/superwifi_binauth.sh "https://raw.githubusercontent.com/Gloory1/openndsv10.3v-vouchers-by-Saeed/main/usr/lib/opennds/superwifi_binauth.sh"
+chmod +x /usr/lib/superwifi-opennds/superwifi_binauth.sh
 echo "⏳ Waiting for 3 seconds..."
 sleep 3
 
@@ -59,14 +60,13 @@ CURRENT_MAC=$(ip link show br-lan | awk '/ether/ {print $2}')
 # Configure openNDS
 uci set opennds.@opennds[0].enabled='1'
 uci set opennds.@opennds[0].login_option_enabled='3'
-uci set opennds.@opennds[0].allow_preemptive_authentication='0'
-uci set opennds.@opennds[0].gatewayinterface='br-lan'
-uci set opennds.@opennds[0].themespec_path='/usr/lib/opennds/accum_theme_voucher.sh'
-uci set opennds.@opennds[0].binauth='/usr/lib/opennds/accum_binauth_script.sh'
-uci set opennds.@opennds[0].log_mountpoint='/mnt/usb'
+uci set opennds.@opennds[0].fas_secure_enabled='3'
+uci set opennds.@opennds[0].themespec_path='/usr/lib/superwifi-opennds/accum_theme_voucher.sh'
+uci set opennds.@opennds[0].binauth='/usr/lib/superwifi-opennds/accum_binauth_script.sh'
+# uci set opennds.@opennds[0].log_mountpoint='/mnt/usb'
 uci set opennds.@opennds[0].preauthidletimeout='10'
-uci set opennds.@opennds[0].authidletimeout='60'
-uci set opennds.@opennds[0].sessiontimeout='360'
+uci set opennds.@opennds[0].authidletimeout='30'
+uci set opennds.@opennds[0].sessiontimeout='180'
 uci set opennds.@opennds[0].checkinterval='30'
 uci add_list opennds.@opennds[0].walledgarden_fqdn_list='googleapis.com'
 uci add_list opennds.@opennds[0].walledgarden_port_list='443'
