@@ -5,8 +5,8 @@
 🎨 **Theme used:** ThemeSpec + Custimezed Voucher_Theme
 
 ### 📁 Files Locations
-- Default `theme_voucher.sh` file path: `/usr/lib/opennds/theme_voucher.sh`  
-- Default `vouchers.txt file` path: `/mnt/usb/ndslog/vouchers.txt`
+- Default `superwifi_theme.sh` file path: `/usr/lib/superwifi-opennds/superwifi_theme.sh`  
+- Default `superwifi_database.db file` path: `/overlay/superwifi-opennds/superwifi_database.db`
 
 > ⚠️ You can change the paths - read `OpenNDS documentations`:
 
@@ -24,33 +24,32 @@ To prevent data loss during power outages or reboots.
 
 ---
 
-### 📄 Voucher File Format (CSV)
+### 📄 Voucher File Format (SQlite)
 
-- CSV format  
-- No header row  
-- Comma `,` separated  
-- One line = One voucher  
-- Must contain 9 columns:
-- Each line in `vouchers.txt` follows this structure:
+- SQLite resopnse format  
+- No header row `|` separated 
+- Must contain 10 columns:
+
 - Examples:
-  - `123456789,1024,512,1048576,1048576,1440,1750955636,AA:BB:CC:DD:EE:FF,374574` `#used`
-  - `112233445,1024,512,1048576,1048576,1440,0,0,0` `#unused`
+  - `123456789|AA:BB:CC:DD:EE:FF|1024|512|1048576|1048576|1440|10245|1750955636|1750955636` `#used`
+  - `123456789|0|1024|512|1048576|1048576|1440|0|0|0` `#unused`
 
 | Column # | Description | Example |
 |----------|-------------|---------|
 | 1 | Voucher Code | `123456789` |
-| 2 | Download Speed Limit (kb/s)(`0` if unlimited) | `1024` |
-| 3 | Upload Speed Limit (kb/s)(`0` if unlimited) | `512` |
-| 4 | Download Quota (kB)(`0` if unlimited) | `1048576` |
-| 5 | Upload Quota (kB)(`0` if unlimited) | `1048576` |
-| 6 | Validity (minutes)(`0` if unlimited) | `1440` |
-| 7 | First Use Timestamp (`0` if unused) | `1719483600` |
-| 8 | Client MAC Address | `AA:BB:CC:DD:EE:FF` |
-| 9 | Accumulative Download Quota (kB) | `374574` |
+| 2 | Client MAC Address | `AA:BB:CC:DD:EE:FF` |
+| 3 | Download Speed Limit (kb/s)(`0` if unlimited) | `1024` |
+| 4 | Upload Speed Limit (kb/s)(`0` if unlimited) | `512` |
+| 5 | Download Quota (kB)(`0` if unlimited) | `1048576` |
+| 6 | Upload Quota (kB)(`0` if unlimited) | `1048576` |
+| 7 | Validity (minutes)(`0` if unlimited) | `1440` |
+| 8 | Accumulative Download Quota (kB) | `374574` |
+| 9 | First Use Timestamp (`0` if unused) | `1719483600` |
+| 10 | Last Use Timestamp (`0` if unused) | `1719483600` |
 
 ---
-> **Note on Column 7:**  
-> This column holds the **timestamp (in seconds)** of the first time the voucher was used.  
+> **Note on Column 9,10:**  
+> This column holds the **timestamp (in seconds)** of the firsta and last time the voucher was used.  
 > - If the value is `0`, it means the voucher hasn't been used yet.  
 > - Once punched, the script sets it to the current UNIX time and uses it to track session expiration.
 
