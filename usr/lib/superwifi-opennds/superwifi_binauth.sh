@@ -20,7 +20,7 @@ update_accum_auto() {
   local incomming_bytes="$2"
   added_value=$((incomming_bytes / 1024))
   # Init database lib
-  . /usr/lib/superwifi-opennds/superwifi_database_lib.sh
+  . /usr/lib/superwifi/superwifi_database_lib.sh
 
   if echo "$raw" | grep -iq "preemptivemac-"; then
     local decoded=$(printf '%b' "${raw//%/\\x}" | tr -d '\n' | tr -d '\r')
