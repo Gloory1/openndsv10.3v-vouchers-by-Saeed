@@ -29,7 +29,7 @@ To prevent data loss during power outages or reboots.
 ### 📄 Voucher File Format (SQlite)
 
 - No header row `|` separated 
-- Must contain 10 columns:
+- Must contain 13 columns:
 
 - Examples:
   - `123456789|AA:BB:CC:DD:EE:FF|1440|1024|512|1048576|1048576|10245|5245|1750955636|1750955636|0` `#used`
