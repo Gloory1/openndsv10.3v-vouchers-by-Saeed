@@ -3,21 +3,7 @@
 # Check and install required packages
 opkg update
 # opkg install opennds block-mount kmod-usb-storage kmod-fs-ext4 kmod-fs-vfat kmod-fs-ntfs usbutils coreutils-base64 sqlite3-cli
-opkg install opennds coreutils-base64 sqlite3-cli sqlite3-cli
-
-# Make sure USB is mounted at /mnt/usb
-# mkdir -p /mnt/usb
-# mount -o rw /dev/sda1 /mnt/usb
-# if ! mount | grep -q '/mnt/usb'; then
-#     echo "USB mount failed. Please check if /dev/sda1 is correct."
-#     exit 1
-# fi
-
-# Create log directory and voucher file on USB
-# mkdir -p /mnt/usb/ndslog
-# touch /mnt/usb/ndslog/vouchers.txt
-# touch /mnt/usb/ndslog/debug.log
-# touch /mnt/usb/ndslog/attempts.txt
+opkg install opennds coreutils-base64 sqlite3-cli sqlite3-cli jq
 
 Create log directory and voucher file on USB
 mkdir -p /usr/lib/superwifi
@@ -79,10 +65,8 @@ uci set opennds.@opennds[0].themespec_path='/usr/lib/superwifi/superwifi_theme.s
 uci set opennds.@opennds[0].binauth='/usr/lib/superwifi/superwifi_binauth.sh'
 uci set opennds.@opennds[0].preauthidletimeout='10'
 uci set opennds.@opennds[0].authidletimeout='30'
-uci set opennds.@opennds[0].sessiontimeout='180'
-uci set opennds.@opennds[0].checkinterval='30'
-uci add_list opennds.@opennds[0].walledgarden_fqdn_list='googleapis.com'
-uci add_list opennds.@opennds[0].walledgarden_port_list='443'
+uci set opennds.@opennds[0].sessiontimeout='360'
+uci set opennds.@opennds[0].checkinterval='60'
 uci add_list opennds.@opennds[0].trustedmac="$CURRENT_MAC"
 
 # uci set opennds.@opennds[0].log_mountpoint='/mnt/usb'
