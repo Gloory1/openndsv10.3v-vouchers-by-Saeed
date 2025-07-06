@@ -8,23 +8,21 @@ init_db() {
   fi
 }
 
+#TODO:
 add_voucher() {
   init_db
   local token="$1"
-  local mac="$2"
+  local time_limit="$2"
   local rate_down="$3"
   local rate_up="$4"
   local quota_down="$5"
   local quota_up="$6"
-  local time_limit="$7"
-  local accum_down="$8"
-  local first_punched="$9"
-  local last_punched="${10}"
 
-  sqlite3 "$DB_PATH" <<EOF
-INSERT OR REPLACE INTO vouchers VALUES (
-  '$token', '$mac', $rate_down, $rate_up, $quota_down, $quota_up,
-  $time_limit, $accum_down, $first_punched, $last_punched
+sqlite3 "$DB_PATH" <<EOF
+INSERT OR REPLACE INTO vouchers (
+  token, time_limit, rate_down, rate_up, quota_down, quota_up
+) VALUES (
+  '$token', $time_limit, $rate_down, $rate_up, $quota_down, $quota_up
 );
 EOF
 }
@@ -53,7 +51,7 @@ update_first_punch() {
   local token="$1"
   local mac="$2"
   local timestamp=$(date +%s)
-  sqlite3 "$DB_PATH" "UPDATE vouchers SET mac = '$mac', first_punched = $timestamp WHERE token = '$token';"
+  sqlite3 "$DB_PATH" "UPDATE vouchers SET mac = '$mac', first_punched = $timestamp, last_punched = $timestamp WHERE token = '$token';"
 }
 
 update_last_punch() {
@@ -74,26 +72,29 @@ get_last_voucher_for_mac() {
   "
 }
 
-update_accum_by_token() {
+qouta_expired() {
   init_db
   local token="$1"
-  local added_value="$2"
-  sqlite3 "$DB_PATH" "UPDATE vouchers SET accum_down = accum_down + $added_value WHERE token = '$token';"
+  sqlite3 "$DB_PATH" "UPDATE vouchers SET qouta_expired = 1 WHERE token = '$token';"
 }
 
-update_accum_by_mac() {
-  init_db
-  local mac="$1"
-  local added_value="$2"
-  local token=$(sqlite3 "$DB_PATH" "
-    SELECT token FROM vouchers 
-    WHERE mac = '$mac' 
-    ORDER BY last_punched DESC 
-    LIMIT 1;
-  ")
 
-  if [ -z "$token" ]; then
-    return
-  fi
-  sqlite3 "$DB_PATH" "UPDATE vouchers SET accum_down = accum_down + $added_value WHERE token = '$token';"
+update_accum() {
+  init_db
+  local token="$1"
+  local download="$2"
+
+  sqlite3 "$DB_PATH" <<EOF
+UPDATE vouchers 
+SET
+  accum_down_total = accum_down_total +
+    CASE
+      WHEN $download > accum_down_season
+        THEN $download - accum_down_season
+      ELSE
+        0
+    END,
+  accum_down_season = $download
+WHERE token = '$token';
+EOF
 }
