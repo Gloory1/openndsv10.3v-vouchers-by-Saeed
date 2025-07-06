@@ -3,7 +3,7 @@
 # Check and install required packages
 opkg update
 # opkg install opennds block-mount kmod-usb-storage kmod-fs-ext4 kmod-fs-vfat kmod-fs-ntfs usbutils coreutils-base64 sqlite3-cli
-opkg install opennds coreutils-base64 sqlite3-cli sqlite3-cli jq
+opkg install opennds coreutils-base64 sqlite3-cli jq
 
 Create log directory and voucher file on USB
 mkdir -p /usr/lib/superwifi
@@ -42,7 +42,7 @@ sleep 1
 # Download cron file from GitHub repository
 wget -O /etc/init.d/superwifi "https://raw.githubusercontent.com/Gloory1/openndsv10.3v-vouchers-by-Saeed/main/usr/lib/superwifi-opennds/superwifi"
 chmod +x /etc/init.d/superwifi
-/etc/init.d/superwifi_quota enable
+/etc/init.d/superwifi enable
 echo "⏳ Waiting for second..."
 sleep 1
 
