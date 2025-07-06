@@ -75,7 +75,7 @@ uci commit opennds
 # Restart opennds service to apply changes
 /etc/init.d/opennds restart
 
-echo "✅ Setup complete. OpenNDS - Accum Theme Voucher by Saeed Muhammed is installed successfully."
+echo "✅ Setup complete. OpenNDS -SuperWIFI Theme by Saeed Muhammed is installed successfully."
 # Done
 echo "Reboot the router or restart opennds to apply changes."
 reboot
