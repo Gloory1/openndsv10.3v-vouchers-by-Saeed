@@ -77,5 +77,5 @@ uci commit opennds
 
 echo "✅ Setup complete. OpenNDS -SuperWIFI Theme by Saeed Muhammed is installed successfully."
 # Done
-echo "Reboot the router or restart opennds to apply changes."
+echo "Reboot the router to apply changes."
 reboot
