@@ -33,6 +33,19 @@ chmod 644 /overlay/superwifi/superwifi_database.db
 echo "⏳ Waiting for second..."
 sleep 1
 
+# Download qouta tracking file from GitHub repository
+wget -O /usr/lib/superwifi/superwifi_quota_tracking.sh "https://raw.githubusercontent.com/Gloory1/openndsv10.3v-vouchers-by-Saeed/main/usr/lib/superwifi-opennds/superwifi_quota_tracking.sh"
+chmod +x /usr/lib/superwifi/superwifi_quota_tracking.sh
+echo "⏳ Waiting for second..."
+sleep 1
+
+# Download cron file from GitHub repository
+wget -O /etc/init.d/superwifi "https://raw.githubusercontent.com/Gloory1/openndsv10.3v-vouchers-by-Saeed/main/usr/lib/superwifi-opennds/superwifi"
+chmod +x /etc/init.d/superwifi
+/etc/init.d/superwifi_quota enable
+echo "⏳ Waiting for second..."
+sleep 1
+
 # Download css script from GitHub repository
 mkdir -p /etc/opennds/htdocs
 wget -O /etc/opennds/htdocs/splash.css "https://raw.githubusercontent.com/Gloory1/openndsv10.3v-vouchers-by-Saeed/main/etc/opennds/htdocs/splash.css"
