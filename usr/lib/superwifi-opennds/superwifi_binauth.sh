@@ -10,28 +10,26 @@
 #
 # If BinAuth is enabled, NDS will call this script as soon as it has received an authentication, deauthentication or shutdown request
 #
-
 #-----------------------------------------------------#---------------------------------------------------------#
 # functions:
 
-update_accum_auto() {
+qouta_expired_auto() {
   init_db
-  local raw="$1"
-  local incomming_bytes="$2"
-  added_value=$((incomming_bytes / 1024))
+  local custom_raw="$1"
+
   # Init database lib
   . /usr/lib/superwifi/superwifi_database_lib.sh
 
-  if echo "$raw" | grep -iq "preemptivemac-"; then
-    local decoded=$(printf '%b' "${raw//%/\\x}" | tr -d '\n' | tr -d '\r')
+
+  if echo "$custom_raw" | grep -iq "preemptivemac-"; then
+    local decoded=$(printf '%b' "${custom_raw//%/\\x}" | tr -d '\n' | tr -d '\r')
     local mac=$(echo "$decoded" | sed 's/.*preemptivemac-//I' | tr 'A-Z' 'a-z')
-    update_accum_by_mac "$mac" "$added_value"
+    local token=$(get_last_voucher_for_mac "$mac")
+    qouta_expired "$token"
   else
-    local decoded=$(echo "$raw" | base64 -d )
-    if [ -z "$decoded" ]; then
-      return
-    fi
-    update_accum_by_token "$decoded" "$added_value"
+    local token=$(echo "$custom_raw" | base64 -d 2>/dev/null)
+    [ -z "$token" ] && return
+    qouta_expired "$token"
   fi
 }
 
@@ -178,6 +176,11 @@ configure_log_location
 #
 action=$1
 
+# Expired voucher
+if [ $action = "download_quota_deauth" ]; then 
+	qouta_expired_auto $8
+fi
+
 if [ $action = "auth_client" ]; then
 	# Arguments passed are as follows
 	# $1 method
@@ -207,8 +210,6 @@ else
 	# $6 session end time
 	# $7 client token
 	# $8 custom data string
-
-  season_accum=$3
 	customdata=$8
 	# Build the log entry:
 	loginfo="method=$1, clientmac=$2, bytes_incoming=$3, bytes_outgoing=$4, session_start=$5, session_end=$6, token=$7, custom=$customdata"
@@ -218,12 +219,13 @@ else
 	# Send the deauth log to FAS if fas_secure_enabled = 3, if not =3 library call does nothing
         
 	if [ "$action" = "deauth" ]; then
-    update_accum_auto "$customdata" $season_accum
 		returned=$(/usr/lib/opennds/libopennds.sh "send_to_fas_deauthed" "$loginfo")
 	fi
 
 
+
 fi
+
 
 
 # Parse the database by client mac ($2):
