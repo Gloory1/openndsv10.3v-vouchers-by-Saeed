@@ -17,9 +17,6 @@
 # Title of this theme:
 title="Super wifi vouchers"
 
-# by enable this maybe it causes problems with accum tracking 
-multiple_devices="0"
-
 #-----------------------------------------------------------------------#
 
 
@@ -133,6 +130,8 @@ header() {
 
     h1 {
         font-size: 2.8rem;
+        text-align: right;
+        direction: rtl;
         margin: 10px 0 5px;
         background: linear-gradient(175deg,#ff8e53,#ffcc00, #ff8e53,#ffcc00,#ff8e53);
         -webkit-background-clip: text;
@@ -145,6 +144,8 @@ header() {
 
     h2 {
         font-size: 1.5rem;
+        text-align: right;
+        direction: rtl;
         margin-bottom: 25px;
         font-weight: 600;
         color: #ff8e53;
@@ -154,31 +155,24 @@ header() {
     }
 
     h3 {
-        font-size: 1.4rem;
-        margin-bottom: 25px;
+        font-size: 1.1rem;
+        padding: 5px;
         font-weight: 500;
         color: #5a2a0c;
         position: relative;
-        z-index: 2;
     }
 
     .info {
         background: rgba(255, 255, 255, 0.3);
         margin-top: 50px;
-        margin-bottom: 20px;
-        padding: 15px;
+        padding: 10px;
         border-radius: 12px;
-
         text-align: center;
         position: relative;
-        z-index: 2;
-
         border: 1.2px solid #ffd8cb;
     }
 
     .info p {
-        margin: 8px 0;
-        line-height: 1.6;
         color:  #e67e22;
         font-weight: 500;
         font-size: 1.2rem;
@@ -470,7 +464,7 @@ check_attempts() {
     local client="$clientmac"
     local db="${logdir}attempts.txt"
 
-    local max=10
+    local max=3
     local window=300  # 5 minutes
 
     [ ! -f "$db" ] && echo 0 && return 0
@@ -521,7 +515,7 @@ calculate_remaining() {
     if [ "$voucher_quota_down" -eq 0 ]; then
         pre_data_remaining="unlimited"
     else
-        pre_data_remaining=$(($voucher_quota_down / 1024)) # KB to MB
+        pre_data_remaining=$(($download_quota / 1024)) # KB to MB
     fi
 
     #-----------------------------------------------------
@@ -590,16 +584,34 @@ check_voucher() {
     fi
 
     # Parse voucher fields from output
-    voucher_token=$(echo "$output" | cut -d'|' -f1)
-    voucher_mac=$(echo "$output" | cut -d'|' -f2)
-    voucher_rate_down=$(echo "$output" | cut -d'|' -f3)
-    voucher_rate_up=$(echo "$output" | cut -d'|' -f4)
-    voucher_quota_down=$(echo "$output" | cut -d'|' -f5)
-    voucher_quota_up=$(echo "$output" | cut -d'|' -f6)
-    voucher_time_limit=$(echo "$output" | cut -d'|' -f7)
-    voucher_accum=$(echo "$output" | cut -d'|' -f8)
-    voucher_first_punched=$(echo "$output" | cut -d'|' -f9)
+    voucher_id=$(echo "$output" | cut -d'|' -f1)
+    voucher_token=$(echo "$output" | cut -d'|' -f2)
+    voucher_mac=$(echo "$output" | cut -d'|' -f3)
+    voucher_time_limit=$(echo "$output" | cut -d'|' -f4)
+    voucher_rate_down=$(echo "$output" | cut -d'|' -f5)
+    voucher_rate_up=$(echo "$output" | cut -d'|' -f6)
+    voucher_quota_down=$(echo "$output" | cut -d'|' -f7)
+    voucher_quota_up=$(echo "$output" | cut -d'|' -f8)
+    voucher_accum_down_total=$(echo "$output" | cut -d'|' -f9)
+    voucher_accum_down_season=$(echo "$output" | cut -d'|' -f10)
+    voucher_first_punched=$(echo "$output" | cut -d'|' -f11)
+    voucher_last_punched=$(echo "$output" | cut -d'|' -f12)
+    voucher_quota_expired=$(echo "$output" | cut -d'|' -f13)
+
+
+    # Set limits according to voucher
     current_time=$(date +%s)
+    upload_rate=$voucher_rate_up
+    download_rate=$voucher_rate_down
+    upload_quota=$voucher_quota_up
+    download_quota=$voucher_quota_down
+
+    if [ "$voucher_quota_down" = 0 ]; then
+        download_quota=$voucher_quota_down
+    else
+        download_quota=$(($voucher_quota_down - $voucher_accum_down_total))
+    fi
+
 
     if [ "$voucher_first_punched" -eq 0 ]; then
 
@@ -614,26 +626,27 @@ check_voucher() {
         check_result_ar="تم تفعيل الكوبون بنجاح! $(calculate_remaining "ar")"
         return 0
 
-    elif [ "$voucher_time_limit" != "0" ] && [ "$current_time" -ge "$voucher_expiration" ]; then
+    elif [ "$voucher_time_limit" != 0 ] && [ "$current_time" -ge "$voucher_expiration" ]; then
         check_result_en="Voucher expired. Time is over."
-        check_result_ar="انتهت صلاحية الكود. الوقت انتهى."
+        check_result_ar="انتهت صلاحية الكود<br>الوقت انتهى"
         return 1
 
-    elif [ "$voucher_quota_down" != "0" ] && [ "$voucher_accum" -ge "$voucher_quota_down" ]; then
+    elif [ "$voucher_quota_expired" = 1 ]; then
+        check_result_en="Voucher expired. Data is over."
+        check_result_ar="انتهت صلاحية الكود<br>البيانات انتهت"
+        return 1
+
+    elif [ "$voucher_quota_down" != 0 ] && [ "$voucher_accum_down_total" -ge "$voucher_quota_down" ]; then
         check_result_en="Voucher used up. No data remaining."
-        check_result_ar="تم استهلاك بينات الكود بالكامل، لا توجد بيانات متبقية."
+        check_result_ar="تم استهلاك بينات الكود بالكامل<br>لا توجد بيانات متبقية"
         return 1
 
-    elif [ "$voucher_mac" != "0" ] && [ "$voucher_mac" != "$clientmac" ] && [ "$multiple_devices" != "1" ]; then
+    elif [ "$voucher_mac" != "0" ] && [ "$voucher_mac" != "$clientmac" ]; then
         check_result_en="Voucher is linked to another device"
-        check_result_ar="هذا الكوبون مرتبط بجهاز آخر.<br> لا يمكن استخدامه من هذا الجهاز"
+        check_result_ar="هذا الكوبون مرتبط بجهاز آخر<br>لا يمكن استخدامه من هذا الجهاز"
         return 1
 
     else
-        update_last_punch "$voucher_token"
-        if [ "$voucher_quota_down" != "0" ]; then
-            voucher_quota_down=$(($voucher_quota_down - $voucher_accum))
-        fi
 
         voucher_expiration=$(($voucher_first_punched + $voucher_time_limit * 60))
         time_remaining=$(( ($voucher_expiration - $current_time) / 60 ))
@@ -641,6 +654,7 @@ check_voucher() {
 
         check_result_en="Session renewed! $(calculate_remaining "en")"
         check_result_ar="تم تجديد الجلسة! $(calculate_remaining "ar")"
+        update_last_punch "$voucher_token"
         return 0
     fi
 
@@ -687,7 +701,7 @@ voucher_validation() {
                 <h3>عملية فاشلة</h3>
                  <p>$check_result_ar</p>
             </div>
-            <p>Click Continue to try again</p>
+            <label>Click Continue to try again</label>
             <form>
                 <input type=\"button\" class=\"btn\" value=\"أعد المحاولة\" onClick=\"location.href='$originurl'\">
             </form>"
@@ -717,10 +731,11 @@ voucher_form() {
 
     echo "
         <div class=\"info\">
-            <p><strong>بمجرد تسجيل الكارت على جهاز معين</p>
-            <p><strong>... فلن يعمل  على أي جهاز آخر</p>
+            <h3><strong>Your IP: $clientip</h3>
+            <h3><strong>Your MAC: $clientmac</h3>
         </div>
-        
+        <label>بمجرد تفعيل الكارت<br> لن يعمل على أي جهاز آخر</label>
+
         
         <form action=\"/opennds_preauth/\" method=\"get\">
             <input type=\"hidden\" name=\"fas\" value=\"$fas\"> 
