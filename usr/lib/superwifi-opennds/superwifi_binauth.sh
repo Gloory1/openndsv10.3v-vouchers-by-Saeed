@@ -14,12 +14,10 @@
 # functions:
 
 qouta_expired_auto() {
-  init_db
   local custom_raw="$1"
 
   # Init database lib
   . /usr/lib/superwifi/superwifi_database_lib.sh
-
 
   if echo "$custom_raw" | grep -iq "preemptivemac-"; then
     local decoded=$(printf '%b' "${custom_raw//%/\\x}" | tr -d '\n' | tr -d '\r')
