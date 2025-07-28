@@ -665,58 +665,53 @@ check_voucher() {
 
 
 voucher_validation() {
+	originurl=$(printf "${originurl//%/\\x}")
 
-    originurl=$(printf "${originurl//%/\\x}")
+	check_voucher
+	if [ $? -eq 0 ]; then
 
-    #block_remaining=$(check_attempts)
+                quotas="$sessiontimeout $upload_rate $download_rate $upload_quota $download_quota"
 
-    #if [ "$block_remaining" -gt 0 ]; then
-        # Blocked case: show block message with remaining time
-    #    block_message "$block_remaining"
+                userinfo="Saeed - $voucher"
+                binauth_custom="$voucher"
+                encode_custom 
+                auth_log
 
-    if check_voucher; then
-        track_attempts 0
-        quotas="$sessiontimeout $upload_rate $download_rate $upload_quota $download_quota"
 
-        userinfo="Saeed - $voucher"
-        binauth_custom="$voucher"
-        encode_custom 
+	        if [ "$ndsstatus" = "authenticated" ]; then
+			 track_attempts 0
+			 echo "<div class='status success'>
+				<h3>عملية ناجحة</h3>
+		                <p>$check_result_ar</p>
+		            </div>
+		            <form>
+		                <input type=\"button\" class=\"btn\" value=\"متابعة\" onClick=\"location.href='$originurl'\">
+		            </form>"
+		else
 
-        auth_log
-
-        if [ "$ndsstatus" = "authenticated" ]; then
-            echo "<div class='status success'>
-                <h3>عملية ناجحة</h3>
-                <p>$check_result_ar</p>
-            </div>
-            <form>
-                <input type=\"button\" class=\"btn\" value=\"متابعة\" onClick=\"location.href='$originurl'\">
-            </form>"
-        else
-
-            check_result_ar="تم رض المصادقة"
+			check_result_ar="تم رض المصادقة"
                         check_result_en="Denied access"
 
-            echo "<div class='status error'>
-                <h3>عملية فاشلة</h3>
-                 <p>$check_result_ar</p>
-            </div>
-            <label>Click Continue to try again</label>
-            <form>
-                <input type=\"button\" class=\"btn\" value=\"أعد المحاولة\" onClick=\"location.href='$originurl'\">
-            </form>"
-        fi
-    else
-        echo "<div class='status error'>
-            <h3>عملية فاشلة</h3>
-            <p>$check_result_ar</p>
-
-        </div>
-        <form>
-            <input type=\"button\" class=\"btn\" value=\"إعادة الحاولة\" onClick=\"location.href='$originurl'\">
-        </form>"
-    fi
-    footer
+	            echo "<div class='status error'>
+	                <h3>عملية فاشلة</h3>
+	                 <p>$check_result_ar</p>
+	            </div>
+	            <label>Click Continue to try again</label>
+	            <form>
+	                <input type=\"button\" class=\"btn\" value=\"أعد المحاولة\" onClick=\"location.href='$originurl'\">
+	            </form>"
+	        fi
+	else
+	        echo "<div class='status error'>
+	            <h3>عملية فاشلة</h3>
+	            <p>$check_result_ar</p>
+	
+	        </div>
+	        <form>
+	            <input type=\"button\" class=\"btn\" value=\"إعادة الحاولة\" onClick=\"location.href='$originurl'\">
+	        </form>"
+	fi
+	footer
 }
 
 voucher_form() {
