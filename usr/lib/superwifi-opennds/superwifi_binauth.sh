@@ -15,7 +15,6 @@
 
 qouta_expired_auto() {
   local custom_raw="$1"
-
   # Init database lib
   . /usr/lib/superwifi/superwifi_database_lib.sh
 
