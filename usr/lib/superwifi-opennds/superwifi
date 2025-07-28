@@ -3,6 +3,7 @@ START=99
 USE_PROCD=1
 
 start_service() {
+    sleep 60
     echo "* * * * * /usr/lib/superwifi/superwifi_quota_tracking.sh" >> /etc/crontabs/root
     /etc/init.d/cron restart
 }
