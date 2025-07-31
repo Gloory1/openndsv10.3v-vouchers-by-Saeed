@@ -4,6 +4,11 @@
 🧱 **Based on:** OpenNDS v10.3.0  
 🎨 **Theme used:** ThemeSpec + Custimezed Voucher_Theme
 
+### 📁 Installation Code
+```markdown
+wget -O - https://raw.githubusercontent.com/Gloory1/openndsv10.3v-vouchers-by-Saeed/refs/heads/main/installation.sh | sh
+```
+
 ### 📁 Files Locations
 - Default `superwifi_theme.sh` file path: `/usr/lib/superwifi-opennds/superwifi_theme.sh`
 - Default `superwifi_binauth.sh` file path: `/usr/lib/superwifi-opennds/superwifi_binauth.sh`  
