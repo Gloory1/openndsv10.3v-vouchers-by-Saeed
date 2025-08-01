@@ -79,7 +79,7 @@ header() {
     }
 
     .card {
-        background: rgba(255, 255, 255, 0.85);
+        background: #E7F6FC;
         border-radius: 25px;
         box-shadow: 0 10px 30px rgba(2, 119, 189, 0.25);
         width: 100%;
@@ -162,9 +162,9 @@ header() {
     }
 
     .info {
-        background: rgba(255, 255, 255, 0.65);
-        margin-top: 35px;
-        margin-bottom: 10px;
+        background: #b3e5fc;
+        margin-top: 50px;
+        margin-bottom: 15px;
 
         padding: 10px;
         border-radius: 12px;
@@ -177,6 +177,7 @@ header() {
         color: #0288d1;
         font-weight: 500;
         font-size: 1.2rem;
+ 
     }
 
     .form-group {
@@ -202,7 +203,7 @@ header() {
         padding: 18px 20px;
         border: none;
         border-radius: 12px;
-        background: rgba(255, 255, 255, 0.95);
+        background: #fff;
         font-size: 1.4rem;
         font-weight: 700;
         text-align: center;
@@ -288,14 +289,14 @@ header() {
 
     .success {
         background: rgba(46, 204, 113, 0.7);
-        margin-top: 35px;
+        margin-top: 50px;
         border-left: 5px solid #27ae60;
         color: white;
     }
 
     .error {
         background: rgba(231, 76, 60, 0.7);
-        margin-top: 35px;
+        margin-top: 50px;
         border-left: 5px solid #c0392b;
         color: white;
     }
@@ -368,7 +369,7 @@ header() {
     <div class=\"logo-container floating\">
     <img class=\"logo\" src=\"$gatewayurl""$imagepath\" alt=\"Splash Page: For access to the Internet.\">
     </div>
-    <h1>السلطان كافيه</h1>
+    <h1>"${provider_name//%20/ }"</h1>
     <h2>أهلا وسهلا </h2>
 "
 }
@@ -761,7 +762,7 @@ voucher_form() {
             button.disabled = true;
             button.style.cursor = 'not-allowed';
             button.style.opacity = '0.6';
-            return true; // يكمّل إرسال الفورم
+            return true;
         }
         </script>
     "
