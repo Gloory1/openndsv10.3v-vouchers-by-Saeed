@@ -409,28 +409,28 @@ block_message() {
 
 try_again_btn() {
  echo "
-	        <div class='status error'>
-	            <p>$check_result_ar</p>
-	        </div>
-		<label>عدد المحاولات محدود</label>
+	<div class='status error'>
+            <p>$check_result_ar</p>
+	</div>
+	<label>عدد المحاولات محدود</label>
 
-	        <form>
-	            <button type=\"button\" class=\"btn\" id=\"retryBtn\" onclick=\"handleRetryClick()\">
-	                <span class=\"spinner\" style=\"display: none;\"></span>
-	                <span class=\"btn-text\">إعادة المحاولة</span>
-	            </button>
-	        </form>
-	
-	        <script>
-	        function handleRetryClick() {
-	            var button = document.getElementById('retryBtn');
-	            button.classList.add('btn-loading');
-	            button.disabled = true;
-	            button.style.cursor = 'not-allowed';
-	            button.style.opacity = '0.6';
-	            location.href = '$originurl';
-	        }
-	        </script>"
+        <form>
+            <button type=\"button\" class=\"btn\" id=\"retryBtn\" onclick=\"handleRetryClick()\">
+                <span class=\"spinner\" style=\"display: none;\"></span>
+                <span class=\"btn-text\">إعادة المحاولة</span>
+            </button>
+        </form>
+
+        <script>
+        function handleRetryClick() {
+            var button = document.getElementById('retryBtn');
+            button.classList.add('btn-loading');
+            button.disabled = true;
+            button.style.cursor = 'not-allowed';
+            button.style.opacity = '0.6';
+            location.href = '$originurl';
+        }
+        </script>"
 }
 
 footer() {
