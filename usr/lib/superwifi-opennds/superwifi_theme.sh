@@ -52,10 +52,10 @@ header() {
     }
 
     body {
-        background: linear-gradient(135deg, #ff9a9e, #fad0c4, #fbc2eb, #a6c1ee);
+         background: linear-gradient(135deg, #e3fdfd, #cbf1f5, #a6e3e9);
         background-size: 400% 400%;
         animation: gradientBG 1s ease infinite;
-        color: #fff;
+        color: #01579b;
         min-height: 100vh;
         display: flex;
         justify-content: center;
@@ -79,16 +79,15 @@ header() {
     }
 
     .card {
-        background: rgba(255, 255, 255, 0.4);
+        background: rgba(255, 255, 255, 0.85);
         border-radius: 25px;
-        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
+        box-shadow: 0 10px 30px rgba(2, 119, 189, 0.25);
         width: 100%;
         max-width: 500px;
-        padding: 25px 15px;
+        padding: 10px 15px;
         position: relative;
         overflow: hidden;
-        backdrop-filter: blur(8px);
-        border: 1px solid rgba(255, 255, 255, 0.3);
+        border: 1px solid rgba(255, 255, 255, 0.7);
     }
 
     .card:before {
@@ -98,7 +97,7 @@ header() {
         left: -50%;
         width: 200%;
         height: 200%;
-        background: radial-gradient(circle, rgba(255, 255, 255, 0.4) 0%, transparent 70%);
+        background: radial-gradient(circle, rgba(255, 255, 255, 0.6) 0%, transparent 70%);
         transform: rotate(30deg);
         z-index: 0;
         animation: rotateGradient 20s linear infinite;
@@ -120,7 +119,7 @@ header() {
         border-radius: 50%;
         object-fit: cover;
         border: 3px solid white;
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        box-shadow: 0 5px 15px rgba(3, 169, 244, 0.2);
         transition: all 0.5s ease;
     }
 
@@ -129,51 +128,53 @@ header() {
     }
 
     h1 {
-        font-size: 2.8rem;
+        font-size: 2.2rem;
         text-align: right;
         direction: rtl;
         margin: 10px 0 5px;
-        background: linear-gradient(175deg,#ff8e53,#ffcc00, #ff8e53,#ffcc00,#ff8e53);
+        background: linear-gradient(175deg, #0288d1, #039be5, #03a9f4);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         position: relative;
         z-index: 2;
-        text-shadow: 0 2px 8px rgba(255, 107, 107, 0.15);
+        text-shadow: 0 2px 8px rgba(2, 119, 189, 0.15);
         letter-spacing: -1px;
     }
 
     h2 {
-        font-size: 1.5rem;
+        font-size: 1.3rem;
         text-align: right;
         direction: rtl;
         margin-bottom: 25px;
         font-weight: 600;
-        color: #ff8e53;
+        color: #0288d1;
         position: relative;
         z-index: 2;
-        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        text-shadow: 0 1px 2px rgba(255, 255, 255, 0.5);
     }
 
     h3 {
         font-size: 1.1rem;
         padding: 5px;
         font-weight: 500;
-        color: #5a2a0c;
+        color: #01579b;
         position: relative;
     }
 
     .info {
-        background: rgba(255, 255, 255, 0.3);
-        margin-top: 50px;
+        background: rgba(255, 255, 255, 0.65);
+        margin-top: 35px;
+        margin-bottom: 10px;
+
         padding: 10px;
         border-radius: 12px;
         text-align: center;
         position: relative;
-        border: 1.2px solid #ffd8cb;
+        border: 1.5px solid #b3e5fc;
     }
 
     .info p {
-        color:  #e67e22;
+        color: #0288d1;
         font-weight: 500;
         font-size: 1.2rem;
     }
@@ -190,7 +191,7 @@ header() {
         margin-top: 15px;
         margin-bottom: 10px;
         font-weight: 700;
-        color: #e67e22;
+        color: #0277bd;
         font-size: 1.1rem;
         position: relative;
         z-index: 2;
@@ -205,9 +206,9 @@ header() {
         font-size: 1.4rem;
         font-weight: 700;
         text-align: center;
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
-        color: #5a2a0c;
-        border: 2px solid #ffd8cb;
+        box-shadow: 0 5px 15px rgba(2, 119, 189, 0.1);
+        color: #01579b;
+        border: 2px solid #b3e5fc;
         transition: all 0.3s ease;
         position: relative;
         z-index: 2;
@@ -216,12 +217,12 @@ header() {
 
     input[type='text']:focus {
         outline: none;
-        border-color: #ff6b6b;
-        box-shadow: 0 5px 20px rgba(255, 107, 107, 0.2);
+        border-color: #03a9f4;
+        box-shadow: 0 5px 20px rgba(3, 169, 244, 0.2);
     }
 
     .btn {
-        background: linear-gradient(45deg, #ff6b6b, #ff8e53);
+        background: linear-gradient(45deg, #0288d1, #03a9f4);
         color: white;
         border: none;
         padding: 15px;
@@ -231,7 +232,7 @@ header() {
         width: 100%;
         font-weight: 700;
         transition: all 0.3s ease;
-        box-shadow: 0 7px 20px rgba(255, 107, 107, 0.3);
+        box-shadow: 0 7px 20px rgba(3, 169, 244, 0.3);
         position: relative;
         z-index: 2;
         overflow: hidden;
@@ -250,25 +251,30 @@ header() {
 
     .btn:hover {
         transform: translateY(-5px);
-        box-shadow: 0 10px 25px rgba(255, 107, 107, 0.4);
-        animation: pulse 3s infinite;
+        box-shadow: 0 10px 25px rgba(3, 169, 244, 0.4);
+    }
+    .spinner {
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        border: 3px solid rgba(255,255,255,.3);
+        border-radius: 50%;
+        border-top-color: #fff;
+        animation: spin 1s ease-in-out infinite;
+        margin-right: 10px;
+        vertical-align: middle;
     }
 
-    @keyframes pulse {
-        0% {
-            transform: translateY(-5px) scale(1);
-            box-shadow: 0 10px 25px rgba(255, 107, 107, 0.4);
-        }
+    @keyframes spin {
+        to { transform: rotate(360deg); }
+    }
 
-        50% {
-            transform: translateY(-5px) scale(1.02);
-            box-shadow: 0 15px 30px rgba(255, 107, 107, 0.6);
-        }
+    .btn-loading .btn-text {
+        display: none;
+    }
 
-        100% {
-            transform: translateY(-5px) scale(1);
-            box-shadow: 0 10px 25px rgba(255, 107, 107, 0.4);
-        }
+    .btn-loading .spinner {
+        display: inline-block !important;
     }
 
     .status {
@@ -278,19 +284,18 @@ header() {
         font-size: 1.1rem;
         position: relative;
         z-index: 2;
-        backdrop-filter: blur(5px);
     }
 
     .success {
         background: rgba(46, 204, 113, 0.7);
-        margin-top: 50px;
+        margin-top: 35px;
         border-left: 5px solid #27ae60;
         color: white;
     }
 
     .error {
         background: rgba(231, 76, 60, 0.7);
-        margin-top: 50px;
+        margin-top: 35px;
         border-left: 5px solid #c0392b;
         color: white;
     }
@@ -304,13 +309,12 @@ header() {
         text-align: center;
         position: relative;
         z-index: 2;
-        backdrop-filter: blur(3px);
-        color: #5a2a0c;
-        border: 1px solid rgba(230, 126, 34, 0.2);
+        color: #01579b;
+        border: 1px solid rgba(3, 169, 244, 0.2);
     }
 
     .terms-notice a {
-        color: #e67e22;
+        color: #0288d1;
         font-weight: 700;
         text-decoration: none;
     }
@@ -318,7 +322,7 @@ header() {
     .footer {
         margin-top: 20px;
         font-size: 0.85rem;
-        color: #e67e22;
+        color: #0288d1;
         position: relative;
         z-index: 2;
         font-weight: 600;
@@ -327,19 +331,18 @@ header() {
     hr {
         border: 0;
         height: 2px;
-        background: linear-gradient(to right, transparent, #ffd8cb, transparent);
+        background: linear-gradient(to right, transparent, #81d4fa, transparent);
         margin: 20px 0;
     }
 
     .countdown {
         font-size: 1.6rem;
-        color: #ff6b6b;
+        color: #03a9f4;
         margin: 20px 0;
         position: relative;
         z-index: 2;
         font-weight: 700;
     }
-
     .floating {
         animation: float 3s ease-in-out infinite;
     }
@@ -357,6 +360,7 @@ header() {
             transform: translateY(0px);
         }
     }
+
     </style>
     </head>
     <body>
@@ -364,12 +368,12 @@ header() {
     <div class=\"logo-container floating\">
     <img class=\"logo\" src=\"$gatewayurl""$imagepath\" alt=\"Splash Page: For access to the Internet.\">
     </div>
-    <h1>السلطان كافيه</h1>
+    <h1>إنترنت كافيه</h1>
     <h2>أهلا وسهلا </h2>
 "
 }
-
 # باقي الكود يفضل كما هو بدون تغيير...
+
 
 block_message() {
     local remaining=\"$1\"
@@ -403,13 +407,39 @@ block_message() {
 "
 }
 
+try_again_btn() {
+ echo "
+	        <div class='status error'>
+	            <p>$check_result_ar</p>
+	        </div>
+		<label>عدد المحاولات محدود</label>
+
+	        <form>
+	            <button type=\"button\" class=\"btn\" id=\"retryBtn\" onclick=\"handleRetryClick()\">
+	                <span class=\"spinner\" style=\"display: none;\"></span>
+	                <span class=\"btn-text\">إعادة المحاولة</span>
+	            </button>
+	        </form>
+	
+	        <script>
+	        function handleRetryClick() {
+	            var button = document.getElementById('retryBtn');
+	            button.classList.add('btn-loading');
+	            button.disabled = true;
+	            button.style.cursor = 'not-allowed';
+	            button.style.opacity = '0.6';
+	            location.href = '$originurl';
+	        }
+	        </script>"
+}
+
 footer() {
     year=$(date +'%Y')
     echo "
         <div class=\"footer\">
             <hr>
             <div>
-                &copy; Saeed & BlueWave Projects and Services 2015 - $year
+                &copy; Saeed & BlueWave Projects and Services 2025
                 <div>Portal Version: $version</div>
             </div>
         </div>
@@ -420,7 +450,6 @@ footer() {
 
     exit 0
 }
-
 login_with_voucher() {
     voucher_validation
     footer
@@ -681,7 +710,6 @@ voucher_validation() {
 	        if [ "$ndsstatus" = "authenticated" ]; then
 			 track_attempts 0
 			 echo "<div class='status success'>
-				<h3>عملية ناجحة</h3>
 		                <p>$check_result_ar</p>
 		            </div>
 		            <form>
@@ -690,26 +718,11 @@ voucher_validation() {
 		else
 
 			check_result_ar="تم رض المصادقة"
-                        check_result_en="Denied access"
-
-	            echo "<div class='status error'>
-	                <h3>عملية فاشلة</h3>
-	                 <p>$check_result_ar</p>
-	            </div>
-	            <label>Click Continue to try again</label>
-	            <form>
-	                <input type=\"button\" class=\"btn\" value=\"أعد المحاولة\" onClick=\"location.href='$originurl'\">
-	            </form>"
+			check_result_en="Denied access"
+			try_again_btn
 	        fi
 	else
-	        echo "<div class='status error'>
-	            <h3>عملية فاشلة</h3>
-	            <p>$check_result_ar</p>
-	
-	        </div>
-	        <form>
-	            <input type=\"button\" class=\"btn\" value=\"إعادة الحاولة\" onClick=\"location.href='$originurl'\">
-	        </form>"
+	   try_again_btn
 	fi
 	footer
 }
@@ -726,21 +739,31 @@ voucher_form() {
 
     echo "
         <div class=\"info\">
-            <h3><strong>Your IP: $clientip</h3>
-            <h3><strong>Your MAC: $clientmac</h3>
+            <h3>بمجرد تفعيل الكارت<br> لن يعمل على أي جهاز آخر</h3>
         </div>
-        <label>بمجرد تفعيل الكارت<br> لن يعمل على أي جهاز آخر</label>
-
-        
-        <form action=\"/opennds_preauth/\" method=\"get\">
+        <form action=\"/opennds_preauth/\" method=\"get\" onsubmit=\"return handleVoucherSubmit(this)\">
             <input type=\"hidden\" name=\"fas\" value=\"$fas\"> 
             
             <div class=\"form-group\">
-            <input type=\"text\" id=\"voucher\" name=\"voucher\" value=\"$voucher_code\" placeholder=\"اكتب هنا\" required>
+                <input type=\"text\" id=\"voucher\" name=\"voucher\" value=\"$voucher_code\" placeholder=\"اكتب هنا\" required>
             </div>
             
-            <input type=\"submit\" class=\"btn\" value=\"تحقق من الرقم\">
+            <button type=\"submit\" class=\"btn\" id=\"voucherBtn\">
+                <span class=\"spinner\" style=\"display: none;\"></span>
+                <span class=\"btn-text\">تحقق من الرقم</span>
+            </button>
         </form>
+
+        <script>
+        function handleVoucherSubmit(form) {
+            var button = document.getElementById('voucherBtn');
+            button.classList.add('btn-loading');
+            button.disabled = true;
+            button.style.cursor = 'not-allowed';
+            button.style.opacity = '0.6';
+            return true; // يكمّل إرسال الفورم
+        }
+        </script>
     "
     fi
     footer
