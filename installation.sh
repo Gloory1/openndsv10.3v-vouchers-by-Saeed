@@ -66,7 +66,8 @@ for i in $(seq 1 10); do
 done
 echo "] ✅ Now It's ready..."
 
-
+# 
+read -p "Enter provider name: " provider_name
 # Get MAC address from br-lan interface
 CURRENT_MAC=$(ip link show br-lan | awk '/ether/ {print $2}')
 
@@ -80,9 +81,9 @@ uci set opennds.@opennds[0].preauthidletimeout='10'
 uci set opennds.@opennds[0].authidletimeout='30'
 uci set opennds.@opennds[0].sessiontimeout='360'
 uci set opennds.@opennds[0].checkinterval='60'
+uci add_list opennds.@opennds[0].fas_custom_variables_list="provider_name=$provider_name"
 uci add_list opennds.@opennds[0].trustedmac="$CURRENT_MAC"
 
-# uci set opennds.@opennds[0].log_mountpoint='/mnt/usb'
 uci commit opennds
 
 # Restart opennds service to apply changes
