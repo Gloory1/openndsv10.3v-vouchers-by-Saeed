@@ -673,7 +673,7 @@ check_voucher() {
 
     elif [ "$voucher_mac" != "0" ] && [ "$voucher_mac" != "$clientmac" ]; then
         check_result_en="Voucher is linked to another device"
-        check_result_ar="هذا الكوبون مرتبط بجهاز آخر<br>لا يمكن استخدامه من هذا الجهاز"
+        check_result_ar="هذا الكوبون مرتبط بجهاز آخر<br>لا يمكن استخدامه من أي جهاز آخر"
         return 1
 
     else
