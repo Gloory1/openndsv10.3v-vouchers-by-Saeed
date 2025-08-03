@@ -5,21 +5,15 @@
 #This software is released under the GNU GPL license.
 #Edited by Saeed Muhammed
 
-
 #-----------------------------------------------------------------------#
-#
 # init variables 
-#
 
 # Including database lib
 . /usr/lib/superwifi/superwifi_database_lib.sh
 
 # Title of this theme:
 title="Super wifi vouchers"
-
 #-----------------------------------------------------------------------#
-
-
 
 # functions:
 
@@ -42,7 +36,7 @@ header() {
     <meta charset=\"utf-8\">
     <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">
     <link rel=\"shortcut icon\" href=\"$gatewayurl""$imagepath\" type=\"image/x-icon\">
-    <title>$gatewayname</title>
+    <title>$title</title>
     <style>
     * {
         margin: 0;
@@ -52,15 +46,15 @@ header() {
     }
 
     body {
-         background: linear-gradient(135deg, #e3fdfd, #cbf1f5, #a6e3e9);
+        background: linear-gradient(135deg, #e3fdfd, #cbf1f5, #a6e3e9);
         background-size: 400% 400%;
         animation: gradientBG 1s ease infinite;
         color: #01579b;
         min-height: 100vh;
+        padding: 10px;
         display: flex;
         justify-content: center;
         align-items: center;
-        padding: 10px;
         text-align: center;
     }
 
@@ -77,19 +71,16 @@ header() {
             background-position: 0% 50%;
         }
     }
-
     .card {
         background: #E7F6FC;
         border-radius: 25px;
         box-shadow: 0 10px 30px rgba(2, 119, 189, 0.25);
         width: 100%;
         max-width: 500px;
-        padding: 10px 15px;
+        padding: 10px;
         position: relative;
         overflow: hidden;
-        border: 1px solid rgba(255, 255, 255, 0.7);
     }
-
     .card:before {
         content: '';
         position: absolute;
@@ -107,7 +98,7 @@ header() {
     .logo-container {
         position: relative;
         z-index: 2;
-        margin-top: 20px;
+        margin-top: 10px;
         float: left; 
         margin-right: 15px;
     }
@@ -119,7 +110,7 @@ header() {
         border-radius: 50%;
         object-fit: cover;
         border: 3px solid white;
-        box-shadow: 0 5px 15px rgba(3, 169, 244, 0.2);
+        box-shadow: 0 0 25px rgba(3, 169, 244, .5);
         transition: all 0.5s ease;
     }
 
@@ -128,7 +119,7 @@ header() {
     }
 
     h1 {
-        font-size: 2.2rem;
+        font-size: 2.1rem;
         text-align: right;
         direction: rtl;
         margin: 10px 0 5px;
@@ -142,7 +133,7 @@ header() {
     }
 
     h2 {
-        font-size: 1.3rem;
+        font-size: 1.2rem;
         text-align: right;
         direction: rtl;
         margin-bottom: 25px;
@@ -163,10 +154,7 @@ header() {
 
     .info {
         background: #b3e5fc;
-        margin-top: 50px;
         margin-bottom: 15px;
-
-        padding: 10px;
         border-radius: 12px;
         text-align: center;
         position: relative;
@@ -256,9 +244,9 @@ header() {
     }
     .spinner {
         display: inline-block;
-        width: 20px;
-        height: 20px;
-        border: 3px solid rgba(255,255,255,.3);
+        width: 30px;
+        height: 30px;
+        border: 5px solid rgba(255,255,255,.3);
         border-radius: 50%;
         border-top-color: #fff;
         animation: spin 1s ease-in-out infinite;
@@ -321,7 +309,6 @@ header() {
     }
 
     .footer {
-        margin-top: 20px;
         font-size: 0.85rem;
         color: #0288d1;
         position: relative;
@@ -333,7 +320,14 @@ header() {
         border: 0;
         height: 2px;
         background: linear-gradient(to right, transparent, #81d4fa, transparent);
-        margin: 20px 0;
+        margin: 15px 0;
+    }
+
+    hs {
+        border: 0;
+        height: 2px;
+        background: transparent;
+        margin: 0px;
     }
 
     .countdown {
@@ -371,6 +365,8 @@ header() {
     </div>
     <h1>"${provider_name//%20/ }"</h1>
     <h2>أهلا وسهلا </h2>
+    
+ 
 "
 }
 # باقي الكود يفضل كما هو بدون تغيير...
@@ -435,7 +431,6 @@ try_again_btn() {
 }
 
 footer() {
-    year=$(date +'%Y')
     echo "
         <div class=\"footer\">
             <hr>
@@ -673,7 +668,7 @@ check_voucher() {
 
     elif [ "$voucher_mac" != "0" ] && [ "$voucher_mac" != "$clientmac" ]; then
         check_result_en="Voucher is linked to another device"
-        check_result_ar="هذا الكوبون مرتبط بجهاز آخر<br>لا يمكن استخدامه إلا من نفس الجهاز"
+        check_result_ar="هذا الكوبون مرتبط بجهاز آخر<br>لا يمكن استخدامه من هذا الجهاز"
         return 1
 
     else
@@ -739,9 +734,11 @@ voucher_form() {
     voucher_code=$(echo "$cpi_query" | awk -F "voucher%3d" '{printf "%s", $2}' | awk -F "%26" '{printf "%s", $1}')
 
     echo "
+
         <div class=\"info\">
             <h3>بمجرد تفعيل الكارت<br> لن يعمل على أي جهاز آخر</h3>
         </div>
+   
         <form action=\"/opennds_preauth/\" method=\"get\" onsubmit=\"return handleVoucherSubmit(this)\">
             <input type=\"hidden\" name=\"fas\" value=\"$fas\"> 
             
@@ -765,6 +762,7 @@ voucher_form() {
             return true;
         }
         </script>
+      
     "
     fi
     footer
