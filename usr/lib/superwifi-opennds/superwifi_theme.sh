@@ -6,7 +6,7 @@
 #Edited by Saeed Muhammed
 
 #-----------------------------------------------------------------------#
-# init variables 
+# init variables
 
 # Including database lib
 . /usr/lib/superwifi/superwifi_database_lib.sh
@@ -371,7 +371,6 @@ header() {
 }
 # باقي الكود يفضل كما هو بدون تغيير...
 
-
 block_message() {
     local remaining=\"$1\"
 
@@ -405,7 +404,7 @@ block_message() {
 }
 
 try_again_btn() {
- echo "
+    echo "
 	<div class='status error'>
             <p>$status_details</p>
 	</div>
@@ -481,7 +480,7 @@ track_attempts() {
     # Remove existing entry
     sed -i "/^${client},/d" "$db"
     # Add updated entry
-    echo "$client,$count,$ts" >> "$db"  # Keep original timestamp
+    echo "$client,$count,$ts" >>"$db" # Keep original timestamp
 }
 
 check_attempts() {
@@ -490,7 +489,7 @@ check_attempts() {
     local db="${logdir}attempts.txt"
 
     local max=3
-    local window=300  # 5 minutes
+    local window=300 # 5 minutes
 
     [ ! -f "$db" ] && echo 0 && return 0
 
@@ -552,7 +551,7 @@ calculate_remaining() {
 
     if [ "$cal_lang" = "ar" ]; then
         time_display="الوقت المتبقي"
-                data_display="البيانات المتبقية"
+        data_display="البيانات المتبقية"
 
         if [ "$pre_time_remaining" = "unlimited" ]; then
             time_value="غير محدود"
@@ -590,7 +589,7 @@ calculate_remaining() {
 check_voucher() {
     # Initialize status variable
     status_details=""
-    
+
     # 1. Validate voucher format (exactly 9 alphanumeric or dash characters)
     if ! echo -n "$voucher" | grep -qE "^[a-zA-Z0-9-]{9}$"; then
         status_details="كود الكارت يجب أن يكون 9 أحرف<br> (أحرف أو أرقام أو شرطات)"
@@ -621,7 +620,6 @@ check_voucher() {
     voucher_last_punched=$(echo "$output" | cut -d'|' -f12)
     voucher_quota_expired=$(echo "$output" | cut -d'|' -f13)
 
-
     # 3. Check quota expiration flag
     if [ "$voucher_quota_expired" -ne 0 ]; then
         status_details="انتهت صلاحية الكارت<br>فشل الإتصال"
@@ -629,8 +627,8 @@ check_voucher() {
     fi
 
     # 4. Check data usage
-    if [ "$voucher_quota_down" -ne 0 ] && 
-       [ "$voucher_accum_down_total" -ge "$voucher_quota_down" ]; then
+    if [ "$voucher_quota_down" -ne 0 ] &&
+        [ "$voucher_accum_down_total" -ge "$voucher_quota_down" ]; then
         status_details="تم استهلاك بيانات الكارت بالكامل<br>لا توجد بيانات متبقية"
         return 1
     fi
@@ -644,9 +642,9 @@ check_voucher() {
     # 6. Check time validity
     if [ "$voucher_first_punched" -ne 0 ]; then
         voucher_expiration=$((voucher_first_punched + voucher_time_limit * 60))
-        
-        if [ "$voucher_time_limit" -ne 0 ] && 
-           [ "$current_time" -ge "$voucher_expiration" ]; then
+
+        if [ "$voucher_time_limit" -ne 0 ] &&
+            [ "$current_time" -ge "$voucher_expiration" ]; then
             status_details="انتهت صلاحية الكارت<br>الوقت انتهى"
             return 1
         fi
@@ -661,9 +659,9 @@ check_voucher() {
         update_first_punch "$voucher_token" "$clientmac"
         status_details="تم تفعيل الكارت بنجاح! $(calculate_remaining "ar")"
     else
-        # Session renewal 
+        # Session renewal
         voucher_expiration=$((voucher_first_punched + voucher_time_limit * 60))
-        time_remaining=$(( (voucher_expiration - current_time) / 60 ))
+        time_remaining=$(((voucher_expiration - current_time) / 60))
         [ "$time_remaining" -lt 0 ] && time_remaining=0
         session_length=$time_remaining
         update_last_punch "$voucher_token"
@@ -675,7 +673,7 @@ check_voucher() {
     download_rate=$voucher_rate_down
     upload_quota=$voucher_quota_up
     download_quota=$voucher_quota_down
-    
+
     if [ "$voucher_quota_down" -ne 0 ]; then
         download_quota=$((voucher_quota_down - voucher_accum_down_total))
     fi
@@ -684,36 +682,35 @@ check_voucher() {
 }
 
 voucher_validation() {
-	originurl=$(printf "${originurl//%/\\x}")
+    originurl=$(printf "${originurl//%/\\x}")
 
-	check_voucher
-	if [ $? -eq 0 ]; then
+    check_voucher
+    if [ $? -eq 0 ]; then
 
-                quotas="$sessiontimeout $upload_rate $download_rate $upload_quota $download_quota"
+        quotas="$sessiontimeout $upload_rate $download_rate $upload_quota $download_quota"
 
-                userinfo="Saeed - $voucher"
-                binauth_custom="$voucher"
-                encode_custom 
-                auth_log
+        userinfo="Saeed - $voucher"
+        binauth_custom="$voucher"
+        encode_custom
+        auth_log
 
-
-	        if [ "$ndsstatus" = "authenticated" ]; then
-			 track_attempts 0
-			 echo "<div class='status success'>
+        if [ "$ndsstatus" = "authenticated" ]; then
+            track_attempts 0
+            echo "<div class='status success'>
 		                <p>$status_details</p>
 		            </div>
 		            <form>
 		                <input type=\"button\" class=\"btn\" value=\"متابعة\" onClick=\"location.href='$originurl'\">
 		            </form>"
-		else
+        else
 
-			status_details="تم رض المصادقة"
-			try_again_btn
-	        fi
-	else
-	   try_again_btn
-	fi
-	footer
+            status_details="تم رض المصادقة"
+            try_again_btn
+        fi
+    else
+        try_again_btn
+    fi
+    footer
 }
 
 voucher_form() {
@@ -724,9 +721,9 @@ voucher_form() {
         # Blocked case: show block message with remaining time
         block_message "$block_remaining"
     else
-    voucher_code=$(echo "$cpi_query" | awk -F "voucher%3d" '{printf "%s", $2}' | awk -F "%26" '{printf "%s", $1}')
+        voucher_code=$(echo "$cpi_query" | awk -F "voucher%3d" '{printf "%s", $2}' | awk -F "%26" '{printf "%s", $1}')
 
-    echo "
+        echo "
 
         <div class=\"info\">
             <h3>بمجرد تفعيل الكارت<br> لن يعمل على أي جهاز آخر</h3>
@@ -797,7 +794,7 @@ quotas="$sessiontimeout $upload_rate $download_rate $upload_quota $download_quot
 
 # Define the list of Parameters we expect to be sent sent from openNDS ($ndsparamlist):
 # Note you can add custom parameters to the config file and to read them you must also add them here.
-# Custom parameters are "Portal" information and are the same for all clients eg "admin_email" and "location" 
+# Custom parameters are "Portal" information and are the same for all clients eg "admin_email" and "location"
 ndscustomparams=""
 ndscustomimages=""
 ndscustomfiles=""
@@ -814,7 +811,6 @@ fasvarlist="$fasvarlist $additionalthemevars"
 # You can choose to define a custom string. This will be b64 encoded and sent to openNDS.
 # There it will be made available to be displayed in the output of ndsctl json as well as being sent
 #	to the BinAuth post authentication processing script if enabled.
-
 
 # Set the variable $binauth_custom to the desired value.
 # Values set here can be overridden by the themespec file
