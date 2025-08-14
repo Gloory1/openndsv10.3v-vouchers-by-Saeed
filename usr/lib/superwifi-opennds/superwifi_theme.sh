@@ -407,7 +407,7 @@ block_message() {
 try_again_btn() {
  echo "
 	<div class='status error'>
-            <p>$check_result_ar</p>
+            <p>$status_details</p>
 	</div>
 	<label>عدد المحاولات محدود</label>
 
@@ -585,30 +585,28 @@ calculate_remaining() {
     echo "<br>${time_display}: ${time_value}<br>${data_display}: ${data_value}"
 }
 
-# SuperWiFi Voucher Management Scripts
+# SuperWiFi Voucher Management Script (Optimized)
 
 check_voucher() {
-    check_result_en=""
-    check_result_ar=""
-
-    # Validate token format (exactly 9 alphanumeric or dash characters)
+    # Initialize status variable
+    status_details=""
+    
+    # 1. Validate voucher format (exactly 9 alphanumeric or dash characters)
     if ! echo -n "$voucher" | grep -qE "^[a-zA-Z0-9-]{9}$"; then
-        check_result_en="Invalid voucher code <br> must be 9 alphanumeric characters"
-        check_result_ar="كود الكوبون يجب أن يكون 9 أحرف<br> (أحرف أو أرقام أو شرطات)"
+        status_details="كود الكارت يجب أن يكون 9 أحرف<br> (أحرف أو أرقام أو شرطات)"
         return 1
     fi
 
-    # Retrieve voucher from DB script
+    # 2. Retrieve voucher from DB
     output=$(get_voucher "$voucher")
-
     if [ -z "$output" ]; then
         track_attempts 1
-        check_result_en="Voucher not found"
-        check_result_ar="كود الكوبون غير صحيح أو غير موجود"
+        status_details="كود الكارت غير صحيح أو غير موجود"
         return 1
     fi
 
     # Parse voucher fields from output
+    current_time=$(date +%s)
     voucher_id=$(echo "$output" | cut -d'|' -f1)
     voucher_token=$(echo "$output" | cut -d'|' -f2)
     voucher_mac=$(echo "$output" | cut -d'|' -f3)
@@ -624,70 +622,66 @@ check_voucher() {
     voucher_quota_expired=$(echo "$output" | cut -d'|' -f13)
 
 
-    # Set limits according to voucher
-    current_time=$(date +%s)
+    # 3. Check quota expiration flag
+    if [ "$voucher_quota_expired" -ne 0 ]; then
+        status_details="انتهت صلاحية الكارت<br>فشل الإتصال"
+        return 1
+    fi
+
+    # 4. Check data usage
+    if [ "$voucher_quota_down" -ne 0 ] && 
+       [ "$voucher_accum_down_total" -ge "$voucher_quota_down" ]; then
+        status_details="تم استهلاك بيانات الكارت بالكامل<br>لا توجد بيانات متبقية"
+        return 1
+    fi
+
+    # 5. Check MAC binding
+    if [ "$voucher_mac" != "0" ] && [ "$voucher_mac" != "$clientmac" ]; then
+        status_details="هذا الكارت مرتبط بجهاز آخر<br>لا يمكن استخدامه من هذا الجهاز"
+        return 1
+    fi
+
+    # 6. Check time validity
+    if [ "$voucher_first_punched" -ne 0 ]; then
+        voucher_expiration=$((voucher_first_punched + voucher_time_limit * 60))
+        
+        if [ "$voucher_time_limit" -ne 0 ] && 
+           [ "$current_time" -ge "$voucher_expiration" ]; then
+            status_details="انتهت صلاحية الكارت<br>الوقت انتهى"
+            return 1
+        fi
+    fi
+
+    # All validations passed - activate/renew voucher
+    if [ "$voucher_first_punched" -eq 0 ]; then
+        # First-time activation
+        voucher_expiration=$((current_time + voucher_time_limit * 60))
+        time_remaining=$voucher_time_limit
+        sessiontimeout=$voucher_time_limit
+        update_first_punch "$voucher_token" "$clientmac"
+        status_details="تم تفعيل الكارت بنجاح! $(calculate_remaining "ar")"
+    else
+        # Session renewal 
+        voucher_expiration=$((voucher_first_punched + voucher_time_limit * 60))
+        time_remaining=$(( (voucher_expiration - current_time) / 60 ))
+        [ "$time_remaining" -lt 0 ] && time_remaining=0
+        session_length=$time_remaining
+        update_last_punch "$voucher_token"
+        status_details="تم تجديد الجلسة! $(calculate_remaining "ar")"
+    fi
+
+    # Set connection parameters
     upload_rate=$voucher_rate_up
     download_rate=$voucher_rate_down
     upload_quota=$voucher_quota_up
     download_quota=$voucher_quota_down
-
-    if [ "$voucher_quota_down" = 0 ]; then
-        download_quota=$voucher_quota_down
-    else
-        download_quota=$(($voucher_quota_down - $voucher_accum_down_total))
+    
+    if [ "$voucher_quota_down" -ne 0 ]; then
+        download_quota=$((voucher_quota_down - voucher_accum_down_total))
     fi
 
-
-    if [ "$voucher_first_punched" -eq 0 ]; then
-
-	voucher_expiration=$(($current_time + $voucher_time_limit * 60))
-        time_remaining=$voucher_time_limit
-        sessiontimeout=$voucher_time_limit
-
-
-        update_first_punch "$voucher_token" "$clientmac"
-
-        check_result_en="Voucher activated successfully!$(calculate_remaining "en")"
-        check_result_ar="تم تفعيل الكوبون بنجاح! $(calculate_remaining "ar")"
-        return 0
-
-    elif [ "$voucher_time_limit" != 0 ] && [ "$current_time" -ge "$voucher_expiration" ]; then
-        check_result_en="Voucher expired. Time is over."
-        check_result_ar="انتهت صلاحية الكود<br>الوقت انتهى"
-        return 1
-
-    elif [ "$voucher_quota_expired" = 1 ]; then
-        check_result_en="Voucher expired. Data is over."
-        check_result_ar="انتهت صلاحية الكود<br>البيانات انتهت"
-        return 1
-
-    elif [ "$voucher_quota_down" != 0 ] && [ "$voucher_accum_down_total" -ge "$voucher_quota_down" ]; then
-        check_result_en="Voucher used up. No data remaining."
-        check_result_ar="تم استهلاك بينات الكود بالكامل<br>لا توجد بيانات متبقية"
-        return 1
-
-    elif [ "$voucher_mac" != "0" ] && [ "$voucher_mac" != "$clientmac" ]; then
-        check_result_en="Voucher is linked to another device"
-        check_result_ar="هذا الكوبون مرتبط بجهاز آخر<br>لا يمكن استخدامه من هذا الجهاز"
-        return 1
-
-    else
-
-        voucher_expiration=$(($voucher_first_punched + $voucher_time_limit * 60))
-        time_remaining=$(( ($voucher_expiration - $current_time) / 60 ))
-        session_length=$time_remaining
-
-        check_result_en="Session renewed! $(calculate_remaining "en")"
-        check_result_ar="تم تجديد الجلسة! $(calculate_remaining "ar")"
-        update_last_punch "$voucher_token"
-        return 0
-    fi
-
-    check_result_en="Unknown error"
-    check_result_ar="خطأ غير معلوم"
-    return 1
+    return 0
 }
-
 
 voucher_validation() {
 	originurl=$(printf "${originurl//%/\\x}")
@@ -706,15 +700,14 @@ voucher_validation() {
 	        if [ "$ndsstatus" = "authenticated" ]; then
 			 track_attempts 0
 			 echo "<div class='status success'>
-		                <p>$check_result_ar</p>
+		                <p>$status_details</p>
 		            </div>
 		            <form>
 		                <input type=\"button\" class=\"btn\" value=\"متابعة\" onClick=\"location.href='$originurl'\">
 		            </form>"
 		else
 
-			check_result_ar="تم رض المصادقة"
-			check_result_en="Denied access"
+			status_details="تم رض المصادقة"
 			try_again_btn
 	        fi
 	else
@@ -737,6 +730,7 @@ voucher_form() {
 
         <div class=\"info\">
             <h3>بمجرد تفعيل الكارت<br> لن يعمل على أي جهاز آخر</h3>
+            <h3>$clientmac</h3>
         </div>
    
         <form action=\"/opennds_preauth/\" method=\"get\" onsubmit=\"return handleVoucherSubmit(this)\">
@@ -768,38 +762,7 @@ voucher_form() {
     footer
 }
 
-read_terms() {
-    echo "
-        <form action=\"/opennds_preauth/\" method=\"get\">
-            <input type=\"hidden\" name=\"fas\" value=\"$fas\">
-            <input type=\"hidden\" name=\"terms\" value=\"yes\">
-            <input type=\"submit\" class=\"btn\" value=\"Read Terms of Service\" style=\"background: linear-gradient(to right, #2193b0, #6dd5ed);\">
-        </form>
-    "
-}
-
-display_terms() {
-    echo "
-    <div class=\"card\">
-        <div class=\"logo-container\">
-            <img class=\"logo\" src=\"$gatewayurl""$logo\" alt=\"شعار $gatewayname\">
-        </div>
-        <h1>شروط الاستخدام</h1>
-        
-        <div class=\"info\">
-            <!-- محتوى الشروط -->
-        </div>
-        
-        <form>
-            <input type=\"button\" class=\"btn\" value=\"عودة\" onClick=\"history.go(-1);return true;\">
-        </form>
-    "
-    footer
-}
-
 #### end of functions ####
-
-
 #################################################
 #						#
 #  Start - Main entry point for this Theme	#
