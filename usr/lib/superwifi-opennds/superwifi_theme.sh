@@ -522,65 +522,26 @@ check_attempts() {
 }
 
 calculate_remaining() {
-    local cal_lang="$1"
-
+    time_display="الوقت المتبقي"
+    data_display="البيانات المتبقية"
     #-----------------------------------------------------
     # Calculate remaining time
-    local pre_time_remaining
     if [ "$voucher_time_limit" -eq 0 ]; then
-        pre_time_remaining="unlimited"
+        time_value="غير محدود"
     else
-        pre_time_remaining=$time_remaining
+        time_value="${time_remaining} دقيقة"
     fi
 
     #-----------------------------------------------------
     # Calculate remaining data
-    local pre_data_remaining
     if [ "$voucher_quota_down" -eq 0 ]; then
-        pre_data_remaining="unlimited"
+        data_value="غير محدود"
     else
-        pre_data_remaining=$(($download_quota / 1024)) # KB to MB
+        data_value="$((download_quota / 1024)) ميجابايت"
     fi
 
     #-----------------------------------------------------
-    #
-    # Prepare output based on language
-    #
-
-    local time_display data_display time_value data_value
-
-    if [ "$cal_lang" = "ar" ]; then
-        time_display="الوقت المتبقي"
-        data_display="البيانات المتبقية"
-
-        if [ "$pre_time_remaining" = "unlimited" ]; then
-            time_value="غير محدود"
-        else
-            time_value="${pre_time_remaining} دقيقة"
-        fi
-
-        if [ "$pre_data_remaining" = "unlimited" ]; then
-            data_value="غير محدود"
-        else
-            data_value="${pre_data_remaining} ميجابايت"
-        fi
-    else
-        time_display="Time remaining"
-        data_display="Data remaining"
-
-        if [ "$pre_time_remaining" = "unlimited" ]; then
-            time_value="unlimited"
-        else
-            time_value="${pre_time_remaining} minutes"
-        fi
-
-        if [ "$pre_data_remaining" = "unlimited" ]; then
-            data_value="unlimited"
-        else
-            data_value="${pre_data_remaining} MB"
-        fi
-    fi
-
+    # Display result
     echo "<br>${time_display}: ${time_value}<br>${data_display}: ${data_value}"
 }
 
@@ -592,6 +553,7 @@ check_voucher() {
 
     # 1. Validate voucher format (exactly 9 alphanumeric or dash characters)
     if ! echo -n "$voucher" | grep -qE "^[a-zA-Z0-9-]{9}$"; then
+        track_attempts 1
         status_details="كود الكارت يجب أن يكون 9 أحرف<br> (أحرف أو أرقام أو شرطات)"
         return 1
     fi
@@ -649,26 +611,13 @@ check_voucher() {
             return 1
         fi
     fi
-
+    #-------------------------------------------------------------------------
     # All validations passed - activate/renew voucher
-    if [ "$voucher_first_punched" -eq 0 ]; then
-        # First-time activation
-        voucher_expiration=$((current_time + voucher_time_limit * 60))
-        time_remaining=$voucher_time_limit
-        sessiontimeout=$voucher_time_limit
-        update_first_punch "$voucher_token" "$clientmac"
-        status_details="تم تفعيل الكارت بنجاح! $(calculate_remaining "ar")"
-    else
-        # Session renewal
-        voucher_expiration=$((voucher_first_punched + voucher_time_limit * 60))
-        time_remaining=$(((voucher_expiration - current_time) / 60))
-        [ "$time_remaining" -lt 0 ] && time_remaining=0
-        session_length=$time_remaining
-        update_last_punch "$voucher_token"
-        status_details="تم تجديد الجلسة! $(calculate_remaining "ar")"
-    fi
-
+    #-------------------------------------------------------------------------
+    #
     # Set connection parameters
+    #
+
     upload_rate=$voucher_rate_up
     download_rate=$voucher_rate_down
     upload_quota=$voucher_quota_up
@@ -676,6 +625,24 @@ check_voucher() {
 
     if [ "$voucher_quota_down" -ne 0 ]; then
         download_quota=$((voucher_quota_down - voucher_accum_down_total))
+    fi
+
+
+    if [ "$voucher_first_punched" -eq 0 ]; then
+        # First-time activation
+        voucher_expiration=$((current_time + voucher_time_limit * 60))
+        time_remaining=$voucher_time_limit
+        sessiontimeout=$voucher_time_limit
+        update_first_punch "$voucher_token" "$clientmac"
+        status_details="تم تفعيل الكارت بنجاح! $(calculate_remaining)"
+    else
+        # Session renewal
+        voucher_expiration=$((voucher_first_punched + voucher_time_limit * 60))
+        time_remaining=$(((voucher_expiration - current_time) / 60))
+        [ "$time_remaining" -lt 0 ] && time_remaining=0
+        session_length=$time_remaining
+        update_last_punch "$voucher_token"
+        status_details="تم تجديد الجلسة! $(calculate_remaining)"
     fi
 
     return 0
