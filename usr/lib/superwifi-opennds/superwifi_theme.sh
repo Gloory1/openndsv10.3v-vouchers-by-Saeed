@@ -669,11 +669,6 @@ voucher_validation() {
 
     check_voucher
     if [ $? -eq 0 ]; then
-		echo "<div class='status pending'>
-                <p>جاري المعالجة... هذه تفاصيل الكارت مؤقتًا:</p>
-                <p>$status_details</p>
-              </div>"
-		sleep 1
         quotas="$sessiontimeout $upload_rate $download_rate $upload_quota $download_quota"
         userinfo="Saeed - $voucher"
         binauth_custom="$voucher"
