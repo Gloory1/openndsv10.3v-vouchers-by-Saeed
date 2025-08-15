@@ -524,8 +524,9 @@ check_attempts() {
 calculate_remaining() {
     time_display="الوقت المتبقي"
     data_display="البيانات المتبقية"
+
     #-----------------------------------------------------
-    # Calculate remaining time
+    # حساب الوقت المتبقي
     if [ "$voucher_time_limit" -eq 0 ]; then
         time_value="غير محدود"
     else
@@ -533,20 +534,25 @@ calculate_remaining() {
     fi
 
     #-----------------------------------------------------
-    # Calculate remaining data
+    # حساب البيانات المتبقية
     if [ "$voucher_quota_down" -eq 0 ]; then
         data_value="غير محدود"
     else
-        data_value="$((download_quota / 1024)) ميجابايت"
+        remaining_mb=$((download_quota / 1024))
+        if [ $remaining_mb -ge 1024 ]; then
+            remaining_gb=$((remaining_mb / 1024))
+            data_value="${remaining_gb} جيجابايت"
+        else
+            data_value="${remaining_mb} ميجابايت"
+        fi
     fi
 
     #-----------------------------------------------------
-    # Display result
+    # عرض النتيجة
     echo "<br>${time_display}: ${time_value}<br>${data_display}: ${data_value}"
 }
 
 # SuperWiFi Voucher Management Script (Optimized)
-
 check_voucher() {
     # Initialize status variable
     status_details=""
@@ -629,19 +635,20 @@ check_voucher() {
 
 
     if [ "$voucher_first_punched" -eq 0 ]; then
+        # Set last punch
+        update_first_punch "$voucher_token" "$clientmac"
         # First-time activation
-        voucher_expiration=$((current_time + voucher_time_limit * 60))
         time_remaining=$voucher_time_limit
         sessiontimeout=$voucher_time_limit
-        update_first_punch "$voucher_token" "$clientmac"
         status_details="تم تفعيل الكارت بنجاح! $(calculate_remaining)"
     else
+        # Update last punch
+        update_last_punch "$voucher_token"
         # Session renewal
         voucher_expiration=$((voucher_first_punched + voucher_time_limit * 60))
         time_remaining=$(((voucher_expiration - current_time) / 60))
         [ "$time_remaining" -lt 0 ] && time_remaining=0
-        session_length=$time_remaining
-        update_last_punch "$voucher_token"
+        sessiontimeout=$time_remaining
         status_details="تم تجديد الجلسة! $(calculate_remaining)"
     fi
 
