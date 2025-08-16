@@ -444,7 +444,7 @@ footer() {
             <hr>
             <div>
                 &copy; Saeed & BlueWave Projects and Services 2025
-                <div>Portal Version: $version</div>
+                <div>MAC : $$clientmac</div>
             </div>
         </div>
     </div>
@@ -708,8 +708,7 @@ voucher_form() {
 
         <div class=\"info\">
             <h3>بمجرد تفعيل الكارت<br> لن يعمل على أي جهاز آخر</h3>
-            <h3>$clientmac</h3>
-        </div>
+            </div>
    
         <form action=\"/opennds_preauth/\" method=\"get\" onsubmit=\"return handleVoucherSubmit(this)\">
             <input type=\"hidden\" name=\"fas\" value=\"$fas\"> 
