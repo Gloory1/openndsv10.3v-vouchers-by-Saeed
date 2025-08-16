@@ -444,7 +444,7 @@ footer() {
             <hr>
             <div>
                 &copy; Saeed & BlueWave Projects and Services 2025
-                <div>MAC : $$clientmac</div>
+                <div>MAC : $clientmac</div>
             </div>
         </div>
     </div>
