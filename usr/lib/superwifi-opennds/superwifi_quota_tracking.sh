@@ -28,7 +28,10 @@ update_accum_auto() {
 # JSON from openNDS
 ndsctl json | jq -r '
   .clients | to_entries[] |
-  "\(.value.custom) \(.value.download_this_session)"
-' | while read -r custom download_this_session; do
-  update_accum_auto "$custom" "$download_this_session"
+  "\(.value.custom) \(.value.download_this_session) \(.value.upload_this_session)"
+' | while read -r custom download_this_session upload_this_session; do
+
+  total_session_usage=$((download_this_session + upload_this_session))
+  update_accum_auto "$custom" "$total_session_usage"
+
 done
