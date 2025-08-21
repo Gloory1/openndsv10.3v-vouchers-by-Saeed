@@ -444,16 +444,16 @@ footer() {
             <hr>
             <div>
                 &copy; Saeed & BlueWave Projects and Services 2025
-                <div>MAC : $clientmac</div>
+                <div>$clientmac</div>
             </div>
         </div>
     </div>
     </body>
     </html>
     "
-
     exit 0
 }
+
 login_with_voucher() {
     voucher_validation
     footer
