@@ -1,0 +1,47 @@
+PRAGMA foreign_keys = ON;
+
+CREATE TABLE IF NOT EXISTS packages (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT DEFAULT 'Normal client package',
+    membership INTEGER DEFAULT 2, -- 0=Owner, 1=VIP, 2=Voucher
+    quantity INTEGER DEFAULT 0,
+    created_at TEXT DEFAULT (datetime('now')),
+    time_limit INTEGER DEFAULT 60,
+    rate_down INTEGER DEFAULT 0,
+    rate_up INTEGER DEFAULT 0,
+    quota_down INTEGER DEFAULT 0,
+    quota_up INTEGER DEFAULT 0
+);
+
+-- إنشاء جدول الكوبونات لو مش موجود
+CREATE TABLE IF NOT EXISTS vouchers (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    package_id INTEGER DEFAULT 0,
+    token TEXT UNIQUE NOT NULL,
+    user_mac TEXT DEFAULT '0',
+    first_punched INTEGER DEFAULT 0,
+    last_punched INTEGER DEFAULT 0,
+    accum_down_total INTEGER DEFAULT 0,
+    accum_down_season INTEGER DEFAULT 0,
+    quota_expired INTEGER DEFAULT 0,
+    FOREIGN KEY(package_id) REFERENCES packages(id)
+);
+
+-- إنشاء VIEW لتجميع البيانات
+CREATE VIEW IF NOT EXISTS vouchers_details AS
+SELECT 
+    v.id,
+    v.package_id,
+    v.token,
+    p.membership,
+    p.name AS package_name,
+    v.quota_expired,
+    v.accum_down_total,
+    v.accum_down_season,
+    p.time_limit,
+    p.rate_down,
+    p.rate_up,
+    p.quota_down,
+    p.quota_up
+FROM vouchers v
+JOIN packages p ON v.package_id = p.id;
