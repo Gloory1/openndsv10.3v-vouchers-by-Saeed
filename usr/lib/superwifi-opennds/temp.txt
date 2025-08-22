@@ -2,7 +2,7 @@ PRAGMA foreign_keys = ON;
 
 CREATE TABLE IF NOT EXISTS packages (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT DEFAULT 'Normal client package',
+    description TEXT DEFAULT 'Vouchers package',
     membership INTEGER DEFAULT 2, -- 0=Owner, 1=VIP, 2=Voucher
     quantity INTEGER DEFAULT 0,
     created_at TEXT DEFAULT (datetime('now')),
@@ -32,9 +32,9 @@ CREATE VIEW IF NOT EXISTS vouchers_details AS
 SELECT 
     v.id,
     v.package_id,
-    v.token,
+    p.description,
     p.membership,
-    p.name AS package_name,
+    v.token,
     v.quota_expired,
     v.accum_down_total,
     v.accum_down_season,
