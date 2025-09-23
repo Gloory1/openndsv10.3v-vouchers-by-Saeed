@@ -7,12 +7,7 @@
 DATABASE_SCRIPT_DIR="/overlay/superwifi"
 . "$DATABASE_SCRIPT_DIR/superwifi_database_init.sh" || { echo "Failed to source init_db.sh"; exit 1; }
 
-# Now init_db() and DB_PATH are available
-
-
-sql_escape() {
-printf "%s" "$1" | sed "s/'/''/g"
-}
+# Now init_db(), sql_escape(), and DB_PATH are available
 
 # ----------------------
 # Get all vouchers
@@ -153,10 +148,10 @@ log_auth_attempt() {
 # - Result codes:
 #   0 = success
 #   1 = not exist
-#   2 = voucher expire (quota_expired flag = 1)
+#   2 = voucher expire (validity flag = 1)
 #   3 = quota expire (computed)
 #   4 = time expire (computed)
-# - Output columns (CSV): token,user_mac,membership,time_limit,rate_down,rate_up,quota_down,quota_up,quota_expired,quota_remaining,time_remaining_seconds,result
+# - Output columns (CSV): token,user_mac,membership,time_limit,rate_down,rate_up,quota_down,quota_up,validity,quota_remaining,time_remaining_seconds,result
 # ----------------------
 # TODO:
 check_quota_and_time() {
@@ -183,7 +178,7 @@ check_quota_and_time() {
   rate_up,
   quota_down,
   quota_up,
-  quota_expired,
+  validity,
   -- compute quota_remaining
   CASE
     WHEN quota_up = 0 AND quota_down = 0 THEN 0
@@ -199,7 +194,7 @@ check_quota_and_time() {
   END AS time_remaining_seconds,
   -- compute result code
   CASE
-    WHEN quota_expired = 1 THEN 2
+    WHEN validity = 1 THEN 2
     WHEN
       CASE
         WHEN quota_up = 0 AND quota_down = 0 THEN 0
