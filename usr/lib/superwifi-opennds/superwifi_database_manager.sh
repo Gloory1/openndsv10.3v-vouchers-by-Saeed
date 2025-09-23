@@ -14,7 +14,36 @@ DATABASE_SCRIPT_DIR="/overlay/superwifi"
 # ----------------------
 get_all_vouchers() {
   init_db
-  sqlite3 "$DB_PATH" "SELECT * FROM vouchers;"
+  
+  local response=$(sqlite3 "$DB_PATH" "SELECT * FROM vouchers_full_details")
+  echo "$response"
+}
+
+# ----------------------
+# Get voucher for authintication
+# ----------------------
+get_voucher_auth() {
+  init_db
+  local token_raw="$1"
+  
+  local token=$(sql_escape "$token_raw")
+  local response=$(sqlite3 "$DB_PATH" "SELECT * FROM vouchers_auth_details WHERE token = '$token';")
+  echo "$response"
+}
+
+# ----------------------
+# Get the last voucher used by a mac (most recent last_punched)
+# ----------------------
+get_last_voucher_by_usermac() {
+  init_db
+  local mac_raw="$1"
+  local mac=$(sql_escape "$mac_raw")
+  sqlite3 "$DB_PATH" "
+    SELECT * FROM vouchers
+    WHERE user_mac = '$mac'
+    ORDER BY last_punched DESC
+    LIMIT 1;
+  "
 }
 
 # ----------------------
@@ -22,39 +51,24 @@ get_all_vouchers() {
 # - first_punched set only if not set before (i.e. first use)
 # - last_punched always updated
 # ----------------------
-update_first_punch() {
+update_voucher_punch() {
   init_db
   local token_raw="$1"
   local mac_raw="$2"
   
   local token=$(sql_escape "$token_raw")
   local mac=$(sql_escape "$mac_raw")
-  local ts=$(date +%s)
 
   # If first_punched is 0, set to ts; always update last_punched and user_mac
-  sqlite3 "$DB_PATH" "
-    UPDATE vouchers
-    SET user_mac = '$mac',
-        first_punched = CASE WHEN first_punched = 0 THEN $ts ELSE first_punched END,
-        last_punched = $ts
-    WHERE token = '$token';
-  "
-}
+  sqlite3 "$DB_PATH" <<EOF
+UPDATE vouchers
+SET 
+  user_mac =  CASE WHEN user_mac = '0' THEN '$mac' ELSE user_mac END,
+  first_punched = CASE WHEN first_punched = 0 THEN strftime('%s','now') ELSE first_punched END,
+  last_punched = strftime('%s','now')
 
-# ----------------------
-# Update last punch timestamp only
-# ----------------------
-update_last_punch() {
-  init_db
-  local token_raw="$1"
-  
-  local token=$(sql_escape "$token_raw")
-  local ts=$(date +%s)
-  sqlite3 "$DB_PATH" "
-    UPDATE vouchers
-    SET last_punched = $ts
-    WHERE token = '$token';
-  "
+WHERE token = '$token';
+EOF
 }
 
 # ----------------------
@@ -142,93 +156,6 @@ log_auth_attempt() {
   fi
 }
 
-# ----------------------
-# check_quota_and_time (replaces previous get_voucher)
-# - Returns CSV row from vouchers_auth_details with computed fields and a result code
-# - Result codes:
-#   0 = success
-#   1 = not exist
-#   2 = voucher expire (validity flag = 1)
-#   3 = quota expire (computed)
-#   4 = time expire (computed)
-# - Output columns (CSV): token,user_mac,membership,time_limit,rate_down,rate_up,quota_down,quota_up,validity,quota_remaining,time_remaining_seconds,result
-# ----------------------
-# TODO:
-check_quota_and_time() {
-  init_db
-  local token_raw="$1"
-  local token=$(sql_escape "$token_raw")
-
-  # check existence
-  local exists
-  exists=$(sqlite3 "$DB_PATH" "SELECT COUNT(1) FROM vouchers WHERE token = '$token';")
-  if [ "$exists" -eq 0 ]; then
-    # token not found -> return minimal CSV with result=1
-    printf "token_not_found,, , , , , , , , , ,1\n"
-    return 0
-  fi
-
-  # token exists -> compute fields including quota_remaining and time_remaining_seconds and result
-  sqlite3 -csv "$DB_PATH" "SELECT
-  token,
-  user_mac,
-  membership,
-  time_limit,
-  rate_down,
-  rate_up,
-  quota_down,
-  quota_up,
-  validity,
-  -- compute quota_remaining
-  CASE
-    WHEN quota_up = 0 AND quota_down = 0 THEN 0
-    WHEN (quota_up + quota_down) - (accum_usage_total + accum_usage_season) <= 0 THEN -1
-    ELSE (quota_up + quota_down) - (accum_usage_total + accum_usage_season)
-  END AS quota_remaining,
-  -- compute time_remaining_seconds
-  CASE
-    WHEN time_limit = 0 THEN 0
-    WHEN first_punched = 0 THEN time_limit * 60
-    WHEN (strftime('%s','now') - first_punched) > (time_limit * 60) THEN -1
-    ELSE (time_limit * 60) - (strftime('%s','now') - first_punched)
-  END AS time_remaining_seconds,
-  -- compute result code
-  CASE
-    WHEN validity = 1 THEN 2
-    WHEN
-      CASE
-        WHEN quota_up = 0 AND quota_down = 0 THEN 0
-        WHEN (quota_up + quota_down) - (accum_usage_total + accum_usage_season) <= 0 THEN -1
-        ELSE (quota_up + quota_down) - (accum_usage_total + accum_usage_season)
-      END = -1 THEN 3
-    WHEN
-      CASE
-        WHEN time_limit = 0 THEN 0
-        WHEN first_punched = 0 THEN time_limit * 60
-        WHEN (strftime('%s','now') - first_punched) > (time_limit * 60) THEN -1
-        ELSE (time_limit * 60) - (strftime('%s','now') - first_punched)
-      END = -1 THEN 4
-    ELSE 0
-  END AS result
-FROM vouchers v
-JOIN packages p ON v.package_id = p.id
-WHERE v.token = '$token' LIMIT 1;"
-}
-
-# ----------------------
-# Get the last voucher used by a mac (most recent last_punched)
-# ----------------------
-get_last_voucher_for_mac() {
-  init_db
-  local mac_raw="$1"
-  local mac=$(sql_escape "$mac_raw")
-  sqlite3 "$DB_PATH" "
-    SELECT * FROM vouchers
-    WHERE user_mac = '$mac'
-    ORDER BY last_punched DESC
-    LIMIT 1;
-  "
-}
 
 # ----------------------
 # Usage examples (uncomment to run)
