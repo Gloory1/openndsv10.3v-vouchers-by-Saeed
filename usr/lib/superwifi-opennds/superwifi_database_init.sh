@@ -55,7 +55,7 @@ CREATE TABLE IF NOT EXISTS vouchers (
   last_punched INTEGER DEFAULT 0,   -- epoch seconds of last activity
   accum_usage_season INTEGER DEFAULT 0, -- usage counter for current session/season (bytes or units)
   accum_usage_total INTEGER DEFAULT 0,  -- cumulative usage total (bytes or units)
-  validity INTEGER DEFAULT 0,  -- 0 = active, 1 = expired
+  validity INTEGER DEFAULT 1,  -- 1 = valid, 0 = expired
   FOREIGN KEY(package_id) REFERENCES packages(id)
 );
 
