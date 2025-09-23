@@ -132,10 +132,10 @@ SELECT
   -- time remaining in seconds; time_limit stored in minutes. if time_limit = 0 -> unlimited
   CASE
     WHEN p.time_limit = 0 THEN 0
-    WHEN v.first_punched = 0 THEN p.time_limit * 60  -- not started yet -> full time (seconds)
+    WHEN v.first_punched = 0 THEN p.time_limit   -- لسه ما بدأش → يرجع وقت الباكدج بالدقايق
     WHEN (strftime('%s','now') - v.first_punched) > (p.time_limit * 60) THEN -1
-    ELSE (p.time_limit * 60) - (strftime('%s','now') - v.first_punched)
-  END AS time_remaining_seconds
+    ELSE CAST(((p.time_limit * 60) - (strftime('%s','now') - v.first_punched)) / 60 AS INTEGER)
+  END AS time_remaining_minutes
 FROM vouchers v
 JOIN packages p ON v.package_id = p.id;
 
