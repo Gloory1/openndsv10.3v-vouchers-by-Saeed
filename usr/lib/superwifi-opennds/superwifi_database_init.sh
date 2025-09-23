@@ -4,7 +4,7 @@
 # Place this file next to the main script and source it from the manager.
 
 
-DB_PATH="/overlay/superwifi/superwifi_database_v2.db"
+DB_PATH="/overlay/superwifi/superwifi_database_v3.db"
 
 
 # Simple SQL escaping helper (used by manager; kept here for convenience if needed)
@@ -17,7 +17,7 @@ printf "%s" "$1" | sed "s/'/''/g"
 init_db() {
   # Ensure DB exists and create schema, pragmas, indexes, views
   # Called at the start of all operations to be safe (idempotent)
-  sqlite3 "$DB_PATH" <<'SQL'
+  sqlite3 "$DB_PATH" <<EOF
 PRAGMA foreign_keys = ON;
 
 -- customers table
@@ -26,7 +26,7 @@ CREATE TABLE IF NOT EXISTS customers (
   mac_address TEXT UNIQUE NOT NULL,
   name TEXT DEFAULT 'Guest',
   created_at TEXT DEFAULT (datetime('now')),
-  last_seen TEXT,           -- last time the client was active (ISO timestamp)
+  last_punched INTEGER DEFAULT 0,           -- last time the client was active (seconds)
   total_sessions INTEGER DEFAULT 0 -- number of successful sessions
 );
 
@@ -55,23 +55,25 @@ CREATE TABLE IF NOT EXISTS vouchers (
   last_punched INTEGER DEFAULT 0,   -- epoch seconds of last activity
   accum_usage_season INTEGER DEFAULT 0, -- usage counter for current session/season (bytes or units)
   accum_usage_total INTEGER DEFAULT 0,  -- cumulative usage total (bytes or units)
-  quota_expired INTEGER DEFAULT 0,  -- 1 = expired, 0 = active
+  validity INTEGER DEFAULT 0,  -- 0 = active, 1 = expired
   FOREIGN KEY(package_id) REFERENCES packages(id)
 );
 
 -- auth_log table (ordered as requested)
 -- result codes:
 -- 0 = success
--- 1 = not exist
--- 2 = voucher expire (manually flagged)
--- 3 = quota expire
--- 4 = time expire
+-- 1 = exist but doesn't auth 
+-- 2 = expired
+-- 3 = not exist
+-- 4 = quota expire
+-- 5 = time expire
+
 CREATE TABLE IF NOT EXISTS auth_log (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   customer_id INTEGER,
   token TEXT,
   user_mac TEXT NOT NULL,
-  ip_address TEXT,
+  ip_address TEXT NOT NULL,
   attempt_time TEXT DEFAULT (datetime('now')),
   result INTEGER NOT NULL DEFAULT 0,
   FOREIGN KEY(customer_id) REFERENCES customers(id)
@@ -102,7 +104,7 @@ SELECT
   v.last_punched,
   v.accum_usage_season,
   v.accum_usage_total,
-  v.quota_expired
+  v.validity
 FROM vouchers v
 JOIN packages p ON v.package_id = p.id
 LEFT JOIN customers c ON v.user_mac = c.mac_address;
@@ -120,7 +122,7 @@ SELECT
   p.rate_up,
   p.quota_down,
   p.quota_up,
-  v.quota_expired,
+  v.validity,
   -- compute total package quota (up + down). If both zero -> unlimited (0).
   CASE
     WHEN p.quota_up = 0 AND p.quota_down = 0 THEN 0
@@ -137,5 +139,11 @@ SELECT
 FROM vouchers v
 JOIN packages p ON v.package_id = p.id;
 
-SQL
+EOF
 }
+
+# If this file is executed directly, call init_db()
+if [ "$(basename "$0")" = "$(basename "$0")" ]; then
+# This file was run: initialize DB
+init_db
+fi
