@@ -60,10 +60,24 @@ for i in $(seq 1 10); do
 done
 echo "] ✅ Now It's ready..."
 
-# 
-read -p "Enter provider name: " provider_name
+# Prompt / fallback لاسم البروڤايدر
+DEFAULT_PROVIDER="Super WIFI"
+if [ -n "$1" ]; then
+  provider_name="$1"
+elif [ -n "$PROVIDER_NAME" ]; then
+  provider_name="$PROVIDER_NAME"
+elif [ -t 0 ]; then
+  echo -n "Enter provider name [${DEFAULT_PROVIDER}]: "
+  read provider_name
+  provider_name=${provider_name:-$DEFAULT_PROVIDER}
+else
+  provider_name="$DEFAULT_PROVIDER"
+fi
+
+echo "Using provider name: $provider_name"
+
 # Get MAC address from br-lan interface
-CURRENT_MAC=$(ip link show br-lan | awk '/ether/ {print $2}')
+CURRENT_MAC=$(ip link show br-lan | awk '/ether/ {print $2}' || true)
 
 # Configure openNDS
 uci set opennds.@opennds[0].enabled='1'
@@ -76,14 +90,12 @@ uci set opennds.@opennds[0].authidletimeout='30'
 uci set opennds.@opennds[0].sessiontimeout='360'
 uci set opennds.@opennds[0].checkinterval='60'
 uci add_list opennds.@opennds[0].fas_custom_variables_list="provider_name=$provider_name"
-uci add_list opennds.@opennds[0].trustedmac="$CURRENT_MAC"
+
+if [ -n "$CURRENT_MAC" ]; then
+  uci add_list opennds.@opennds[0].trustedmac="$CURRENT_MAC"
+fi
 
 uci commit opennds
-
-# Restart opennds service to apply changes
 /etc/init.d/opennds restart
 
 echo "✅ Setup complete. OpenNDS -SuperWIFI Theme by Saeed Muhammed is installed successfully."
-# Done
-echo "Reboot the router to apply changes."
-reboot
