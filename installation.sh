@@ -2,7 +2,34 @@
 
 # Check and install required packages
 opkg update
-opkg install opennds sqlite3-cli jq
+#!/bin/sh
+
+# Required packages
+REQUIRED_PKGS="opennds sqlite3-cli jq"
+
+echo "🔍 Checking required packages..."
+
+for pkg in $REQUIRED_PKGS; do
+    if ! opkg list-installed | grep -q "^$pkg "; then
+        echo "⚙️ Installing missing package: $pkg ..."
+        opkg update >/dev/null 2>&1
+        if ! opkg install "$pkg" >/dev/null 2>&1; then
+            echo "❌ Failed to install $pkg. Aborting setup."
+            exit 1
+        fi
+    fi
+done
+
+# Verify all installed
+for pkg in $REQUIRED_PKGS; do
+    if ! opkg list-installed | grep -q "^$pkg "; then
+        echo "❌ Package $pkg not installed correctly. Aborting."
+        exit 1
+    fi
+done
+
+echo "✅ All required packages are installed. Continuing..."
+
 
 # Download theme voucher script from GitHub repository
 wget -O /usr/lib/superwifi/superwifi_theme.sh "https://raw.githubusercontent.com/Gloory1/openndsv10.3v-vouchers-by-Saeed/main/usr/lib/superwifi-opennds/superwifi_theme.sh"
