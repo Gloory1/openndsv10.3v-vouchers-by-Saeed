@@ -4,7 +4,7 @@
 # Place this file next to the main script and source it from the manager.
 
 
-DB_PATH="/overlay/superwifi/superwifi_database_v3.db"
+DB_PATH="/overlay/superwifi/superwifi_database_v2.db"
 
 
 # Simple SQL escaping helper (used by manager; kept here for convenience if needed)
@@ -18,127 +18,130 @@ init_db() {
   # Ensure DB exists and create schema, pragmas, indexes, views
   # Called at the start of all operations to be safe (idempotent)
   sqlite3 "$DB_PATH" <<EOF
-PRAGMA foreign_keys = ON;
 
--- customers table
-CREATE TABLE IF NOT EXISTS customers (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  mac_address TEXT UNIQUE NOT NULL,
-  name TEXT DEFAULT 'Guest',
-  created_at TEXT DEFAULT (datetime('now')),
-  last_punched INTEGER DEFAULT 0,           -- last time the client was active (seconds)
-  total_sessions INTEGER DEFAULT 0 -- number of successful sessions
+-- ============================================
+-- 1) packages_log  (history / templates of packages)
+-- ============================================
+CREATE TABLE IF NOT EXISTS packages_log (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    membership INTEGER DEFAULT 0,   -- 0=Voucher, 1=VIP 
+    time_limit INTEGER DEFAULT 60,  -- minutes (0 = unlimited)
+    rate_down INTEGER DEFAULT 0,    -- KBs (0 = unlimited)
+    rate_up INTEGER DEFAULT 0,      -- KBs (0 = unlimited)
+    quota_down INTEGER DEFAULT 0,    -- KBs (0 = unlimited)
+    quota_up INTEGER DEFAULT 0,     -- KBs (0 = unlimited)
+    quantity INTEGER DEFAULT 0,
+    digit INTEGER DEFAULT 0,
+    price INTEGER DEFAULT 0,
+    description TEXT DEFAULT '',
+    created_at TEXT DEFAULT (datetime('now'))
 );
 
--- packages table
-CREATE TABLE IF NOT EXISTS packages (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  created_at TEXT DEFAULT (datetime('now')),
-  description TEXT DEFAULT 'Vouchers package',
-  quantity INTEGER DEFAULT 0,
-  membership INTEGER DEFAULT 2, -- 0 = Owner, 1 = VIP, 2 = Voucher
-  time_limit INTEGER DEFAULT 60,    -- time limit in minutes (0 = unlimited)
-  rate_up INTEGER DEFAULT 0,
-  rate_down INTEGER DEFAULT 0,
-  quota_up INTEGER DEFAULT 0,       -- quota units for upload
-  quota_down INTEGER DEFAULT 0      -- quota units for download
+-- ============================================
+-- 2) vouchers_info  (main vouchers)
+-- ============================================
+CREATE TABLE IF NOT EXISTS vouchers_info (
+    token TEXT PRIMARY KEY NOT NULL,
+    user_mac TEXT DEFAULT '0',
+    package_id INTEGER DEFAULT 0,
+    membership INTEGER DEFAULT 0,   -- 0=Voucher, 1=VIP
+    time_limit INTEGER DEFAULT 0,
+    rate_down INTEGER DEFAULT 0,
+    rate_up INTEGER DEFAULT 0,
+    quota_down INTEGER DEFAULT 0,
+    quota_up INTEGER DEFAULT 0,
+
+    -- voucher usage
+    cumulative_usage_total INTEGER DEFAULT 0,
+    cumulative_usage_season INTEGER DEFAULT 0,
+    first_punched INTEGER DEFAULT 0,  -- epoch seconds (0 = not used yet)
+    last_punched INTEGER DEFAULT 0,   -- epoch seconds
+    expiration_status INTEGER DEFAULT 0
 );
 
--- vouchers table
--- NOTE: accum_usage_* columns represent combined upload+download usage
-CREATE TABLE IF NOT EXISTS vouchers (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  token TEXT UNIQUE NOT NULL,
-  package_id INTEGER DEFAULT 0,
-  user_mac TEXT DEFAULT '0',        -- store mac as '0' when unused
-  first_punched INTEGER DEFAULT 0,  -- epoch seconds when first used (0 = never)
-  last_punched INTEGER DEFAULT 0,   -- epoch seconds of last activity
-  accum_usage_season INTEGER DEFAULT 0, -- usage counter for current session/season (bytes or units)
-  accum_usage_total INTEGER DEFAULT 0,  -- cumulative usage total (bytes or units)
-  validity INTEGER DEFAULT 1,  -- 1 = valid, 0 = expired
-  FOREIGN KEY(package_id) REFERENCES packages(id)
+-- ============================================
+-- 3) attempts_log  (authentication attempts)
+-- ============================================
+CREATE TABLE IF NOT EXISTS attempts_log (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    punch_date TEXT DEFAULT (datetime('now')),
+    user_mac TEXT NOT NULL,
+    user_ip TEXT NOT NULL,
+    token TEXT,
+    result TEXT
 );
 
--- auth_log table (ordered as requested)
--- result codes:
--- 0 = success
--- 1 = exist but doesn't auth 
--- 2 = expired
--- 3 = not exist
--- 4 = quota expire
--- 5 = time expire
-
-CREATE TABLE IF NOT EXISTS auth_log (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  customer_id INTEGER,
-  token TEXT,
-  user_mac TEXT NOT NULL,
-  ip_address TEXT NOT NULL,
-  attempt_time TEXT DEFAULT (datetime('now')),
-  result INTEGER NOT NULL DEFAULT 0,
-  FOREIGN KEY(customer_id) REFERENCES customers(id)
-);
-
--- Indexes for performance
-CREATE INDEX IF NOT EXISTS idx_vouchers_token ON vouchers(token);
-CREATE INDEX IF NOT EXISTS idx_vouchers_user_mac ON vouchers(user_mac);
-CREATE INDEX IF NOT EXISTS idx_vouchers_first_punched ON vouchers(first_punched);
-CREATE INDEX IF NOT EXISTS idx_auth_log_time ON auth_log(attempt_time);
-
--- View: vouchers_full_details (all details)
-CREATE VIEW IF NOT EXISTS vouchers_full_details AS
-SELECT 
-  v.id AS voucher_id,
-  v.token,
-  v.package_id,
-  v.user_mac,
-  c.name AS customer_name,
-  p.description AS package_description,
-  p.membership,
-  p.time_limit,
-  p.rate_down,
-  p.rate_up,
-  p.quota_down,
-  p.quota_up,
-  v.first_punched,
-  v.last_punched,
-  v.accum_usage_season,
-  v.accum_usage_total,
-  v.validity
-FROM vouchers v
-JOIN packages p ON v.package_id = p.id
-LEFT JOIN customers c ON v.user_mac = c.mac_address;
-
--- View: vouchers_auth_details (used for auth decisions)
--- quota_remaining: 0 = unlimited, -1 = expired, >0 = remaining units
--- time_remaining_seconds: 0 = unlimited, -1 = expired, >0 = seconds remaining
+-- ============================================
+-- 4) vouchers_auth_details VIEW
+-- ============================================
 CREATE VIEW IF NOT EXISTS vouchers_auth_details AS
 SELECT
-  v.token,
-  v.user_mac,
-  p.membership,
-  p.time_limit,
-  p.rate_down,
-  p.rate_up,
-  p.quota_down,
-  p.quota_up,
-  v.validity,
-  -- compute total package quota (up + down). If both zero -> unlimited (0).
-  CASE
-    WHEN p.quota_up = 0 AND p.quota_down = 0 THEN 0
-    WHEN (p.quota_up + p.quota_down) - (v.accum_usage_total + v.accum_usage_season) <= 0 THEN -1
-    ELSE (p.quota_up + p.quota_down) - (v.accum_usage_total + v.accum_usage_season)
-  END AS quota_remaining,
-  -- time remaining in seconds; time_limit stored in minutes. if time_limit = 0 -> unlimited
-  CASE
-    WHEN p.time_limit = 0 THEN 0
-    WHEN v.first_punched = 0 THEN p.time_limit   -- لسه ما بدأش → يرجع وقت الباكدج بالدقايق
-    WHEN (strftime('%s','now') - v.first_punched) > (p.time_limit * 60) THEN -1
-    ELSE CAST(((p.time_limit * 60) - (strftime('%s','now') - v.first_punched)) / 60 AS INTEGER)
-  END AS time_remaining_minutes
-FROM vouchers v
-JOIN packages p ON v.package_id = p.id;
+    token,
+    user_mac,
+    expiration_status,
+    rate_down,
+    rate_up,
 
+    -----------------------------------------------------------------
+  CASE
+    WHEN time_limit = 0 THEN 0
+    WHEN COALESCE(first_punched,0) = 0 THEN time_limit
+    WHEN (strftime('%s','now') - COALESCE(first_punched,0)) > (time_limit * 60) THEN -1
+    ELSE CAST(((time_limit * 60) - (strftime('%s','now') - COALESCE(first_punched,0))) / 60 AS INTEGER)
+  END AS voucher_time_remaining_min,
+
+  -- Ø§Ù„Ø¨ÙŠØ§Ù†Ø§Øª Ø§Ù„Ù…ØªØ¨Ù‚ÙŠØ© (Ø¨Ø§Ù„ÙƒÙŠÙ„ÙˆØ¨Ø§ÙŠØª Ø§Ù„Ø±Ù‚Ù…ÙŠØ©)
+  CASE
+    WHEN quota_down = 0 THEN 0
+    WHEN (quota_down - COALESCE(cumulative_usage_total,0)) <= 0 THEN -1
+    ELSE (quota_down - COALESCE(cumulative_usage_total,0))
+  END AS voucher_quota_remaining_kb,
+
+    ----------------------------------------------------------------- 
+    (
+      CASE
+        WHEN time_limit = 0 THEN '<br>Ø§Ù„ÙˆÙ‚Øª Ø§Ù„Ù…ØªØ¨Ù‚ÙŠ: ØºÙŠØ± Ù…Ø­Ø¯ÙˆØ¯'
+        WHEN COALESCE(first_punched,0) = 0 THEN '<br>Ø§Ù„ÙˆÙ‚Øª Ø§Ù„Ù…ØªØ¨Ù‚ÙŠ: ' || CAST(time_limit AS TEXT) || ' Ø¯Ù‚ÙŠÙ‚Ø©'
+        WHEN ((time_limit * 60) - (strftime('%s','now') - COALESCE(first_punched,0))) <= 0 THEN '<br>Ø§Ù„ÙˆÙ‚Øª Ø§Ù„Ù…ØªØ¨Ù‚ÙŠ: Ø§Ù†ØªÙ‡Ù‰ Ø§Ù„ÙˆÙ‚Øª'
+        ELSE
+          CASE
+            WHEN ((time_limit * 60) - (strftime('%s','now') - COALESCE(first_punched,0))) < 60
+              THEN '<br>Ø§Ù„ÙˆÙ‚Øª Ø§Ù„Ù…ØªØ¨Ù‚ÙŠ: Ø£Ù‚Ù„ Ù…Ù† Ø¯Ù‚ÙŠÙ‚Ø©'
+            WHEN ((time_limit * 60) - (strftime('%s','now') - COALESCE(first_punched,0))) >= 3600
+              THEN
+                '<br>Ø§Ù„ÙˆÙ‚Øª Ø§Ù„Ù…ØªØ¨Ù‚ÙŠ: '
+                || CAST(CAST(((time_limit * 60) - (strftime('%s','now') - COALESCE(first_punched,0))) / 3600 AS INTEGER) AS TEXT)
+                || ' Ø³Ø§Ø¹Ø© Ùˆ '
+                || CAST(CAST((((time_limit * 60) - (strftime('%s','now') - COALESCE(first_punched,0))) % 3600) / 60 AS INTEGER) AS TEXT)
+                || ' Ø¯Ù‚ÙŠÙ‚Ø©'
+            ELSE
+                '<br>Ø§Ù„ÙˆÙ‚Øª Ø§Ù„Ù…ØªØ¨Ù‚ÙŠ: '
+                || CAST(CAST(((time_limit * 60) - (strftime('%s','now') - COALESCE(first_punched,0))) / 60 AS INTEGER) AS TEXT)
+                || ' Ø¯Ù‚ÙŠÙ‚Ø©'
+          END
+      END
+    )
+    ||
+    (
+      CASE
+        WHEN quota_down = 0 THEN '<br>Ø§Ù„Ø¨ÙŠØ§Ù†Ø§Øª Ø§Ù„Ù…ØªØ¨Ù‚ÙŠØ©: ØºÙŠØ± Ù…Ø­Ø¯ÙˆØ¯'
+        WHEN (quota_down - COALESCE(cumulative_usage_total,0)) <= 0 THEN '<br>Ø§Ù„Ø¨ÙŠØ§Ù†Ø§Øª Ø§Ù„Ù…ØªØ¨Ù‚ÙŠØ©: Ø§Ù†ØªÙ‡Ù‰ Ø§Ù„Ø±ØµÙŠØ¯'
+        ELSE
+          CASE
+            WHEN ((quota_down - COALESCE(cumulative_usage_total,0)) / 1024.0) >= 1024.0
+              THEN
+                '<br>Ø§Ù„Ø¨ÙŠØ§Ù†Ø§Øª Ø§Ù„Ù…ØªØ¨Ù‚ÙŠØ©: '
+                || CAST(((quota_down - COALESCE(cumulative_usage_total,0)) / 1024 / 1024) AS INTEGER)
+                || ' Ø¬ÙŠØ¬Ø§Ø¨Ø§ÙŠØª'
+            ELSE
+                '<br>Ø§Ù„Ø¨ÙŠØ§Ù†Ø§Øª Ø§Ù„Ù…ØªØ¨Ù‚ÙŠØ©: '
+                || CAST(CAST(((quota_down - COALESCE(cumulative_usage_total,0)) / 1024.0) AS INTEGER) AS TEXT)
+                || ' Ù…ÙŠØ¬Ø§Ø¨Ø§ÙŠØª'
+          END
+      END
+    ) AS remaining_message_html
+
+FROM vouchers_info;
 EOF
 }
 
