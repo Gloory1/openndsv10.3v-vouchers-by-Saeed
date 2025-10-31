@@ -4,11 +4,11 @@
 🧱 **Based on:** OpenNDS v10.3.0  
 🎨 **Theme used:** ThemeSpec + Custimezed Voucher_Theme
 
-### 📁 Installation Code
+### 📁 Installation Code v2
 ```markdown
 wget -O - https://raw.githubusercontent.com/Gloory1/openndsv10.3v-vouchers-by-Saeed/refs/heads/main/installation.sh | sh
 ```
-### 📁 Update Code
+### 📁 Update Code from v1 to v2
 ```markdown
 wget -O - https://raw.githubusercontent.com/Gloory1/openndsv10.3v-vouchers-by-Saeed/refs/heads/main/update_v1_v2.sh | sh
 ```
