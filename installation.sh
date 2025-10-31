@@ -16,7 +16,7 @@ echo "⏳ Waiting for second..."
 sleep 1
 
 # Download database script from GitHub repository
-wget -O /usr/lib/superwifi/superwifi_database_lib.sh "https://raw.githubusercontent.com/Gloory1/openndsv10.3v-vouchers-by-Saeed/main/usr/lib/superwifi-opennds/superwifi_database_manager.sh"
+wget -O /usr/lib/superwifi/superwifi_database_manager.sh "https://raw.githubusercontent.com/Gloory1/openndsv10.3v-vouchers-by-Saeed/main/usr/lib/superwifi-opennds/superwifi_database_manager.sh"
 chmod +x /usr/lib/superwifi/superwifi_database_manager.sh
 echo "⏳ Waiting for second..."
 sleep 1
@@ -25,7 +25,6 @@ sleep 1
 wget -q -O /usr/lib/superwifi/superwifi_database_init.sh "https://raw.githubusercontent.com/Gloory1/openndsv10.3v-vouchers-by-Saeed/main/usr/lib/superwifi-opennds/superwifi_database_init.sh"
 chmod +x /usr/lib/superwifi/superwifi_database_init.sh
 echo "⏳ Running script..."
-/usr/lib/superwifi/superwifi_database_init.sh
 
 # Download qouta tracking file from GitHub repository
 wget -O /usr/lib/superwifi/superwifi_quota_tracking.sh "https://raw.githubusercontent.com/Gloory1/openndsv10.3v-vouchers-by-Saeed/main/usr/lib/superwifi-opennds/superwifi_quota_tracking.sh"
@@ -96,6 +95,12 @@ if [ -n "$CURRENT_MAC" ]; then
 fi
 
 uci commit opennds
+
+# Initial database
+/usr/lib/superwifi/superwifi_database_init.sh
+echo "⏳ Initialing Database..."
+sleep 2
+
 /etc/init.d/opennds restart
 
 echo "✅ Setup complete. OpenNDS -SuperWIFI Theme by Saeed Muhammed is installed successfully."
