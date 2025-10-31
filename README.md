@@ -8,6 +8,10 @@
 ```markdown
 wget -O - https://raw.githubusercontent.com/Gloory1/openndsv10.3v-vouchers-by-Saeed/refs/heads/main/installation.sh | sh
 ```
+### 📁 Update Code
+```markdown
+wget -O - https://raw.githubusercontent.com/Gloory1/openndsv10.3v-vouchers-by-Saeed/refs/heads/main/update_v1_v2.sh | sh
+```
 
 ### 📁 Files Locations
 - Default `superwifi_theme.sh` file path: `/usr/lib/superwifi-opennds/superwifi_theme.sh`
