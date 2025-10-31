@@ -90,7 +90,7 @@ SELECT
     ELSE CAST(((time_limit * 60) - (strftime('%s','now') - COALESCE(first_punched,0))) / 60 AS INTEGER)
   END AS voucher_time_remaining_min,
 
-  -- Ø§Ù„Ø¨ÙŠØ§Ù†Ø§Øª Ø§Ù„Ù…ØªØ¨Ù‚ÙŠØ© (Ø¨Ø§Ù„ÙƒÙŠÙ„ÙˆØ¨Ø§ÙŠØª Ø§Ù„Ø±Ù‚Ù…ÙŠØ©)
+  -- البيانات المتبقية (بالكيلوبايت الرقمية)
   CASE
     WHEN quota_down = 0 THEN 0
     WHEN (quota_down - COALESCE(cumulative_usage_total,0)) <= 0 THEN -1
@@ -100,43 +100,43 @@ SELECT
     ----------------------------------------------------------------- 
     (
       CASE
-        WHEN time_limit = 0 THEN '<br>Ø§Ù„ÙˆÙ‚Øª Ø§Ù„Ù…ØªØ¨Ù‚ÙŠ: ØºÙŠØ± Ù…Ø­Ø¯ÙˆØ¯'
-        WHEN COALESCE(first_punched,0) = 0 THEN '<br>Ø§Ù„ÙˆÙ‚Øª Ø§Ù„Ù…ØªØ¨Ù‚ÙŠ: ' || CAST(time_limit AS TEXT) || ' Ø¯Ù‚ÙŠÙ‚Ø©'
-        WHEN ((time_limit * 60) - (strftime('%s','now') - COALESCE(first_punched,0))) <= 0 THEN '<br>Ø§Ù„ÙˆÙ‚Øª Ø§Ù„Ù…ØªØ¨Ù‚ÙŠ: Ø§Ù†ØªÙ‡Ù‰ Ø§Ù„ÙˆÙ‚Øª'
+        WHEN time_limit = 0 THEN '<br>الوقت المتبقي: غير محدود'
+        WHEN COALESCE(first_punched,0) = 0 THEN '<br>الوقت المتبقي: ' || CAST(time_limit AS TEXT) || ' دقيقة'
+        WHEN ((time_limit * 60) - (strftime('%s','now') - COALESCE(first_punched,0))) <= 0 THEN '<br>الوقت المتبقي: انتهى الوقت'
         ELSE
           CASE
             WHEN ((time_limit * 60) - (strftime('%s','now') - COALESCE(first_punched,0))) < 60
-              THEN '<br>Ø§Ù„ÙˆÙ‚Øª Ø§Ù„Ù…ØªØ¨Ù‚ÙŠ: Ø£Ù‚Ù„ Ù…Ù† Ø¯Ù‚ÙŠÙ‚Ø©'
+              THEN '<br>الوقت المتبقي: أقل من دقيقة'
             WHEN ((time_limit * 60) - (strftime('%s','now') - COALESCE(first_punched,0))) >= 3600
               THEN
-                '<br>Ø§Ù„ÙˆÙ‚Øª Ø§Ù„Ù…ØªØ¨Ù‚ÙŠ: '
+                '<br>الوقت المتبقي: '
                 || CAST(CAST(((time_limit * 60) - (strftime('%s','now') - COALESCE(first_punched,0))) / 3600 AS INTEGER) AS TEXT)
-                || ' Ø³Ø§Ø¹Ø© Ùˆ '
+                || ' ساعة و '
                 || CAST(CAST((((time_limit * 60) - (strftime('%s','now') - COALESCE(first_punched,0))) % 3600) / 60 AS INTEGER) AS TEXT)
-                || ' Ø¯Ù‚ÙŠÙ‚Ø©'
+                || ' دقيقة'
             ELSE
-                '<br>Ø§Ù„ÙˆÙ‚Øª Ø§Ù„Ù…ØªØ¨Ù‚ÙŠ: '
+                '<br>الوقت المتبقي: '
                 || CAST(CAST(((time_limit * 60) - (strftime('%s','now') - COALESCE(first_punched,0))) / 60 AS INTEGER) AS TEXT)
-                || ' Ø¯Ù‚ÙŠÙ‚Ø©'
+                || ' دقيقة'
           END
       END
     )
     ||
     (
       CASE
-        WHEN quota_down = 0 THEN '<br>Ø§Ù„Ø¨ÙŠØ§Ù†Ø§Øª Ø§Ù„Ù…ØªØ¨Ù‚ÙŠØ©: ØºÙŠØ± Ù…Ø­Ø¯ÙˆØ¯'
-        WHEN (quota_down - COALESCE(cumulative_usage_total,0)) <= 0 THEN '<br>Ø§Ù„Ø¨ÙŠØ§Ù†Ø§Øª Ø§Ù„Ù…ØªØ¨Ù‚ÙŠØ©: Ø§Ù†ØªÙ‡Ù‰ Ø§Ù„Ø±ØµÙŠØ¯'
+        WHEN quota_down = 0 THEN '<br>البيانات المتبقية: غير محدود'
+        WHEN (quota_down - COALESCE(cumulative_usage_total,0)) <= 0 THEN '<br>البيانات المتبقية: انتهى الرصيد'
         ELSE
           CASE
             WHEN ((quota_down - COALESCE(cumulative_usage_total,0)) / 1024.0) >= 1024.0
               THEN
-                '<br>Ø§Ù„Ø¨ÙŠØ§Ù†Ø§Øª Ø§Ù„Ù…ØªØ¨Ù‚ÙŠØ©: '
+                '<br>البيانات المتبقية: '
                 || CAST(((quota_down - COALESCE(cumulative_usage_total,0)) / 1024 / 1024) AS INTEGER)
-                || ' Ø¬ÙŠØ¬Ø§Ø¨Ø§ÙŠØª'
+                || ' جيجابايت'
             ELSE
-                '<br>Ø§Ù„Ø¨ÙŠØ§Ù†Ø§Øª Ø§Ù„Ù…ØªØ¨Ù‚ÙŠØ©: '
+                '<br>البيانات المتبقية: '
                 || CAST(CAST(((quota_down - COALESCE(cumulative_usage_total,0)) / 1024.0) AS INTEGER) AS TEXT)
-                || ' Ù…ÙŠØ¬Ø§Ø¨Ø§ÙŠØª'
+                || ' ميجابايت'
           END
       END
     ) AS remaining_message_html
