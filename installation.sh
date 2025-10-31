@@ -2,7 +2,7 @@
 
 # Check and install required packages
 opkg update
-# opkg install opennds sqlite3-cli jq
+opkg install opennds sqlite3-cli jq
 
 # Download theme voucher script from GitHub repository
 wget -O /usr/lib/superwifi/superwifi_theme.sh "https://raw.githubusercontent.com/Gloory1/openndsv10.3v-vouchers-by-Saeed/main/usr/lib/superwifi-opennds/superwifi_theme.sh"
