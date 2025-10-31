@@ -8,48 +8,41 @@ opkg install opennds sqlite3-cli jq
 wget -O /usr/lib/superwifi/superwifi_theme.sh "https://raw.githubusercontent.com/Gloory1/openndsv10.3v-vouchers-by-Saeed/main/usr/lib/superwifi-opennds/superwifi_theme.sh"
 chmod +x /usr/lib/superwifi/superwifi_theme.sh
 echo "⏳ Waiting for second..."
-sleep 1
+
 # Download authentication script from GitHub repository
+echo "⏳Download authentication script..."
 wget -O /usr/lib/superwifi/superwifi_binauth.sh "https://raw.githubusercontent.com/Gloory1/openndsv10.3v-vouchers-by-Saeed/main/usr/lib/superwifi-opennds/superwifi_binauth.sh"
 chmod +x /usr/lib/superwifi/superwifi_binauth.sh
-echo "⏳ Waiting for second..."
-sleep 1
+
 
 # Download database script from GitHub repository
+echo "⏳ Download DBMS script..."
 wget -O /usr/lib/superwifi/superwifi_database_manager.sh "https://raw.githubusercontent.com/Gloory1/openndsv10.3v-vouchers-by-Saeed/main/usr/lib/superwifi-opennds/superwifi_database_manager.sh"
 chmod +x /usr/lib/superwifi/superwifi_database_manager.sh
-echo "⏳ Waiting for second..."
-sleep 1
-
-# Download database script from GitHub repository
+# Download database init from GitHub repository
 wget -q -O /usr/lib/superwifi/superwifi_database_init.sh "https://raw.githubusercontent.com/Gloory1/openndsv10.3v-vouchers-by-Saeed/main/usr/lib/superwifi-opennds/superwifi_database_init.sh"
 chmod +x /usr/lib/superwifi/superwifi_database_init.sh
-echo "⏳ Running script..."
+
 
 # Download qouta tracking file from GitHub repository
+echo "⏳ Download quota tracker..."
 wget -O /usr/lib/superwifi/superwifi_quota_tracking.sh "https://raw.githubusercontent.com/Gloory1/openndsv10.3v-vouchers-by-Saeed/main/usr/lib/superwifi-opennds/superwifi_quota_tracking.sh"
 chmod +x /usr/lib/superwifi/superwifi_quota_tracking.sh
-echo "⏳ Waiting for second..."
-sleep 1
 
 # Download cron file from GitHub repository
+echo "⏳ Download cron file..."
 wget -O /etc/init.d/superwifi "https://raw.githubusercontent.com/Gloory1/openndsv10.3v-vouchers-by-Saeed/main/usr/lib/superwifi-opennds/superwifi"
 chmod +x /etc/init.d/superwifi
 /etc/init.d/superwifi enable
-echo "⏳ Waiting for second..."
-sleep 1
 
-# Download css script from GitHub repository
-mkdir -p /etc/opennds/htdocs
-wget -O /etc/opennds/htdocs/splash.css "https://raw.githubusercontent.com/Gloory1/openndsv10.3v-vouchers-by-Saeed/main/etc/opennds/htdocs/splash.css"
-echo "⏳ Waiting for second..."
-sleep 1
-
+# # UI
+echo "⏳ Download logo & css script..."
 # Download logo image to the correct location
 mkdir -p /etc/opennds/htdocs/images
 wget -O /etc/opennds/htdocs/images/splash.jpg "https://raw.githubusercontent.com/Gloory1/openndsv10.3v-vouchers-by-Saeed/main/etc/opennds/htdocs/splash.jpg"
-echo "⏳ Waiting for second..."
-sleep 1
+# Download css script from GitHub repository
+mkdir -p /etc/opennds/htdocs
+wget -O /etc/opennds/htdocs/splash.css "https://raw.githubusercontent.com/Gloory1/openndsv10.3v-vouchers-by-Saeed/main/etc/opennds/htdocs/splash.css"
 
 echo "🛠️ Preparing openNDS in 10 seconds..."
 echo -n "⏳ Progress: ["
