@@ -2,13 +2,7 @@
 
 # Check and install required packages
 opkg update
-# opkg install opennds block-mount kmod-usb-storage kmod-fs-ext4 kmod-fs-vfat kmod-fs-ntfs usbutils coreutils-base64 sqlite3-cli
-opkg install opennds coreutils-base64 sqlite3-cli jq
-
-Create log directory and voucher file on USB
-mkdir -p /usr/lib/superwifi
-mkdir -p /overlay/superwifi
-
+# opkg install opennds sqlite3-cli jq
 
 # Download theme voucher script from GitHub repository
 wget -O /usr/lib/superwifi/superwifi_theme.sh "https://raw.githubusercontent.com/Gloory1/openndsv10.3v-vouchers-by-Saeed/main/usr/lib/superwifi-opennds/superwifi_theme.sh"
@@ -22,16 +16,16 @@ echo "⏳ Waiting for second..."
 sleep 1
 
 # Download database script from GitHub repository
-wget -O /usr/lib/superwifi/superwifi_database_lib.sh "https://raw.githubusercontent.com/Gloory1/openndsv10.3v-vouchers-by-Saeed/main/usr/lib/superwifi-opennds/superwifi_database_lib.sh"
-chmod +x /usr/lib/superwifi/superwifi_database_lib.sh
+wget -O /usr/lib/superwifi/superwifi_database_lib.sh "https://raw.githubusercontent.com/Gloory1/openndsv10.3v-vouchers-by-Saeed/main/usr/lib/superwifi-opennds/superwifi_database_manager.sh"
+chmod +x /usr/lib/superwifi/superwifi_database_manager.sh
 echo "⏳ Waiting for second..."
 sleep 1
 
-# Download database file from GitHub repository
-wget -O /overlay/superwifi/superwifi_database.db "https://raw.githubusercontent.com/Gloory1/openndsv10.3v-vouchers-by-Saeed/main/usr/lib/superwifi-opennds/superwifi_database.db"
-chmod 644 /overlay/superwifi/superwifi_database.db
-echo "⏳ Waiting for second..."
-sleep 1
+# Download database script from GitHub repository
+wget -q -O /usr/lib/superwifi/superwifi_database_init.sh "https://raw.githubusercontent.com/Gloory1/openndsv10.3v-vouchers-by-Saeed/main/usr/lib/superwifi-opennds/superwifi_database_init.sh"
+chmod +x /usr/lib/superwifi/superwifi_database_init.sh
+echo "⏳ Running script..."
+/usr/lib/superwifi/superwifi_database_init.sh
 
 # Download qouta tracking file from GitHub repository
 wget -O /usr/lib/superwifi/superwifi_quota_tracking.sh "https://raw.githubusercontent.com/Gloory1/openndsv10.3v-vouchers-by-Saeed/main/usr/lib/superwifi-opennds/superwifi_quota_tracking.sh"
