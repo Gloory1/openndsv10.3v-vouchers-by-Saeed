@@ -2,7 +2,6 @@
 
 # Check and install required packages
 opkg update
-#!/bin/sh
 
 # Required packages
 REQUIRED_PKGS="opennds sqlite3-cli jq"
