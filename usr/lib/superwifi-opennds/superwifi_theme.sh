@@ -9,7 +9,7 @@
 # init variables
 
 # Including database lib
-. /usr/lib/superwifi/superwifi_database_lib.sh
+. /usr/lib/superwifi/superwifi_database_manager.sh
 
 # Title of this theme:
 title="Super wifi vouchers"
@@ -36,7 +36,7 @@ header() {
     <meta charset=\"utf-8\">
     <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">
     <link rel=\"shortcut icon\" href=\"$gatewayurl""$imagepath\" type=\"image/x-icon\">
-	<link rel=\"stylesheet\" type=\"text/css\" href=\"$gatewayurl/splash.css\">
+    <link rel=\"stylesheet\" type=\"text/css\" href=\"$gatewayurl/splash.css\">
     <title>$title</title>
     </head>
     <body>
@@ -46,8 +46,6 @@ header() {
     </div>
     <h1>"${provider_name//%20/ }"</h1>
     <h2>أهلا وسهلا </h2>
-    
- 
 "
 }
 # باقي الكود يفضل كما هو بدون تغيير...
@@ -85,9 +83,10 @@ block_message() {
 }
 
 try_again_btn() {
+	local status_details_msg="$1"
     echo "
 	<div class='status error'>
-            <p>$status_details</p>
+            <p>$status_details_msg</p>
 	</div>
 	<label>عدد المحاولات محدود</label>
 
@@ -125,243 +124,125 @@ footer() {
     "
     exit 0
 }
-
 login_with_voucher() {
     voucher_validation
     footer
 }
 
-track_attempts() {
-    local success="$1"
-    local now=$(date +%s)
-    local client="$clientmac"
-    local db="${logdir}attempts.txt"
-
-    mkdir -p "$(dirname "$db")"
-    touch "$db"
-
-    if [ "$success" -eq 0 ]; then
-        # Remove attempts log on success
-        sed -i "/^${client},/d" "$db"
-        return
-    fi
-
-    # Add/update failed attempt
-    local count=0
-    local ts=$now
-    if grep -q "^${client}," "$db"; then
-        # Get existing count and timestamp
-        local line
-        line=$(grep "^${client}," "$db" | head -n1)
-        count=$(echo "$line" | cut -d, -f2)
-        ts=$(echo "$line" | cut -d, -f3)
-    fi
-
-    count=$((count + 1))
-    # Remove existing entry
-    sed -i "/^${client},/d" "$db"
-    # Add updated entry
-    echo "$client,$count,$ts" >>"$db" # Keep original timestamp
-}
-
-check_attempts() {
-    local now=$(date +%s)
-    local client="$clientmac"
-    local db="${logdir}attempts.txt"
-
-    local max=3
-    local window=300 # 5 minutes
-
-    [ ! -f "$db" ] && echo 0 && return 0
-
-    local count=0
-    local ts=$now
-    if grep -q "^${client}," "$db"; then
-        # Get existing count and timestamp
-        local line
-        line=$(grep "^${client}," "$db" | head -n1)
-        count=$(echo "$line" | cut -d, -f2)
-        ts=$(echo "$line" | cut -d, -f3)
-    fi
-
-    local diff=$((now - ts))
-
-    if [ "$diff" -gt "$window" ]; then
-        sed -i "\|^${client},|d" "$db"
-        echo 0
-        return 0
-    fi
-
-    if [ "$count" -ge "$max" ]; then
-        local remaining=$((window - diff))
-        echo "$remaining"
-        return 1
-    fi
-
-    echo 0
-    return 0
-}
-
-calculate_remaining() {
-    time_display="الوقت المتبقي"
-    data_display="البيانات المتبقية"
-
-    #-----------------------------------------------------
-    # حساب الوقت المتبقي
-    if [ "$voucher_time_limit" -eq 0 ]; then
-        time_value="غير محدود"
-    else
-        time_value="${time_remaining} دقيقة"
-    fi
-
-    #-----------------------------------------------------
-    # حساب البيانات المتبقية
-    if [ "$voucher_quota_down" -eq 0 ]; then
-        data_value="غير محدود"
-    else
-        remaining_mb=$((download_quota / 1024))
-        if [ $remaining_mb -ge 1024 ]; then
-            remaining_gb=$((remaining_mb / 1024))
-            data_value="${remaining_gb} جيجابايت"
-        else
-            data_value="${remaining_mb} ميجابايت"
-        fi
-    fi
-
-    #-----------------------------------------------------
-    # عرض النتيجة
-    echo "<br>${time_display}: ${time_value}<br>${data_display}: ${data_value}"
-}
 
 # SuperWiFi Voucher Management Script (Optimized)
 check_voucher() {
-    # Initialize status variable
-    status_details=""
+	# local scope so messages/vars don't pollute global environment
+	local MSG_INVALID_FORMAT="يجب أن يتكون الكارت على الأقل من <br> (ستة أحرف أو أرقام)"
+	local MSG_NOT_FOUND="الكارت غير صحيح أو غير موجود"
+	local MSG_INVALID_TOKEN="انتهت صلاحية الكارت<br>فشل الإتصال"
+	local MSG_QUOTA_EXHAUSTED="تم استهلاك بيانات الكارت بالكامل<br>لا توجد بيانات متبقية"
+	local MSG_TIME_EXPIRED="انتهت صلاحية الكارت<br>الوقت انتهى"
+	local MSG_MAC_BOUND="هذا الكارت مرتبط بجهاز آخر<br>لا يمكن استخدامه من هذا الجهاز"
+	local MSG_VALIDITY_EXPIRED="انتهت صلاحية الكارت<br>فشل الإتصال"
+	local MSG_ACTIVATED="تم تفعيل الكارت بنجاح!"
 
-    # 1. Validate voucher format (exactly 9 alphanumeric or dash characters)
-    if ! echo -n "$voucher" | grep -qE "^[a-zA-Z0-9-]{9}$"; then
-        track_attempts 1
-        status_details="كود الكارت يجب أن يكون 9 أحرف<br> (أحرف أو أرقام أو شرطات)"
-        return 1
-    fi
+	status_details=""
 
-    # 2. Retrieve voucher from DB
-    output=$(get_voucher "$voucher")
-    if [ -z "$output" ]; then
-        track_attempts 1
-        status_details="كود الكارت غير صحيح أو غير موجود"
-        return 1
-    fi
+	# 1. Validate voucher format
+	if ! echo -n "$voucher" | grep -qE "^[a-zA-Z0-9-]{1,12}$"; then
+		status_details="$MSG_INVALID_FORMAT"
+		return 1
+	fi
 
-    # Parse voucher fields from output
-    current_time=$(date +%s)
-    voucher_id=$(echo "$output" | cut -d'|' -f1)
-    voucher_token=$(echo "$output" | cut -d'|' -f2)
-    voucher_mac=$(echo "$output" | cut -d'|' -f3)
-    voucher_time_limit=$(echo "$output" | cut -d'|' -f4)
-    voucher_rate_down=$(echo "$output" | cut -d'|' -f5)
-    voucher_rate_up=$(echo "$output" | cut -d'|' -f6)
-    voucher_quota_down=$(echo "$output" | cut -d'|' -f7)
-    voucher_quota_up=$(echo "$output" | cut -d'|' -f8)
-    voucher_accum_down_total=$(echo "$output" | cut -d'|' -f9)
-    voucher_accum_down_season=$(echo "$output" | cut -d'|' -f10)
-    voucher_first_punched=$(echo "$output" | cut -d'|' -f11)
-    voucher_last_punched=$(echo "$output" | cut -d'|' -f12)
-    voucher_quota_expired=$(echo "$output" | cut -d'|' -f13)
+	# 2. Retrieve voucher details
+	output=$(get_auth_voucher "$voucher")
+	if [ -z "$output" ]; then
+		status_details="$MSG_NOT_FOUND"
+		return 1
+	fi
 
-    # 3. Check quota expiration flag
-    if [ "$voucher_quota_expired" -ne 0 ]; then
-        status_details="انتهت صلاحية الكارت<br>فشل الإتصال"
-        return 1
-    fi
+	# Parse fields produced by your VIEW (SQLite query)
+	#   token, Text
+	#   user_mac, Text
+	#   expiration_status Int
+	#   rate_down, Int
+	#   rate_up, Int
+	#   time_remaining_min, Int 
+	#   quota_remaining_kb, Int 
+	#   remaining_message_html, Text 
 
-    # 4. Check data usage
-    if [ "$voucher_quota_down" -ne 0 ] &&
-        [ "$voucher_accum_down_total" -ge "$voucher_quota_down" ]; then
-        status_details="تم استهلاك بيانات الكارت بالكامل<br>لا توجد بيانات متبقية"
-        return 1
-    fi
+	# Parse fields (must match order of SELECT in the VIEW)
+	voucher_token=$(echo "$output" | cut -d'|' -f1)
+	voucher_user_mac=$(echo "$output" | cut -d'|' -f2)
+	voucher_expiration_status=$(echo "$output" | cut -d'|' -f3)
+	voucher_rate_down=$(echo "$output" | cut -d'|' -f4)
+	voucher_rate_up=$(echo "$output" | cut -d'|' -f5)
+	voucher_time_remaining_min=$(echo "$output" | cut -d'|' -f6)
+	voucher_quota_remaining_kb=$(echo "$output" | cut -d'|' -f7)
+	voucher_remaining_message_html=$(echo "$output" | cut -d'|' -f8)
 
-    # 5. Check MAC binding
-    if [ "$voucher_mac" != "0" ] && [ "$voucher_mac" != "$clientmac" ]; then
-        status_details="هذا الكارت مرتبط بجهاز آخر<br>لا يمكن استخدامه من هذا الجهاز"
-        return 1
-    fi
+	# 3. Check validity flag
+	if [ "$voucher_expiration_status" -eq 1 ]; then
+		status_details="$MSG_VALIDITY_EXPIRED"
+		return 1
+	fi
 
-    # 6. Check time validity
-    if [ "$voucher_first_punched" -ne 0 ]; then
-        voucher_expiration=$((voucher_first_punched + voucher_time_limit * 60))
+	# 4. Check quota
+	if [ "$voucher_quota_remaining_kb" -eq -1 ]; then
+		status_details="$MSG_QUOTA_EXHAUSTED"
+		return 1
+	fi
 
-        if [ "$voucher_time_limit" -ne 0 ] &&
-            [ "$current_time" -ge "$voucher_expiration" ]; then
-            status_details="انتهت صلاحية الكارت<br>الوقت انتهى"
-            return 1
-        fi
-    fi
-    #-------------------------------------------------------------------------
-    # All validations passed - activate/renew voucher
-    #-------------------------------------------------------------------------
-    #
-    # Set connection parameters
-    #
+	# 5. Check time validity
+	if [ "$voucher_time_remaining_min" -eq -1 ]; then
+		status_details="$MSG_TIME_EXPIRED"
+		return 1
+	fi
 
-    upload_rate=$voucher_rate_up
-    download_rate=$voucher_rate_down
-    upload_quota=$voucher_quota_up
-    download_quota=$voucher_quota_down
+	# 6. Check MAC binding
+	if [ "$voucher_user_mac" != "0" ] && [ "$voucher_user_mac" != "$clientmac" ]; then
+		status_details="$MSG_MAC_BOUND"
+		return 1
+	fi
 
-    if [ "$voucher_quota_down" -ne 0 ]; then
-        download_quota=$((voucher_quota_down - voucher_accum_down_total))
-    fi
+	# 7. All validations passed -> Activate/Renew
+	upload_rate=$voucher_rate_up
+	download_rate=$voucher_rate_down
 
+	upload_quota=$voucher_quota_remaining_kb
+	download_quota=$voucher_quota_remaining_kb
 
-    if [ "$voucher_first_punched" -eq 0 ]; then
-        # Set last punch
-        update_first_punch "$voucher_token" "$clientmac"
-        # First-time activation
-        time_remaining=$voucher_time_limit
-        sessiontimeout=$voucher_time_limit
-        status_details="تم تفعيل الكارت بنجاح! $(calculate_remaining)"
-    else
-        # Update last punch
-        update_last_punch "$voucher_token"
-        # Session renewal
-        voucher_expiration=$((voucher_first_punched + voucher_time_limit * 60))
-        time_remaining=$(((voucher_expiration - current_time) / 60))
-        [ "$time_remaining" -lt 0 ] && time_remaining=0
-        sessiontimeout=$time_remaining
-        status_details="تم تجديد الجلسة! $(calculate_remaining)"
-    fi
+	sessiontimeout=$voucher_time_remaining_min
+	# Set success message
+	status_details="$voucher_remaining_message_html"
+	# Update punches
+	update_punch "$voucher_token" "$clientmac"
 
-    return 0
+	return 0
 }
+
 
 voucher_validation() {
     originurl=$(printf "${originurl//%/\\x}")
 
     check_voucher
     if [ $? -eq 0 ]; then
+
         quotas="$sessiontimeout $upload_rate $download_rate $upload_quota $download_quota"
-        userinfo="Saeed - $voucher"
+        userinfo="SuperWifi"
         binauth_custom="$voucher"
         encode_custom
         auth_log
 
         if [ "$ndsstatus" = "authenticated" ]; then
-            track_attempts 0
             echo "<div class='status success'>
-		                <p>$status_details</p>
+		                <p>$voucher_remaining_message_html</p> 
 		            </div>
 		            <form>
 		                <input type=\"button\" class=\"btn\" value=\"متابعة\" onClick=\"location.href='$originurl'\">
 		            </form>"
         else
-
-            status_details="تم رض المصادقة"
-            try_again_btn
+			status_details="الكارت صحيح ولكن....<br> رجاءا حاول مجددا."
+            try_again_btn "$status_details"
         fi
     else
-        try_again_btn
+        try_again_btn "$status_details"
     fi
     footer
 }
@@ -380,7 +261,8 @@ voucher_form() {
 
         <div class=\"info\">
             <h3>بمجرد تفعيل الكارت<br> لن يعمل على أي جهاز آخر</h3>
-            </div>
+
+        </div>
    
         <form action=\"/opennds_preauth/\" method=\"get\" onsubmit=\"return handleVoucherSubmit(this)\">
             <input type=\"hidden\" name=\"fas\" value=\"$fas\"> 
@@ -459,26 +341,3 @@ ndsparamlist="$ndsparamlist $ndscustomparams $ndscustomimages $ndscustomfiles"
 additionalthemevars="tos voucher"
 
 fasvarlist="$fasvarlist $additionalthemevars"
-
-# You can choose to define a custom string. This will be b64 encoded and sent to openNDS.
-# There it will be made available to be displayed in the output of ndsctl json as well as being sent
-#	to the BinAuth post authentication processing script if enabled.
-
-# Set the variable $binauth_custom to the desired value.
-# Values set here can be overridden by the themespec file
-# binauth_custom="voucher=$voucher_token"
-
-# Encode and activate the custom string
-# encode_custom
-
-# Set the user info string for logs (this can contain any useful information)
-#userinfo="$voucher_token"
-
-##############################################################################################################################
-# Customise the Logfile location.
-##############################################################################################################################
-#Note: the default uses the tmpfs "temporary" directory to prevent flash wear.
-# Override the defaults to a custom location eg a mounted USB stick.
-#mountpoint="/mylogdrivemountpoint"
-#logdir="$mountpoint/ndslog/"
-#logname="ndslog.log"
