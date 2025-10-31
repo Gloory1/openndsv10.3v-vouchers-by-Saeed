@@ -13,28 +13,16 @@
 #-----------------------------------------------------#---------------------------------------------------------#
 # functions:
 
-qouta_expired_auto() {
-  local custom_raw="$1"
-  local total_season_usage="$2"
+auto_update_accumulated_usage() {
+  local mac="$1"
+  local upload_this_session="$2"
+  local download_this_session="$3"
 
   # Init database lib
-  . /usr/lib/superwifi/superwifi_database_lib.sh
+  . /usr/lib/superwifi/superwifi_database_manager.sh
 
-  if echo "$custom_raw" | grep -iq "preemptivemac-"; then
-    local decoded=$(printf '%b' "${custom_raw//%/\\x}" | tr -d '\n' | tr -d '\r')
-    local mac=$(echo "$decoded" | sed 's/.*preemptivemac-//I' | tr 'A-Z' 'a-z')
-    local token=$(get_last_voucher_for_mac "$mac")
+  update_accumulated_usage_by_mac "$mac" "$upload_this_session" "$download_this_session"
 
-    update_accum "$token" "$total_season_usage"
-    qouta_expired "$token"
-
-  else
-    local token=$(echo "$custom_raw" | base64 -d 2>/dev/null)
-    [ -z "$token" ] && return
-
-    update_accum "$token" "$total_season_usage"
-    qouta_expired "$token"
-  fi
 }
 
 get_client_zone () {
@@ -183,14 +171,11 @@ action=$1
 # Expired voucher
 if [ "$action" = "download_quota_deauth" ]; then 
 
-    # Get data usage
+    client_mac=$2
     bytes_incoming=$3
-    bytes_outgoing=$4
-    total_season_usage=$((bytes_incoming + bytes_outgoing))
-
-    customdata=$8
-
-    qouta_expired_auto "$customdata" "$total_season_usage"
+    bytes_outgoing=$4 
+ 
+    auto_update_accumulated_usage "$client_mac" "$bytes_incoming" "$bytes_outgoing"
 fi
 
 if [ $action = "auth_client" ]; then
