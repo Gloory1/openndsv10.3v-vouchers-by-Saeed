@@ -98,23 +98,8 @@ fi
 # Initialize database safely
 echo "⏳ Initializing Database..."
 
-if [ -f "$DB_PATH" ]; then
-  if [ -x "$DEST_DIR/superwifi_database_init.sh" ]; then
-    echo "⚙️  Running database initialization..."
-    "$DEST_DIR/superwifi_database_init.sh" && echo "✅ Database initialized."
-  else
-    echo "⚠️  Init script not found."
-  fi
-
-  if [ -x "$DEST_DIR/superwifi_migration_v1_to_v2.sh" ]; then
-    echo "⚙️  Running migration (v1 → v2)..."
-    "$DEST_DIR/superwifi_migration_v1_to_v2.sh" && echo "✅ Migration done."
-  else
-    echo "⚠️  Migration script not found."
-  fi
-else
-  echo "⚠️  Database file not found at $DB_PATH — skipping init & migration."
-fi
+[ -x "$DEST_DIR/superwifi_database_init.sh" ] && "$DEST_DIR/superwifi_database_init.sh"
+[ -x "$DEST_DIR/superwifi_migration_v1_to_v2.sh" ] && "$DEST_DIR/superwifi_migration_v1_to_v2.sh"
 
 # Restart OpenNDS
 [ -x /etc/init.d/opennds ] && /etc/init.d/opennds restart
