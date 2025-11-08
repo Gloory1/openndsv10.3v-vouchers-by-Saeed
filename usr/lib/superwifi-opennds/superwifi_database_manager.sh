@@ -59,21 +59,28 @@ update_accumulated_usage_by_mac() {
 
   local season_usage_kb=$(( season_upload_raw + season_download_raw ))
 
-  local token=$(sqlite3 "$DB_PATH" "SELECT token FROM vouchers_info WHERE user_mac = '$user_mac' ORDER BY last_punched DESC LIMIT 1;")
-
-  [ -z "$token" ] && return 0
+  [ -z "$user_mac" ] && return 0
 
   local quota_finished=$(
     sqlite3 "$DB_PATH" <<EOF
+.parameter set ?1 "$user_mac"
+.parameter set ?2 "$season_usage_kb"
+
 UPDATE vouchers_info
 SET
   cumulative_usage_total = cumulative_usage_total +
     CASE
-      WHEN $season_usage_kb > cumulative_usage_season THEN $season_usage_kb - cumulative_usage_season
+      WHEN ?2 > cumulative_usage_season THEN ?2 - cumulative_usage_season
       ELSE 0
     END,
-  cumulative_usage_season = $season_usage_kb
-WHERE token = '$token';
+  cumulative_usage_season = ?2
+WHERE token = (
+  SELECT T.token
+  FROM vouchers_info AS T
+  WHERE T.user_mac = ?1
+  ORDER BY T.last_punched DESC
+  LIMIT 1
+);
 
 SELECT
   CASE
@@ -82,12 +89,17 @@ SELECT
     ELSE 0
   END
 FROM vouchers_info
-WHERE token = '$token'
-LIMIT 1;
+WHERE token = (
+  SELECT T.token
+  FROM vouchers_info AS T
+  WHERE T.user_mac = ?1
+  ORDER BY T.last_punched DESC
+  LIMIT 1
+);
 EOF
   )
 
-  echo "$quota_finished"
+  echo "${quota_finished:-0}"
 }
 
 # ----------------------
