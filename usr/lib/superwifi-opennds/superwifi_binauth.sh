@@ -15,14 +15,14 @@
 
 auto_update_accumulated_usage() {
   local mac="$1"
-  local upload_this_session="$2"
-  local download_this_session="$3"
+  
+  local upload_this_session=$((${2:-0} / 1024))
+  local download_this_session=$((${3:-0} / 1024))
 
   # Init database lib
   . /usr/lib/superwifi/superwifi_database_manager.sh
 
   update_accumulated_usage_by_mac "$mac" "$upload_this_session" "$download_this_session"
-
 }
 
 get_client_zone () {
