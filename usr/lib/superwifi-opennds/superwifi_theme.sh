@@ -18,6 +18,20 @@ title="Super wifi vouchers"
 # functions:
 
 generate_splash_sequence() {
+    # 1. Only look in DB if user didn't type a code manually
+    if [ -z "$voucher" ]; then
+         local last_voucher=$(get_last_voucher_for_mac "$clientmac")
+         
+         # 2. PRE-CHECK: Is this old voucher actually valid?
+         # We temporarily set it to check it.
+         voucher="$last_voucher"
+         if ! check_voucher > /dev/null 2>&1; then
+             # It's expired/bad. Forget it.
+             voucher=""
+         fi
+    fi
+
+    # 3. Now decide: Do we have a VALID voucher (manual or auto)?
     if [ -n "$voucher" ]; then
         login_with_voucher
     else
