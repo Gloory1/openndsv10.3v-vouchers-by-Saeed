@@ -18,40 +18,27 @@ title="Super wifi vouchers"
 # functions:
 
 generate_splash_sequence() {
+if [ -z "$voucher" ]; then
+    saved_voucher=$(get_last_voucher_for_mac "$clientmac")
     
-    # 1. If the user did NOT type a code manually, try to auto-fetch
-    if [ -z "$voucher" ]; then
-        # Get the last code from the database
-        saved_voucher=$(get_last_voucher_for_mac "$clientmac")
-        
-        # If we found a saved code
-        if [ -n "$saved_voucher" ]; then
-            # Set it temporarily to check it
-            voucher="$saved_voucher"
-            
-            # SILENT PRE-CHECK:
-            # We run the check to see if it's still valid.
-            # > /dev/null 2>&1 hides any output/errors so the user doesn't see them yet.
-            check_voucher > /dev/null 2>&1
-            
-            # $? checks the result of the previous command (0 = Valid, 1 = Invalid)
-            if [ $? -ne 0 ]; then
-                # The old voucher is expired/empty. 
-                # Clear the variable so we force the user to see the input form.
-                voucher=""
-            fi
-        fi
+    # If we found a saved code
+    if [ -n "$saved_voucher" ]; then
+        voucher="$saved_voucher"
     fi
+    check_voucher
+    if [ $? -ne 0 ]; then 
+        # Clear the variable so we force the user to see the input form.
+        voucher=""
+    fi
+fi
 
-    # 2. Final Decision
-    # If $voucher is set (either manually entered OR auto-fetched & valid)
-    if [ -n "$voucher" ]; then
-        # Go straight to login (User sees "Success" immediately)
-        login_with_voucher
-    else
-        # No voucher found, or the old one was expired -> Show the Form
-        voucher_form
-    fi
+if [ -n "$voucher" ]; then
+    # Go straight to login (User sees "Success" immediately)
+    login_with_voucher
+else
+    # No voucher found, or the old one was expired -> Show the Form
+    voucher_form
+fi
 }
 
 header() {
