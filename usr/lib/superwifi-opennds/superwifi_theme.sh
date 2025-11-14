@@ -18,9 +18,7 @@ title="Super wifi vouchers"
 # functions:
 
 generate_splash_sequence() {
-    if [ -z "$voucher" ]; then
-        voucher=$(get_last_voucher_for_mac "$clientmac")
-    fi
+    voucher=$(get_last_voucher_for_mac "$clientmac")
 
     if [ -n "$voucher" ] && check_voucher > /dev/null 2>&1; then
         login_with_voucher
