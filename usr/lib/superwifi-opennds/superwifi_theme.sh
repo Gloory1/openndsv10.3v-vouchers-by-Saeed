@@ -18,27 +18,15 @@ title="Super wifi vouchers"
 # functions:
 
 generate_splash_sequence() {
-if [ -z "$voucher" ]; then
-    saved_voucher=$(get_last_voucher_for_mac "$clientmac")
-    
-    # If we found a saved code
-    if [ -n "$saved_voucher" ]; then
-        voucher="$saved_voucher"
+    if [ -z "$voucher" ]; then
+        voucher=$(get_last_voucher_for_mac "$clientmac")
     fi
-    check_voucher
-    if [ $? -ne 0 ]; then 
-        # Clear the variable so we force the user to see the input form.
-        voucher=""
-    fi
-fi
 
-if [ -n "$voucher" ]; then
-    # Go straight to login (User sees "Success" immediately)
-    login_with_voucher
-else
-    # No voucher found, or the old one was expired -> Show the Form
-    voucher_form
-fi
+    if [ -n "$voucher" ] && check_voucher > /dev/null 2>&1; then
+        login_with_voucher
+    else
+        voucher_form
+    fi
 }
 
 header() {
