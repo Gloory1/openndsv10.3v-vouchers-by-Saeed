@@ -11,6 +11,11 @@
 
 title="Super wifi vouchers"
 
+# --- [ Settings ] ---
+# 0 = الوضع العادي (يظهر رابط للمتابعة)
+# 1 = الوضع التلقائي (يحاول تسجيل الدخول فوراً بآخر كارت سليم)
+auto_auth=0
+
 #-----------------------------------------------------------------------#
 # Functions
 
@@ -54,13 +59,41 @@ footer() {
     exit 0
 }
 
-# 1. Simple Logic: Either verify code OR show form
+# -----------------------------------------------------
+# THE LOGIC CONTROLLER (Smart Auth)
+# -----------------------------------------------------
 generate_splash_sequence() {
+    # 1. If user typed a code in URL manually, prioritize it
     if [ -n "$voucher" ]; then
         login_with_voucher
-    else
-        voucher_form
+        return
     fi
+
+    # 2. Get the last voucher from DB
+    local saved_voucher=""
+    if command -v get_last_voucher_for_mac >/dev/null 2>&1; then
+         saved_voucher=$(get_last_voucher_for_mac "$clientmac")
+    fi
+
+    # 3. Check Auto-Auth Setting
+    # If auto_auth is 1 AND we have a saved voucher
+    if [ "$auto_auth" -eq 1 ] && [ -n "$saved_voucher" ]; then
+        # We MUST check validity first to avoid loops
+        voucher="$saved_voucher"
+        check_voucher > /dev/null 2>&1
+        
+        if [ $? -eq 0 ]; then
+            # It's valid -> Login immediately
+            login_with_voucher
+            return
+        else
+            # It's expired -> Reset voucher and show form
+            voucher=""
+        fi
+    fi
+
+    # 4. Default: Show Form (includes the text link if saved_voucher exists)
+    voucher_form
 }
 
 login_with_voucher() {
@@ -218,7 +251,7 @@ try_again_btn() {
 }
 
 # -----------------------------------------------------
-# THIS IS THE MAGIC PART (Simple & Direct)
+# MAIN FORM UI
 # -----------------------------------------------------
 voucher_form() {
     block_remaining=$(check_attempts)
@@ -229,18 +262,32 @@ voucher_form() {
         # 1. Get info from query
         voucher_code=$(echo "$cpi_query" | awk -F "voucher%3d" '{printf "%s", $2}' | awk -F "%26" '{printf "%s", $1}')
         
-        # 2. Try to get Last Voucher from DB
+        # 2. Try to get Last Voucher from DB (for display purpose)
         local saved_voucher=""
         if command -v get_last_voucher_for_mac >/dev/null 2>&1; then
              saved_voucher=$(get_last_voucher_for_mac "$clientmac")
         fi
 
-        echo "
-        <div class=\"info\">
+        echo "<div class=\"info\">
             <h3>بمجرد تفعيل الكارت<br> لن يعمل على أي جهاز آخر</h3>
-        </div>
+        </div>"
+
+        # --- [START] New Restore Link (Above the Form) ---
+        if [ -n "$saved_voucher" ]; then
+            echo "
+            <div style='text-align:center; margin-bottom: 20px; cursor: pointer;' onclick=\"useLastVoucher('$saved_voucher')\">
+                <a style='text-decoration: underline; color: #2196F3; font-weight: bold; font-size: 16px;'>
+                    تابع آخر استخدام
+                </a>
+                <div style='color: #666; font-size: 14px; margin-top: 4px; font-family: monospace;'>
+                    $saved_voucher
+                </div>
+            </div>
+            "
+        fi
+        # --- [END] New Restore Link ---
    
-        <form id=\"loginForm\" action=\"/opennds_preauth/\" method=\"get\" onsubmit=\"return handleVoucherSubmit()\">
+        echo "<form id=\"loginForm\" action=\"/opennds_preauth/\" method=\"get\" onsubmit=\"return handleVoucherSubmit()\">
             <input type=\"hidden\" name=\"fas\" value=\"$fas\"> 
             
             <div class=\"form-group\">
@@ -253,18 +300,6 @@ voucher_form() {
             </button>
         </form>"
 
-        # 3. If we found a saved voucher, SHOW THE BLUE BUTTON
-        if [ -n "$saved_voucher" ]; then
-            echo "
-            <div style='text-align:center; margin: 15px 0; font-size: 14px; color: #666;'>- أو -</div>
-            
-            <button type=\"button\" class=\"btn\" onclick=\"useLastVoucher('$saved_voucher')\" style=\"background-color: #2196F3; margin-top: 0;\">
-                <span class=\"btn-text\">🔄 دخول بآخر كارت ($saved_voucher)</span>
-            </button>
-            "
-        fi
-
-        # 4. Javascript to handle everything
         echo "
         <script>
         function handleVoucherSubmit() {
@@ -279,7 +314,7 @@ voucher_form() {
         function useLastVoucher(code) {
             // 1. Put the code in the box
             document.getElementById('voucher').value = code;
-            // 2. Click the submit button (to trigger loading animation and submit)
+            // 2. Click the submit button
             document.getElementById('voucherBtn').click();
         }
         </script>
@@ -287,7 +322,6 @@ voucher_form() {
     fi
     footer
 }
-
 
 #### end of functions ####
 #################################################
