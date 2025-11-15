@@ -83,6 +83,74 @@ block_message() {
 "
 }
 
+main_voucher_input() {
+    # استخراج الكود من الرابط إذا كان موجوداً
+    voucher_code=$(echo "$cpi_query" | awk -F "voucher%3d" '{printf "%s", $2}' | awk -F "%26" '{printf "%s", $1}')
+
+    echo "
+    <div class=\"info\">
+        <h3>بمجرد تفعيل الكارت<br> لن يعمل على أي جهاز آخر</h3>
+    </div>
+
+    <form action=\"/opennds_preauth/\" method=\"get\" onsubmit=\"return handleVoucherSubmit(this)\">
+        <input type=\"hidden\" name=\"fas\" value=\"$fas\"> 
+        
+        <div class=\"form-group\">
+            <input type=\"text\" id=\"voucher\" name=\"voucher\" value=\"$voucher_code\" placeholder=\"اكتب هنا\" required>
+        </div>
+        
+        <button type=\"submit\" class=\"btn\" id=\"voucherBtn\">
+            <span class=\"spinner\" style=\"display: none;\"></span>
+            <span class=\"btn-text\">تحقق من الرقم</span>
+        </button>
+    </form>
+
+    <script>
+    function handleVoucherSubmit(form) {
+        var button = document.getElementById('voucherBtn');
+        button.classList.add('btn-loading');
+        button.disabled = true;
+        button.style.cursor = 'not-allowed';
+        button.style.opacity = '0.6';
+        return true;
+    }
+    </script>
+    "
+}
+
+
+restore_session_button() {
+    echo "
+        <div style='text-align:center; margin: 15px 0; font-size: 14px; color: #666;'>- أو -</div>
+        
+        <form action=\"/opennds_preauth/\" method=\"get\" onsubmit=\"return handleRestoreSubmit(this)\">
+            <input type=\"hidden\" name=\"fas\" value=\"$fas\"> 
+            <input type=\"hidden\" name=\"restore_session\" value=\"true\">
+            
+            <button type=\"submit\" class=\"btn\" id=\"restoreBtn\" style=\"background-color: #2196F3; margin-top: 0;\">
+                <span class=\"spinner\" style=\"display: none;\"></span>
+                <span class=\"btn-text\">🔄 تابع آخر استخدام</span>
+            </button>
+        </form>
+
+        <script>
+        function handleRestoreSubmit(form) {
+            var button = document.getElementById('restoreBtn');
+            button.classList.add('btn-loading');
+            button.disabled = true;
+            button.style.cursor = 'not-allowed';
+            button.style.opacity = '0.6';
+            
+            var spinner = button.querySelector('.spinner');
+            if(spinner) spinner.style.display = 'inline-block';
+            
+            return true;
+        }
+        </script>
+    "
+}
+
+
 try_again_btn() {
 	local status_details_msg="$1"
     echo "
@@ -249,48 +317,8 @@ voucher_validation() {
 }
 
 voucher_form() {
-
-    block_remaining=$(check_attempts)
-
-    if [ "$block_remaining" -gt 0 ]; then
-        # Blocked case: show block message with remaining time
-        block_message "$block_remaining"
-    else
-        voucher_code=$(echo "$cpi_query" | awk -F "voucher%3d" '{printf "%s", $2}' | awk -F "%26" '{printf "%s", $1}')
-
-        echo "
-
-        <div class=\"info\">
-            <h3>بمجرد تفعيل الكارت<br> لن يعمل على أي جهاز آخر</h3>
-
-        </div>
-   
-        <form action=\"/opennds_preauth/\" method=\"get\" onsubmit=\"return handleVoucherSubmit(this)\">
-            <input type=\"hidden\" name=\"fas\" value=\"$fas\"> 
-            
-            <div class=\"form-group\">
-                <input type=\"text\" id=\"voucher\" name=\"voucher\" value=\"$voucher_code\" placeholder=\"اكتب هنا\" required>
-            </div>
-            
-            <button type=\"submit\" class=\"btn\" id=\"voucherBtn\">
-                <span class=\"spinner\" style=\"display: none;\"></span>
-                <span class=\"btn-text\">تحقق من الرقم</span>
-            </button>
-        </form>
-
-        <script>
-        function handleVoucherSubmit(form) {
-            var button = document.getElementById('voucherBtn');
-            button.classList.add('btn-loading');
-            button.disabled = true;
-            button.style.cursor = 'not-allowed';
-            button.style.opacity = '0.6';
-            return true;
-        }
-        </script>
-      
-    "
-    fi
+    main_voucher_input
+    restore_session_button
     footer
 }
 
