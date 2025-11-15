@@ -253,6 +253,7 @@ try_again_btn() {
 # -----------------------------------------------------
 # MAIN FORM UI
 # -----------------------------------------------------
+
 voucher_form() {
     block_remaining=$(check_attempts)
 
@@ -272,7 +273,7 @@ voucher_form() {
             <h3>بمجرد تفعيل الكارت<br> لن يعمل على أي جهاز آخر</h3>
         </div>"
    
-        # الفورم الأساسي (خانة الكتابة والزرار)
+        # الفورم الأساسي
         echo "<form id=\"loginForm\" action=\"/opennds_preauth/\" method=\"get\" onsubmit=\"return handleVoucherSubmit()\">
             <input type=\"hidden\" name=\"fas\" value=\"$fas\"> 
             
@@ -286,20 +287,20 @@ voucher_form() {
             </button>
         </form>"
 
-        # --- [نقلنا الرابط هنا تحت الفورم] ---
+        # --- [ التعديل هنا ] ---
         if [ -n "$saved_voucher" ]; then
             echo "
-            <div style='text-align:center; margin-top: 20px; cursor: pointer;' onclick=\"useLastVoucher('$saved_voucher')\">
-                <a style='text-decoration: underline; color: #2196F3; font-weight: bold; font-size: 16px;'>
+            <div onclick=\"useLastVoucher('$saved_voucher')\" 
+                 style='text-align:center; margin-top: 20px; cursor: pointer; position: relative; z-index: 100; padding: 10px;'>
+                
+                <span style='color: #2196F3; font-weight: bold; font-size: 16px;'>
                     تابع آخر استخدام
-                </a>
-                <div style='color: #666; font-size: 14px; margin-top: 5px; font-family: monospace; direction: ltr;'>
-                    $saved_voucher
-                </div>
+                </span>
+            
             </div>
             "
         fi
-        # -----------------------------------
+        # ---------------------
 
         echo "
         <script>
@@ -313,10 +314,15 @@ voucher_form() {
         }
 
         function useLastVoucher(code) {
+            console.log('Restoring voucher: ' + code); // للتأكد من الاستجابة
             // 1. Put the code in the box
-            document.getElementById('voucher').value = code;
-            // 2. Click the submit button
-            document.getElementById('voucherBtn').click();
+            var input = document.getElementById('voucher');
+            if (input) {
+                input.value = code;
+                // 2. Click the submit button
+                var btn = document.getElementById('voucherBtn');
+                if (btn) btn.click();
+            }
         }
         </script>
         "
