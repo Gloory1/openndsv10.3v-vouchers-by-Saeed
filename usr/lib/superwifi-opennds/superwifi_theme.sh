@@ -262,7 +262,7 @@ voucher_form() {
         # 1. Get info from query
         voucher_code=$(echo "$cpi_query" | awk -F "voucher%3d" '{printf "%s", $2}' | awk -F "%26" '{printf "%s", $1}')
         
-        # 2. Try to get Last Voucher from DB (for display purpose)
+        # 2. Try to get Last Voucher from DB
         local saved_voucher=""
         if command -v get_last_voucher_for_mac >/dev/null 2>&1; then
              saved_voucher=$(get_last_voucher_for_mac "$clientmac")
@@ -271,22 +271,8 @@ voucher_form() {
         echo "<div class=\"info\">
             <h3>بمجرد تفعيل الكارت<br> لن يعمل على أي جهاز آخر</h3>
         </div>"
-
-        # --- [START] New Restore Link (Above the Form) ---
-        if [ -n "$saved_voucher" ]; then
-            echo "
-            <div style='text-align:center; margin-bottom: 20px; cursor: pointer;' onclick=\"useLastVoucher('$saved_voucher')\">
-                <a style='text-decoration: underline; color: #2196F3; font-weight: bold; font-size: 16px;'>
-                    تابع آخر استخدام
-                </a>
-                <div style='color: #666; font-size: 14px; margin-top: 4px; font-family: monospace;'>
-                    $saved_voucher
-                </div>
-            </div>
-            "
-        fi
-        # --- [END] New Restore Link ---
    
+        # الفورم الأساسي (خانة الكتابة والزرار)
         echo "<form id=\"loginForm\" action=\"/opennds_preauth/\" method=\"get\" onsubmit=\"return handleVoucherSubmit()\">
             <input type=\"hidden\" name=\"fas\" value=\"$fas\"> 
             
@@ -299,6 +285,21 @@ voucher_form() {
                 <span class=\"btn-text\">تحقق من الرقم</span>
             </button>
         </form>"
+
+        # --- [نقلنا الرابط هنا تحت الفورم] ---
+        if [ -n "$saved_voucher" ]; then
+            echo "
+            <div style='text-align:center; margin-top: 20px; cursor: pointer;' onclick=\"useLastVoucher('$saved_voucher')\">
+                <a style='text-decoration: underline; color: #2196F3; font-weight: bold; font-size: 16px;'>
+                    تابع آخر استخدام
+                </a>
+                <div style='color: #666; font-size: 14px; margin-top: 5px; font-family: monospace; direction: ltr;'>
+                    $saved_voucher
+                </div>
+            </div>
+            "
+        fi
+        # -----------------------------------
 
         echo "
         <script>
