@@ -6,16 +6,15 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'Segoe UI', arial, sans-serif;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 /* ===== BODY ===== */
 body {
-    /* خلفية متدرجة فاتحة جداً مائلة للوردي/الأرجواني الفاتح */
-    background: linear-gradient(135deg, #fce4ec, #f8bbd0, #e91e63); /* تدرج من أبيض مائل للوردي إلى وردي فاتح */
+    /* خلفية بيضاء مائلة للرمادي الفاتح جداً (Clean White/Grey) */
+    background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
     background-size: 400% 400%;
-    animation: gradientBG 8s ease infinite;
-    color: #880e4f; /* نص وردي داكن للقراءة */
+    animation: gradientBG 15s ease infinite;
     min-height: 100vh;
     padding: 10px;
     display: flex;
@@ -32,16 +31,19 @@ body {
 
 /* ===== CARD ===== */
 .card {
-    /* خلفية بيضاء نقية مع ظل وردي */
-    background: #ffffff;
+    /* خلفية الكارد: أحمر ناري متدرج (Masculine Vivid Red) */
+    /* تدرج من الأحمر الغامق إلى الأحمر الصارخ */
+    background: linear-gradient(135deg, #cb2d3e, #ef473a); 
     border-radius: 25px;
-    box-shadow: 0 10px 30px rgba(233, 30, 99, 0.15); /* ظل وردي/أحمر خفيف */
+    /* ظل قوي وبارز */
+    box-shadow: 0 20px 50px rgba(203, 45, 62, 0.4); 
     width: 100%;
     max-width: 500px;
-    padding: 10px;
+    padding: 15px; /* زيادة بسيطة للحشوة */
     position: relative;
     overflow: hidden;
-    border: 1px solid rgba(255, 255, 255, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: white; /* النص الافتراضي أبيض */
 }
 
 .card:before {
@@ -51,10 +53,11 @@ body {
     left: -50%;
     width: 200%;
     height: 200%;
-    background: radial-gradient(circle, rgba(255, 240, 245, 0.6) 0%, transparent 70%); /* توهج أبيض وردي */
+    /* لمعة خفيفة جداً للزجاج */
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.2) 0%, transparent 60%);
     transform: rotate(30deg);
     z-index: 0;
-    animation: rotateGradient 20s linear infinite;
+    animation: rotateGradient 15s linear infinite;
 }
 
 /* ===== LOGO ===== */
@@ -72,14 +75,15 @@ body {
     margin: 0 auto;
     border-radius: 50%;
     object-fit: cover;
-    border: 3px solid #fff;
-    /* توهج وردي بارز */
-    box-shadow: 0 0 25px rgba(233, 30, 99, 0.4);
+    border: 4px solid white;
+    /* ظل أسود خفيف للتباين */
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
     transition: all 0.5s ease;
 }
 
 .logo:hover {
-    transform: scale(1.03) rotate(5deg);
+    transform: scale(1.05) rotate(5deg);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.3);
 }
 
 /* ===== HEADINGS ===== */
@@ -88,13 +92,13 @@ h1 {
     text-align: right;
     direction: rtl;
     margin: 10px 0 5px;
-    /* تدرج لوني للنص (وردي إلى فوشيا) */
-    background: linear-gradient(175deg, #e91e63, #ff4081);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+    /* النص أبيض تماماً ليبرز على الأحمر */
+    color: #ffffff;
+    background: none; 
+    -webkit-text-fill-color: #ffffff;
     position: relative;
     z-index: 2;
-    text-shadow: 0 2px 8px rgba(233, 30, 99, 0.1);
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
     letter-spacing: -0.5px;
 }
 
@@ -103,8 +107,8 @@ h2 {
     text-align: right;
     direction: rtl;
     margin-bottom: 25px;
-    font-weight: 700;
-    color: #e91e63; /* وردي أساسي */
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.9); /* أبيض شفاف قليلاً */
     position: relative;
     z-index: 2;
     text-shadow: none;
@@ -114,24 +118,27 @@ h3 {
     font-size: 1.1rem;
     padding: 5px;
     font-weight: 600;
-    color: #c2185b; /* وردي داكن */
+    color: white;
     position: relative;
 }
 
 /* ===== INFO BOX ===== */
 .info {
-    background: #fce4ec; /* خلفية صندوق معلومات وردية فاتحة جداً */
+    /* خلفية بيضاء شفافة (Glassmorphism) */
+    background: rgba(255, 255, 255, 0.15);
     margin-bottom: 15px;
     border-radius: 12px;
     text-align: center;
     position: relative;
-    border: 1.5px solid #f8bbd0;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(5px);
 }
 
 .info p {
-    color: #e91e63;
+    color: #ffffff;
     font-weight: 600;
     font-size: 1.2rem;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.1);
 }
 
 /* ===== FORM ===== */
@@ -146,23 +153,24 @@ label {
     display: block;
     margin: 15px 0 10px;
     font-weight: 700;
-    color: #e91e63;
+    color: #ffffff; /* الليبل أبيض */
     font-size: 1.1rem;
     position: relative;
     z-index: 2;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.1);
 }
 
 input[type='text'] {
     width: 100%;
     padding: 18px 20px;
-    border: 2px solid #f8bbd0;
+    border: none;
     border-radius: 12px;
-    background: #fff;
+    background: #ffffff; /* الانبوت أبيض */
     font-size: 1.4rem;
     font-weight: 700;
     text-align: center;
-    color: #c2185b;
-    box-shadow: 0 5px 15px rgba(233, 30, 99, 0.05);
+    color: #cb2d3e; /* النص داخل الانبوت أحمر */
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
     transition: all 0.3s ease;
     position: relative;
     z-index: 2;
@@ -170,16 +178,16 @@ input[type='text'] {
 
 input[type='text']:focus {
     outline: none;
-    border-color: #ff4081; /* لون التركيز */
-    box-shadow: 0 5px 20px rgba(255, 64, 129, 0.25);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
 }
 
 /* ===== BUTTON ===== */
 .btn {
-    /* تدرج زر قوي (وردي إلى فوشيا) */
-    background: linear-gradient(45deg, #e91e63, #ff4081);
+    /* زر أسود ليعطي فخامة وذكورة مع الأحمر (Black/Dark Grey) */
+    background: linear-gradient(45deg, #2b2b2b, #000000);
     color: white;
-    border: none;
+    border: 1px solid rgba(255,255,255,0.1);
     padding: 15px;
     font-size: 1.2rem;
     border-radius: 12px;
@@ -187,7 +195,7 @@ input[type='text']:focus {
     width: 100%;
     font-weight: 700;
     transition: all 0.3s ease;
-    box-shadow: 0 7px 20px rgba(255, 64, 129, 0.3);
+    box-shadow: 0 7px 20px rgba(0, 0, 0, 0.3);
     position: relative;
     z-index: 2;
     overflow: hidden;
@@ -200,13 +208,14 @@ input[type='text']:focus {
     left: -100%;
     width: 100%;
     height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
     transition: 0.5s;
 }
 
 .btn:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 25px rgba(233, 30, 99, 0.4);
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+    background: linear-gradient(45deg, #000000, #2b2b2b);
 }
 
 /* ===== BUTTON LOADING ===== */
@@ -242,33 +251,28 @@ input[type='text']:focus {
     font-size: 1.1rem;
     position: relative;
     z-index: 2;
+    background: #ffffff; /* خلفية بيضاء للحالات لتكون واضحة */
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
 }
 
 .pending {
-    background: rgba(255, 102, 160, 0.15); /* وردي فاتح للحالة المعلقة */
-    margin-top: 50px;
-    border-left: 5px solid #ff66a0;
-    color: #c2185b;
+    border-left: 5px solid #f39c12;
+    color: #d35400;
 }
 
-/* الألوان القياسية للنجاح والخطأ تبقى كما هي لوضوح المعنى */
 .success {
-    background: rgba(46, 204, 113, 0.15);
-    margin-top: 50px;
-    border-left: 5px solid #00c853;
-    color: #1b5e20;
+    border-left: 5px solid #27ae60;
+    color: #27ae60;
 }
 
 .error {
-    background: rgba(231, 76, 60, 0.15);
-    margin-top: 50px;
-    border-left: 5px solid #d32f2f;
-    color: #b71c1c;
+    border-left: 5px solid #c0392b;
+    color: #c0392b;
 }
 
 /* ===== TERMS ===== */
 .terms-notice {
-    background: rgba(255, 255, 255, 0.9);
+    background: rgba(255, 255, 255, 0.2); /* شفاف */
     padding: 12px;
     border-radius: 8px;
     margin: 15px 0;
@@ -276,20 +280,20 @@ input[type='text']:focus {
     text-align: center;
     position: relative;
     z-index: 2;
-    color: #c2185b;
-    border: 1px solid rgba(233, 30, 99, 0.2);
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
 .terms-notice a {
-    color: #e91e63;
+    color: #ffffff;
     font-weight: 700;
-    text-decoration: none;
+    text-decoration: underline;
 }
 
 /* ===== FOOTER ===== */
 .footer {
     font-size: 0.85rem;
-    color: #e91e63;
+    color: rgba(255, 255, 255, 0.8);
     position: relative;
     z-index: 2;
     font-weight: 600;
@@ -298,8 +302,8 @@ input[type='text']:focus {
 /* ===== HR ===== */
 hr {
     border: 0;
-    height: 2px;
-    background: linear-gradient(to right, transparent, #f8bbd0, transparent);
+    height: 1px;
+    background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.6), transparent);
     margin: 15px 0;
 }
 
@@ -313,11 +317,12 @@ hs {
 /* ===== COUNTDOWN ===== */
 .countdown {
     font-size: 1.6rem;
-    color: #e91e63;
+    color: #ffffff;
     margin: 20px 0;
     position: relative;
     z-index: 2;
     font-weight: 700;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.2);
 }
 
 /* ===== FLOATING ANIMATION ===== */
