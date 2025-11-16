@@ -11,11 +11,10 @@
 
 /* ===== BODY ===== */
 body {
-    /* خلفية هادئة جداً تدرج بين الأبيض والأزرق السماوي والأخضر المائي */
-    background: linear-gradient(135deg, #e0f7fa, #b2dfdb, #80cbc4);
+    /* خلفية بيضاء ساطعة ونظيفة جداً تليق مع الأحمر */
+    background: linear-gradient(135deg, #ffffff, #fcfcfc, #f1f2f6);
     background-size: 400% 400%;
-    animation: gradientBG 15s ease infinite;
-    color: #004d40; /* نص أخضر غامق جداً ومريح للعين */
+    animation: gradientBG 10s ease infinite;
     min-height: 100vh;
     padding: 10px;
     display: flex;
@@ -32,17 +31,18 @@ body {
 
 /* ===== CARD ===== */
 .card {
-    /* الكارد أبيض ناصع للنظافة والتباين */
-    background: #ffffff;
+    /* الأحمر الناري الفخم */
+    background: linear-gradient(135deg, #d31027, #ea384d);
     border-radius: 25px;
-    /* ظل تركواز ناعم جداً */
-    box-shadow: 0 15px 35px rgba(0, 121, 107, 0.15);
+    /* ظل أحمر واسع عشان يبان منور */
+    box-shadow: 0 20px 60px rgba(211, 16, 39, 0.35);
     width: 100%;
     max-width: 500px;
-    padding: 10px;
+    padding: 15px;
     position: relative;
     overflow: hidden;
-    border: 1px solid rgba(255, 255, 255, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    color: white;
 }
 
 .card:before {
@@ -52,11 +52,10 @@ body {
     left: -50%;
     width: 200%;
     height: 200%;
-    /* تأثير مائي خفيف جداً */
-    background: radial-gradient(circle, rgba(38, 166, 154, 0.05) 0%, transparent 70%);
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.15) 0%, transparent 60%);
     transform: rotate(30deg);
     z-index: 0;
-    animation: rotateGradient 20s linear infinite;
+    animation: rotateGradient 15s linear infinite;
 }
 
 /* ===== LOGO ===== */
@@ -74,30 +73,40 @@ body {
     margin: 0 auto;
     border-radius: 50%;
     object-fit: cover;
-    border: 3px solid white;
-    /* توهج تركواز هادئ */
-    box-shadow: 0 5px 15px rgba(0, 150, 136, 0.3);
+    border: 4px solid #fff;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
     transition: all 0.5s ease;
 }
 
 .logo:hover {
-    transform: scale(1.03) rotate(5deg);
+    transform: scale(1.05) rotate(5deg);
 }
 
-/* ===== HEADINGS ===== */
+/* ===== HEADINGS & SHIMMER EFFECT ===== */
 h1 {
-    font-size: 2.1rem;
+    font-size: 2.2rem;
     text-align: right;
     direction: rtl;
     margin: 10px 0 5px;
-    /* تدرج لوني للنص (أخضر مزرق غامق إلى فاتح) */
-    background: linear-gradient(175deg, #00695c, #00897b);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+    font-weight: 800;
     position: relative;
     z-index: 2;
-    text-shadow: 0 2px 8px rgba(0, 121, 107, 0.1);
     letter-spacing: -0.5px;
+    
+    /* كود اللمعة البرنس */
+    background: linear-gradient(to right, #ffffff 20%, #fff9c4 50%, #ffffff 80%);
+    background-size: 200% auto;
+    color: #fff;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: shine 4s linear infinite;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.1); /* ظل خفيف عشان اللمعة تبان */
+}
+
+@keyframes shine {
+    to {
+        background-position: 200% center;
+    }
 }
 
 h2 {
@@ -106,33 +115,33 @@ h2 {
     direction: rtl;
     margin-bottom: 25px;
     font-weight: 600;
-    color: #00796b;
+    color: rgba(255, 255, 255, 0.95);
     position: relative;
     z-index: 2;
-    text-shadow: none;
 }
 
 h3 {
     font-size: 1.1rem;
     padding: 5px;
-    font-weight: 500;
-    color: #004d40;
+    font-weight: 600;
+    color: white;
     position: relative;
 }
 
 /* ===== INFO BOX ===== */
 .info {
-    background: #e0f2f1; /* أخضر مائي فاتح جداً */
+    background: rgba(255, 255, 255, 0.2);
     margin-bottom: 15px;
     border-radius: 12px;
     text-align: center;
     position: relative;
-    border: 1px solid #b2dfdb;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(5px);
 }
 
 .info p {
-    color: #00695c;
-    font-weight: 600;
+    color: #ffffff;
+    font-weight: 700;
     font-size: 1.2rem;
 }
 
@@ -148,7 +157,7 @@ label {
     display: block;
     margin: 15px 0 10px;
     font-weight: 700;
-    color: #00796b;
+    color: #fff;
     font-size: 1.1rem;
     position: relative;
     z-index: 2;
@@ -157,14 +166,14 @@ label {
 input[type='text'] {
     width: 100%;
     padding: 18px 20px;
-    border: 2px solid #b2dfdb; /* حدود ناعمة */
+    border: none;
     border-radius: 12px;
-    background: #f0fdfc; /* أبيض مائل للأخضر الخفيف جداً */
+    background: #fff;
     font-size: 1.4rem;
     font-weight: 700;
     text-align: center;
-    color: #004d40;
-    box-shadow: none;
+    color: #d31027; /* الكتابة بالأحمر داخل المربع الأبيض */
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
     transition: all 0.3s ease;
     position: relative;
     z-index: 2;
@@ -172,17 +181,16 @@ input[type='text'] {
 
 input[type='text']:focus {
     outline: none;
-    border-color: #26a69a; /* التركيز بلون أقوى */
-    background: #fff;
-    box-shadow: 0 4px 12px rgba(38, 166, 154, 0.2);
+    transform: scale(1.02);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
 }
 
 /* ===== BUTTON ===== */
 .btn {
-    /* تدرج جميل ومريح للعين (Teal Gradient) */
-    background: linear-gradient(45deg, #00897b, #26a69a);
+    /* زر أسود داكن للفخامة والتباين مع الأحمر */
+    background: linear-gradient(45deg, #1a1a1a, #2c3e50);
     color: white;
-    border: none;
+    border: 1px solid rgba(255,255,255,0.1);
     padding: 15px;
     font-size: 1.2rem;
     border-radius: 12px;
@@ -190,7 +198,7 @@ input[type='text']:focus {
     width: 100%;
     font-weight: 700;
     transition: all 0.3s ease;
-    box-shadow: 0 6px 20px rgba(38, 166, 154, 0.3);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.25);
     position: relative;
     z-index: 2;
     overflow: hidden;
@@ -203,13 +211,14 @@ input[type='text']:focus {
     left: -100%;
     width: 100%;
     height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.25), transparent);
     transition: 0.5s;
 }
 
 .btn:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 8px 25px rgba(0, 137, 123, 0.4);
+    transform: translateY(-4px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
+    background: linear-gradient(45deg, #000, #1a1a1a);
 }
 
 /* ===== BUTTON LOADING ===== */
@@ -245,32 +254,28 @@ input[type='text']:focus {
     font-size: 1.1rem;
     position: relative;
     z-index: 2;
+    background: white; /* خلفية بيضاء عشان الكلام يبان */
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
 }
 
 .pending {
-    background: #e0f7fa;
-    margin-top: 50px;
-    border-left: 5px solid #00bcd4; /* سماوي للحالة المعلقة ليتماشى مع الثيم */
-    color: #006064;
+    border-left: 5px solid #f39c12;
+    color: #e67e22;
 }
 
 .success {
-    background: #e8f5e9;
-    margin-top: 50px;
-    border-left: 5px solid #43a047;
-    color: #1b5e20;
+    border-left: 5px solid #27ae60;
+    color: #27ae60;
 }
 
 .error {
-    background: #ffebee;
-    margin-top: 50px;
-    border-left: 5px solid #e53935;
-    color: #b71c1c;
+    border-left: 5px solid #c0392b;
+    color: #c0392b;
 }
 
 /* ===== TERMS ===== */
 .terms-notice {
-    background: rgba(255, 255, 255, 0.8);
+    background: rgba(255, 255, 255, 0.2);
     padding: 12px;
     border-radius: 8px;
     margin: 15px 0;
@@ -278,20 +283,20 @@ input[type='text']:focus {
     text-align: center;
     position: relative;
     z-index: 2;
-    color: #00695c;
-    border: 1px solid rgba(0, 150, 136, 0.2);
+    color: #fff;
+    border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
 .terms-notice a {
-    color: #004d40;
+    color: #fff;
     font-weight: 700;
-    text-decoration: none;
+    text-decoration: underline;
 }
 
 /* ===== FOOTER ===== */
 .footer {
     font-size: 0.85rem;
-    color: #00796b;
+    color: rgba(255, 255, 255, 0.8);
     position: relative;
     z-index: 2;
     font-weight: 600;
@@ -300,8 +305,8 @@ input[type='text']:focus {
 /* ===== HR ===== */
 hr {
     border: 0;
-    height: 2px;
-    background: linear-gradient(to right, transparent, #80cbc4, transparent);
+    height: 1px;
+    background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.7), transparent);
     margin: 15px 0;
 }
 
@@ -315,11 +320,12 @@ hs {
 /* ===== COUNTDOWN ===== */
 .countdown {
     font-size: 1.6rem;
-    color: #00897b;
+    color: #fff;
     margin: 20px 0;
     position: relative;
     z-index: 2;
     font-weight: 700;
+    text-shadow: 0 2px 5px rgba(0,0,0,0.2);
 }
 
 /* ===== FLOATING ANIMATION ===== */
