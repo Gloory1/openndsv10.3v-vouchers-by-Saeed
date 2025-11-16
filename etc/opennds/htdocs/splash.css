@@ -11,10 +11,11 @@
 
 /* ===== BODY ===== */
 body {
-    background: linear-gradient(135deg, #e3fdfd, #cbf1f5, #a6e3e9);
+    /* تغيير الخلفية إلى تدرجات البنفسجي الفاتح */
+    background: linear-gradient(135deg, #f3e5f5, #e1bee7, #ce93d8);
     background-size: 400% 400%;
     animation: gradientBG 8s ease infinite;
-    color: #01579b;
+    color: #4a148c; /* نص بنفسجي داكن */
     min-height: 100vh;
     padding: 10px;
     display: flex;
@@ -31,9 +32,10 @@ body {
 
 /* ===== CARD ===== */
 .card {
-    background: #E7F6FC;
+    background: #F8F0FC; /* خلفية الكارد */
     border-radius: 25px;
-    box-shadow: 0 10px 30px rgba(2, 119, 189, 0.25);
+    /* ظل بنفسجي */
+    box-shadow: 0 10px 30px rgba(74, 20, 140, 0.25);
     width: 100%;
     max-width: 500px;
     padding: 10px;
@@ -70,7 +72,8 @@ body {
     border-radius: 50%;
     object-fit: cover;
     border: 3px solid white;
-    box-shadow: 0 0 25px rgba(3, 169, 244, .5);
+    /* توهج بنفسجي */
+    box-shadow: 0 0 25px rgba(171, 71, 188, .5);
     transition: all 0.5s ease;
 }
 
@@ -84,12 +87,13 @@ h1 {
     text-align: right;
     direction: rtl;
     margin: 10px 0 5px;
-    background: linear-gradient(175deg, #0288d1, #039be5, #03a9f4);
+    /* تدرج لوني للعنوان الرئيسي */
+    background: linear-gradient(175deg, #7b1fa2, #8e24aa, #ab47bc);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     position: relative;
     z-index: 2;
-    text-shadow: 0 2px 8px rgba(2, 119, 189, 0.15);
+    text-shadow: 0 2px 8px rgba(74, 20, 140, 0.15);
     letter-spacing: -1px;
 }
 
@@ -99,7 +103,7 @@ h2 {
     direction: rtl;
     margin-bottom: 25px;
     font-weight: 600;
-    color: #0288d1;
+    color: #7b1fa2;
     position: relative;
     z-index: 2;
     text-shadow: 0 1px 2px rgba(255, 255, 255, 0.5);
@@ -109,22 +113,22 @@ h3 {
     font-size: 1.1rem;
     padding: 5px;
     font-weight: 500;
-    color: #01579b;
+    color: #4a148c;
     position: relative;
 }
 
 /* ===== INFO BOX ===== */
 .info {
-    background: #b3e5fc;
+    background: #e1bee7; /* خلفية صندوق المعلومات */
     margin-bottom: 15px;
     border-radius: 12px;
     text-align: center;
     position: relative;
-    border: 1.5px solid #b3e5fc;
+    border: 1.5px solid #e1bee7;
 }
 
 .info p {
-    color: #0288d1;
+    color: #7b1fa2;
     font-weight: 500;
     font-size: 1.2rem;
 }
@@ -141,7 +145,7 @@ label {
     display: block;
     margin: 15px 0 10px;
     font-weight: 700;
-    color: #0277bd;
+    color: #6a1b9a;
     font-size: 1.1rem;
     position: relative;
     z-index: 2;
@@ -150,14 +154,14 @@ label {
 input[type='text'] {
     width: 100%;
     padding: 18px 20px;
-    border: 2px solid #b3e5fc;
+    border: 2px solid #e1bee7;
     border-radius: 12px;
     background: #fff;
     font-size: 1.4rem;
     font-weight: 700;
     text-align: center;
-    color: #01579b;
-    box-shadow: 0 5px 15px rgba(2, 119, 189, 0.1);
+    color: #4a148c;
+    box-shadow: 0 5px 15px rgba(74, 20, 140, 0.1);
     transition: all 0.3s ease;
     position: relative;
     z-index: 2;
@@ -165,13 +169,14 @@ input[type='text'] {
 
 input[type='text']:focus {
     outline: none;
-    border-color: #03a9f4;
-    box-shadow: 0 5px 20px rgba(3, 169, 244, 0.2);
+    border-color: #ab47bc;
+    box-shadow: 0 5px 20px rgba(171, 71, 188, 0.2);
 }
 
 /* ===== BUTTON ===== */
 .btn {
-    background: linear-gradient(45deg, #0288d1, #03a9f4);
+    /* تدرج زر الإرسال */
+    background: linear-gradient(45deg, #7b1fa2, #ab47bc);
     color: white;
     border: none;
     padding: 15px;
@@ -181,7 +186,7 @@ input[type='text']:focus {
     width: 100%;
     font-weight: 700;
     transition: all 0.3s ease;
-    box-shadow: 0 7px 20px rgba(3, 169, 244, 0.3);
+    box-shadow: 0 7px 20px rgba(171, 71, 188, 0.3);
     position: relative;
     z-index: 2;
     overflow: hidden;
@@ -200,7 +205,7 @@ input[type='text']:focus {
 
 .btn:hover {
     transform: translateY(-5px);
-    box-shadow: 0 10px 25px rgba(3, 169, 244, 0.4);
+    box-shadow: 0 10px 25px rgba(171, 71, 188, 0.4);
 }
 
 /* ===== BUTTON LOADING ===== */
@@ -239,12 +244,14 @@ input[type='text']:focus {
 }
 
 .pending {
-    background: rgba(41, 128, 185, 0.12);
+    /* تعديل لون الانتظار ليتماشى مع الثيم */
+    background: rgba(142, 36, 170, 0.12);
     margin-top: 50px;
-    border-left: 5px solid #2980b9;
-    color: #072b40;
+    border-left: 5px solid #8e24aa;
+    color: #4a148c;
 }
 
+/* الأخضر والأحمر يبقيان كما هما للدلالة على الخطأ والنجاح */
 .success {
     background: rgba(46, 204, 113, 0.7);
     margin-top: 50px;
@@ -269,12 +276,12 @@ input[type='text']:focus {
     text-align: center;
     position: relative;
     z-index: 2;
-    color: #01579b;
-    border: 1px solid rgba(3, 169, 244, 0.2);
+    color: #4a148c;
+    border: 1px solid rgba(171, 71, 188, 0.2);
 }
 
 .terms-notice a {
-    color: #0288d1;
+    color: #7b1fa2;
     font-weight: 700;
     text-decoration: none;
 }
@@ -282,7 +289,7 @@ input[type='text']:focus {
 /* ===== FOOTER ===== */
 .footer {
     font-size: 0.85rem;
-    color: #0288d1;
+    color: #7b1fa2;
     position: relative;
     z-index: 2;
     font-weight: 600;
@@ -292,7 +299,7 @@ input[type='text']:focus {
 hr {
     border: 0;
     height: 2px;
-    background: linear-gradient(to right, transparent, #81d4fa, transparent);
+    background: linear-gradient(to right, transparent, #ce93d8, transparent);
     margin: 15px 0;
 }
 
@@ -306,7 +313,7 @@ hs {
 /* ===== COUNTDOWN ===== */
 .countdown {
     font-size: 1.6rem;
-    color: #03a9f4;
+    color: #ab47bc;
     margin: 20px 0;
     position: relative;
     z-index: 2;
