@@ -6,16 +6,16 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'Segoe UI', arial, sans-serif; /* خط عصري أكثر */
+    font-family: 'Segoe UI', arial, sans-serif;
 }
 
 /* ===== BODY ===== */
 body {
-    /* خلفية بتدرجات عصرية حيوية (برتقالي - وردي - ذهبي) */
-    background: linear-gradient(135deg, #FF9A9E, #FECFEF, #FDC830);
+    /* خلفية متدرجة فاتحة جداً مائلة للوردي/الأرجواني الفاتح */
+    background: linear-gradient(135deg, #fce4ec, #f8bbd0, #e91e63); /* تدرج من أبيض مائل للوردي إلى وردي فاتح */
     background-size: 400% 400%;
     animation: gradientBG 8s ease infinite;
-    color: #d35400; /* نص برتقالي داكن للقراءة */
+    color: #880e4f; /* نص وردي داكن للقراءة */
     min-height: 100vh;
     padding: 10px;
     display: flex;
@@ -32,17 +32,16 @@ body {
 
 /* ===== CARD ===== */
 .card {
-    /* خلفية بيضاء بلمسة زجاجية شفافة قليلاً */
-    background: rgba(255, 255, 255, 0.9);
+    /* خلفية بيضاء نقية مع ظل وردي */
+    background: #ffffff;
     border-radius: 25px;
-    /* ظل دافئ ناعم */
-    box-shadow: 0 10px 30px rgba(255, 111, 97, 0.25);
+    box-shadow: 0 10px 30px rgba(233, 30, 99, 0.15); /* ظل وردي/أحمر خفيف */
     width: 100%;
     max-width: 500px;
     padding: 10px;
     position: relative;
     overflow: hidden;
-    border: 1px solid rgba(255, 255, 255, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.8);
 }
 
 .card:before {
@@ -52,7 +51,7 @@ body {
     left: -50%;
     width: 200%;
     height: 200%;
-    background: radial-gradient(circle, rgba(255, 210, 63, 0.4) 0%, transparent 70%);
+    background: radial-gradient(circle, rgba(255, 240, 245, 0.6) 0%, transparent 70%); /* توهج أبيض وردي */
     transform: rotate(30deg);
     z-index: 0;
     animation: rotateGradient 20s linear infinite;
@@ -74,8 +73,8 @@ body {
     border-radius: 50%;
     object-fit: cover;
     border: 3px solid #fff;
-    /* توهج برتقالي */
-    box-shadow: 0 0 25px rgba(255, 111, 97, 0.6);
+    /* توهج وردي بارز */
+    box-shadow: 0 0 25px rgba(233, 30, 99, 0.4);
     transition: all 0.5s ease;
 }
 
@@ -89,13 +88,13 @@ h1 {
     text-align: right;
     direction: rtl;
     margin: 10px 0 5px;
-    /* تدرج لوني للنص (برتقالي محمر إلى وردي) */
-    background: linear-gradient(175deg, #FF512F, #DD2476);
+    /* تدرج لوني للنص (وردي إلى فوشيا) */
+    background: linear-gradient(175deg, #e91e63, #ff4081);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     position: relative;
     z-index: 2;
-    text-shadow: 0 2px 8px rgba(221, 36, 118, 0.1);
+    text-shadow: 0 2px 8px rgba(233, 30, 99, 0.1);
     letter-spacing: -0.5px;
 }
 
@@ -105,7 +104,7 @@ h2 {
     direction: rtl;
     margin-bottom: 25px;
     font-weight: 700;
-    color: #FF512F;
+    color: #e91e63; /* وردي أساسي */
     position: relative;
     z-index: 2;
     text-shadow: none;
@@ -115,22 +114,22 @@ h3 {
     font-size: 1.1rem;
     padding: 5px;
     font-weight: 600;
-    color: #e65100;
+    color: #c2185b; /* وردي داكن */
     position: relative;
 }
 
 /* ===== INFO BOX ===== */
 .info {
-    background: #FFF3E0; /* خلفية كريمية دافئة */
+    background: #fce4ec; /* خلفية صندوق معلومات وردية فاتحة جداً */
     margin-bottom: 15px;
     border-radius: 12px;
     text-align: center;
     position: relative;
-    border: 1.5px solid #FFE0B2;
+    border: 1.5px solid #f8bbd0;
 }
 
 .info p {
-    color: #ef6c00;
+    color: #e91e63;
     font-weight: 600;
     font-size: 1.2rem;
 }
@@ -147,7 +146,7 @@ label {
     display: block;
     margin: 15px 0 10px;
     font-weight: 700;
-    color: #ff7043;
+    color: #e91e63;
     font-size: 1.1rem;
     position: relative;
     z-index: 2;
@@ -156,14 +155,14 @@ label {
 input[type='text'] {
     width: 100%;
     padding: 18px 20px;
-    border: 2px solid #ffe0b2;
+    border: 2px solid #f8bbd0;
     border-radius: 12px;
     background: #fff;
     font-size: 1.4rem;
     font-weight: 700;
     text-align: center;
-    color: #e65100;
-    box-shadow: 0 5px 15px rgba(230, 81, 0, 0.05);
+    color: #c2185b;
+    box-shadow: 0 5px 15px rgba(233, 30, 99, 0.05);
     transition: all 0.3s ease;
     position: relative;
     z-index: 2;
@@ -171,14 +170,14 @@ input[type='text'] {
 
 input[type='text']:focus {
     outline: none;
-    border-color: #ff9800;
-    box-shadow: 0 5px 20px rgba(255, 152, 0, 0.25);
+    border-color: #ff4081; /* لون التركيز */
+    box-shadow: 0 5px 20px rgba(255, 64, 129, 0.25);
 }
 
 /* ===== BUTTON ===== */
 .btn {
-    /* تدرج زر قوي (Coral to Orange) */
-    background: linear-gradient(45deg, #FF512F, #F09819);
+    /* تدرج زر قوي (وردي إلى فوشيا) */
+    background: linear-gradient(45deg, #e91e63, #ff4081);
     color: white;
     border: none;
     padding: 15px;
@@ -188,7 +187,7 @@ input[type='text']:focus {
     width: 100%;
     font-weight: 700;
     transition: all 0.3s ease;
-    box-shadow: 0 7px 20px rgba(240, 152, 25, 0.4);
+    box-shadow: 0 7px 20px rgba(255, 64, 129, 0.3);
     position: relative;
     z-index: 2;
     overflow: hidden;
@@ -207,7 +206,7 @@ input[type='text']:focus {
 
 .btn:hover {
     transform: translateY(-5px);
-    box-shadow: 0 10px 25px rgba(255, 81, 47, 0.5);
+    box-shadow: 0 10px 25px rgba(233, 30, 99, 0.4);
 }
 
 /* ===== BUTTON LOADING ===== */
@@ -246,10 +245,10 @@ input[type='text']:focus {
 }
 
 .pending {
-    background: rgba(255, 167, 38, 0.15);
+    background: rgba(255, 102, 160, 0.15); /* وردي فاتح للحالة المعلقة */
     margin-top: 50px;
-    border-left: 5px solid #ffa726;
-    color: #e65100;
+    border-left: 5px solid #ff66a0;
+    color: #c2185b;
 }
 
 /* الألوان القياسية للنجاح والخطأ تبقى كما هي لوضوح المعنى */
@@ -269,7 +268,7 @@ input[type='text']:focus {
 
 /* ===== TERMS ===== */
 .terms-notice {
-    background: rgba(255, 255, 255, 0.8);
+    background: rgba(255, 255, 255, 0.9);
     padding: 12px;
     border-radius: 8px;
     margin: 15px 0;
@@ -277,12 +276,12 @@ input[type='text']:focus {
     text-align: center;
     position: relative;
     z-index: 2;
-    color: #e65100;
-    border: 1px solid rgba(255, 167, 38, 0.3);
+    color: #c2185b;
+    border: 1px solid rgba(233, 30, 99, 0.2);
 }
 
 .terms-notice a {
-    color: #ef6c00;
+    color: #e91e63;
     font-weight: 700;
     text-decoration: none;
 }
@@ -290,7 +289,7 @@ input[type='text']:focus {
 /* ===== FOOTER ===== */
 .footer {
     font-size: 0.85rem;
-    color: #ff5722;
+    color: #e91e63;
     position: relative;
     z-index: 2;
     font-weight: 600;
@@ -300,7 +299,7 @@ input[type='text']:focus {
 hr {
     border: 0;
     height: 2px;
-    background: linear-gradient(to right, transparent, #ffcc80, transparent);
+    background: linear-gradient(to right, transparent, #f8bbd0, transparent);
     margin: 15px 0;
 }
 
@@ -314,7 +313,7 @@ hs {
 /* ===== COUNTDOWN ===== */
 .countdown {
     font-size: 1.6rem;
-    color: #ff3d00;
+    color: #e91e63;
     margin: 20px 0;
     position: relative;
     z-index: 2;
