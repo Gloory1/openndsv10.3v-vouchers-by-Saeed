@@ -1,37 +1,30 @@
 #!/bin/sh
 DB_PATH="/overlay/superwifi/superwifi_database_v2.db"
-
 sql_escape() {
 printf "%s" "$1" | sed "s/'/''/g"
 }
-
 # ----------------------
 # Get all vouchers
 # ----------------------
 get_auth_voucher() {
   local token_raw="$1"
   local token=$(sql_escape "$token_raw")
-
   sqlite3 "$DB_PATH" "SELECT * FROM vouchers_auth_details WHERE token = '$token' LIMIT 1;"
 }
-
 get_all_vouchers() {
   sqlite3 "$DB_PATH" "SELECT * FROM vouchers_info;"
 }
-
 # ----------------------
 # Update first punch (token first use) and set mac, timestamps
 # - first_punched set only if not set before (i.e. first use)
 # - last_punched always updated
 # ----------------------
-# Ø¯Ø§Ù„Ø© Ù…ÙˆØ­Ø¯Ø© Ù„ØªØ­Ø¯ÙŠØ« first_punched / last_punched / user_mac
+# ................. ..................... ......................... first_punched / last_punched / user_mac
 update_punch() {
   local token_raw="$1"
   local mac_raw="${2:-}"
-
   local token=$(sql_escape "$token_raw")
   local mac=$(sql_escape "$mac_raw")
-
   sqlite3 "$DB_PATH" <<EOF
 UPDATE vouchers_info
 SET
@@ -41,9 +34,6 @@ SET
 WHERE token = '$token';
 EOF
 }
-
-
-
 # ----------------------
 # Update accumulators: accepts upload_raw and download_raw (both integers)
 # Behavior:
@@ -56,32 +46,20 @@ update_accumulated_usage_by_mac() {
   local user_mac="$1"
   local season_upload_raw="${2:-0}"
   local season_download_raw="${3:-0}"
-
   local season_usage_kb=$(( season_upload_raw + season_download_raw ))
-
-  [ -z "$user_mac" ] && return 0
-
+  local token=$(sqlite3 "$DB_PATH" "SELECT token FROM vouchers_info WHERE user_mac = '$user_mac' ORDER BY last_punched DESC LIMIT 1;")
+  [ -z "$token" ] && return 0
   local quota_finished=$(
     sqlite3 "$DB_PATH" <<EOF
-.parameter set ?1 "$user_mac"
-.parameter set ?2 "$season_usage_kb"
-
 UPDATE vouchers_info
 SET
   cumulative_usage_total = cumulative_usage_total +
     CASE
-      WHEN ?2 > cumulative_usage_season THEN ?2 - cumulative_usage_season
+      WHEN $season_usage_kb > cumulative_usage_season THEN $season_usage_kb - cumulative_usage_season
       ELSE 0
     END,
-  cumulative_usage_season = ?2
-WHERE token = (
-  SELECT T.token
-  FROM vouchers_info AS T
-  WHERE T.user_mac = ?1
-  ORDER BY T.last_punched DESC
-  LIMIT 1
-);
-
+  cumulative_usage_season = $season_usage_kb
+WHERE token = '$token';
 SELECT
   CASE
     WHEN quota_down = 0 THEN 0
@@ -89,19 +67,12 @@ SELECT
     ELSE 0
   END
 FROM vouchers_info
-WHERE token = (
-  SELECT T.token
-  FROM vouchers_info AS T
-  WHERE T.user_mac = ?1
-  ORDER BY T.last_punched DESC
-  LIMIT 1
-);
+WHERE token = '$token'
+LIMIT 1;
 EOF
   )
-
-  echo "${quota_finished:-0}"
+  echo "$quota_finished"
 }
-
 # ----------------------
 # Log an auth attempt
 # - result: integer code (0 success, 1 not exist, 2 voucher expire, 3 quota expire, 4 time expire)
@@ -114,19 +85,29 @@ log_auth_attempt() {
   local mac_raw="${2:-}"
   local ip_raw="${3:-}"
   local result_raw="${4:-}"
-
   local token=$(sql_escape "$token_raw")
   local mac=$(sql_escape "$mac_raw")
   local ip=$(sql_escape "$ip_raw")
   local result=$(sql_escape "$result_raw")
-
   sqlite3 "$DB_PATH" <<EOF
 INSERT INTO auth_log (token, user_mac, user_ip, result)
 VALUES ('$token', '$mac', '$ip', '$result');
 EOF
 }
-
-
+# ----------------------
+# Get LAST voucher ONLY if membership = 1 (VIP Auto-Login)
+# ----------------------
+get_last_vip_voucher_for_mac() {
+  local mac_raw="$1"
+  local mac=$(sql_escape "$mac_raw")
+  # ............ .......... ........ .......... .......... + .............. = 1
+  sqlite3 "$DB_PATH" "
+    SELECT token FROM vouchers_info
+    WHERE user_mac = '$mac' AND membership = '1'
+    ORDER BY last_punched DESC
+    LIMIT 1;
+  "
+}
 # ----------------------
 # Get the last voucher used by a mac (most recent last_punched)
 # ----------------------
@@ -134,9 +115,10 @@ get_last_voucher_for_mac() {
   local mac_raw="$1"
   local mac=$(sql_escape "$mac_raw")
   sqlite3 "$DB_PATH" "
-    SELECT * FROM vouchers_info
+    SELECT token FROM vouchers_info
     WHERE user_mac = '$mac'
     ORDER BY last_punched DESC
     LIMIT 1;
   "
 }
+
