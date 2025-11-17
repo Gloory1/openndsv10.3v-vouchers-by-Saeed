@@ -228,6 +228,10 @@ try_again_btn() {
 # MAIN FORM UI
 # -----------------------------------------------------
 
+# -----------------------------------------------------
+# MAIN FORM UI
+# -----------------------------------------------------
+
 voucher_form() {
         # 1. Get info from query
         voucher_code=$(echo "$cpi_query" | awk -F "voucher%3d" '{printf "%s", $2}' | awk -F "%26" '{printf "%s", $1}')
@@ -245,20 +249,18 @@ voucher_form() {
 
         # 2. إضافة زر المتابعة (إذا كان موجوداً) داخل الصندوق
         if [ -n "$saved_voucher" ]; then
-            # تم تغيير العنصر إلى h4 ليتناسب مع فئة الخط (عنوان) مثل h3
+            # تم تغيير العنصر إلى h3 مع الحفاظ على الستايل المطلوب
             echo "
-            <h4 onclick=\"useLastVoucher('$saved_voucher')\" 
-                style='text-align:center; cursor: pointer; color: #2196F3; font-weight: bold; margin-top: 15px; margin-bottom: 0;'>
+            <h3 onclick=\"useLastVoucher('$saved_voucher')\" 
+                style='cursor: pointer; color: #2196F3; margin-top: 10px; margin-bottom: 8; font-weight: bold;'>
                 تابع آخر استخدام
-            </h4>
+            </h3>
             "
         fi
         
-        # 3. إغلاق الصندوق
         echo "</div>"
         # ---------------------
    
-        # الفورم الأساسي
         echo "<form id=\"loginForm\" action=\"/opennds_preauth/\" method=\"get\" onsubmit=\"return handleVoucherSubmit()\">
             <input type=\"hidden\" name=\"fas\" value=\"$fas\"> 
             
@@ -271,8 +273,6 @@ voucher_form() {
                 <span class=\"btn-text\">تحقق من الرقم</span>
             </button>
         </form>"
-
-        # (تم نقل الكود الخاص بزر المتابعة من هنا إلى الأعلى)
 
         echo "
         <script>
