@@ -195,35 +195,6 @@ voucher_validation() {
     footer
 }
 
-block_message() {
-    local remaining=\"$1\"
-    echo "
-    <div class=\"card\">
-      <h3>🚫 تم الحظر مؤقتًا</h3>
-      <div class=\"countdown\">
-        الرجاء الانتظار <span id=\"time\">$remaining</span> ثانية
-      </div>
-      <form>
-        <input type=\"button\" class=\"btn\" id=\"retryBtn\" value=\"أعد المحاولة\" onclick=\"location.reload();\">
-      </form>
-    </div>
-    <script>
-      let remaining = $remaining;
-      const timeSpan = document.getElementById('time');
-      const retryBtn = document.getElementById('retryBtn');
-      const interval = setInterval(() => {
-        remaining--;
-        timeSpan.textContent = remaining;
-        if (remaining <= 0) {
-          clearInterval(interval);
-          retryBtn.style.display = 'block';
-          document.querySelector('.countdown').textContent = 'يمكنك المحاولة الآن';
-        }
-      }, 1000);
-    </script>
-"
-}
-
 try_again_btn() {
     local status_details_msg="$1"
     echo "
@@ -253,13 +224,11 @@ try_again_btn() {
 # -----------------------------------------------------
 # MAIN FORM UI
 # -----------------------------------------------------
+# -----------------------------------------------------
+# MAIN FORM UI
+# -----------------------------------------------------
 
 voucher_form() {
-    block_remaining=$(check_attempts)
-
-    if [ "$block_remaining" -gt 0 ]; then
-        block_message "$block_remaining"
-    else
         # 1. Get info from query
         voucher_code=$(echo "$cpi_query" | awk -F "voucher%3d" '{printf "%s", $2}' | awk -F "%26" '{printf "%s", $1}')
         
@@ -269,9 +238,25 @@ voucher_form() {
              saved_voucher=$(get_last_voucher_for_mac "$clientmac")
         fi
 
+        # --- [ التعديل هنا ] ---
+        # 1. فتح الصندوق
         echo "<div class=\"info\">
-            <h3>بمجرد تفعيل الكارت<br> لن يعمل على أي جهاز آخر</h3>
-        </div>"
+            <h3>بمجرد تفعيل الكارت<br> لن يعمل على أي جهاز آخر</h3>"
+
+        # 2. إضافة زر المتابعة (إذا كان موجوداً) داخل الصندوق
+        if [ -n "$saved_voucher" ]; then
+            # تم تغيير العنصر إلى h4 ليتناسب مع فئة الخط (عنوان) مثل h3
+            echo "
+            <h4 onclick=\"useLastVoucher('$saved_voucher')\" 
+                style='text-align:center; cursor: pointer; color: #2196F3; font-weight: bold; margin-top: 15px; margin-bottom: 0;'>
+                تابع آخر استخدام
+            </h4>
+            "
+        fi
+        
+        # 3. إغلاق الصندوق
+        echo "</div>"
+        # ---------------------
    
         # الفورم الأساسي
         echo "<form id=\"loginForm\" action=\"/opennds_preauth/\" method=\"get\" onsubmit=\"return handleVoucherSubmit()\">
@@ -287,20 +272,7 @@ voucher_form() {
             </button>
         </form>"
 
-        # --- [ التعديل هنا ] ---
-        if [ -n "$saved_voucher" ]; then
-            echo "
-            <div onclick=\"useLastVoucher('$saved_voucher')\" 
-                 style='text-align:center; margin-top: 20px; cursor: pointer; position: relative; z-index: 100; padding: 10px;'>
-                
-                <span style='color: #2196F3; font-weight: bold; font-size: 16px;'>
-                    تابع آخر استخدام
-                </span>
-            
-            </div>
-            "
-        fi
-        # ---------------------
+        # (تم نقل الكود الخاص بزر المتابعة من هنا إلى الأعلى)
 
         echo "
         <script>
@@ -326,7 +298,6 @@ voucher_form() {
         }
         </script>
         "
-    fi
     footer
 }
 
