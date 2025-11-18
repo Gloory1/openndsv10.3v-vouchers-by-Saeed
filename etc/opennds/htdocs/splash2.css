@@ -7,9 +7,9 @@
     color-scheme: light only;
     
     /* الخلفية */
-    --bg-grad-1: #ffffff;
-    --bg-grad-2: #fcfcfc;
-    --bg-grad-3: #f1f2f6;
+    --bg-grad-1: #1a1a1a;
+    --bg-grad-2: #2c3e50;
+    --bg-grad-3: #1a1a1a;
     --text-color: #333;
 
     /* الكارت */
@@ -109,7 +109,7 @@ body {
     background: rgba(255, 255, 255, 0.15) !important;
     border: 1px solid rgba(255, 255, 255, 0.3) !important;
     border-radius: 15px;
-    padding: 15px;
+    padding: 5px;
     backdrop-filter: blur(5px);
     margin-bottom: 15px;
     margin-top: 35px;
@@ -279,7 +279,7 @@ hr {
 .restore-link {
     cursor: pointer;
     color: #ffffff;
-    margin-top: 5px;
+    /* margin-top: 5px; */
     font-weight: 700;
     text-decoration: underline;
     transition: all 0.3s ease;
