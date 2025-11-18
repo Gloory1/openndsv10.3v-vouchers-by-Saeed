@@ -41,7 +41,7 @@ header() {
                 <img class=\"logo\" src=\"$gatewayurl""$imagepath\" alt=\"Splash Page\">
             </div>
 
-            <h1>سوبر واي فاي</h1>
+            <h1>"${provider_name//%20/ }"</h1>
             <h2>أهلا وسهلا</h2>
         </div>
 "
