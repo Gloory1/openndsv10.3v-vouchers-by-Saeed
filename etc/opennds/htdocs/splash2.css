@@ -63,7 +63,7 @@ body {
     width: 100%;
     max-width: 500px;
     min-width: 300px;
-    padding: 20px;
+    padding: 10px;
     position: relative;
     overflow: hidden;
     border: 1px solid var(--card-border);
@@ -152,8 +152,8 @@ img,
 .logo {
     position: relative;
     z-index: 2;
-    width: 100px;
-    height: 100px;
+    width: 90px;
+    height: 90px;
     margin: 10px auto;
     border-radius: 50%;
     object-fit: cover;
@@ -163,8 +163,6 @@ img,
     background-color: white;
     animation: float 3s ease-in-out infinite;
     display: block;
-    
-    /* --- تم الحفاظ على الـ FLOAT كما طلبت --- */
     float: left; 
 }
 
