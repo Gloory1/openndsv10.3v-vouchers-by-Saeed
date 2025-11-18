@@ -34,12 +34,16 @@ header() {
     <title>$title</title>
     </head>
     <body>
-    <div class=\"card\">
-    <div class=\"logo-container floating\">
-    <img class=\"logo\" src=\"$gatewayurl""$imagepath\" alt=\"Splash Page\">
-    </div>
-    <h1>"${provider_name//%20/ }"</h1>
-    <h2>أهلا وسهلا </h2>
+    
+    <div class=\"offset\">
+        <div class="arabic-style">
+            <div class="logo-container floating">
+                <img class="logo" src="https://cdn-icons-png.flaticon.com/512/93/93158.png" alt="Splash Page">
+            </div>
+
+            <h1>سوبر واي فاي</h1>
+            <h2>أهلا وسهلا</h2>
+        </div>
 "
 }
 
@@ -48,8 +52,8 @@ footer() {
         <div class=\"footer\">
             <hr>
             <div>
-                &copy; Saeed & BlueWave Projects and Services 2025
-                <div>$clientmac</div>
+                <copy-right>&copy; Saeed & BlueWave Projects and Services 2025</copy-right>
+                <div style='font-size: 0.8rem; opacity: 0.7;'>$clientmac</div>
             </div>
         </div>
     </div>
@@ -201,7 +205,7 @@ try_again_btn() {
         <div class='status error'>
             <p>$status_details_msg</p>
         </div>
-        <label>عدد المحاولات محدود</label>
+        <label style='color: white;'>عدد المحاولات محدود</label>
 
         <form>
             <button type=\"button\" class=\"btn\" id=\"retryBtn\" onclick=\"handleRetryClick()\">
@@ -221,17 +225,6 @@ try_again_btn() {
         </script>"
 }
 
-# -----------------------------------------------------
-# MAIN FORM UI
-# -----------------------------------------------------
-# -----------------------------------------------------
-# MAIN FORM UI
-# -----------------------------------------------------
-
-# -----------------------------------------------------
-# MAIN FORM UI
-# -----------------------------------------------------
-
 voucher_form() {
         # 1. Get info from query
         voucher_code=$(echo "$cpi_query" | awk -F "voucher%3d" '{printf "%s", $2}' | awk -F "%26" '{printf "%s", $1}')
@@ -243,16 +236,14 @@ voucher_form() {
         fi
 
         # --- [ التعديل هنا ] ---
-        # 1. فتح الصندوق
-        echo "<div class=\"info\">
+        # استخدام insert بدلا من info
+        echo "<div class=\"insert\">
             <h3>بمجرد تفعيل الكارت<br> لن يعمل على أي جهاز آخر</h3>"
 
-        # 2. إضافة زر المتابعة (إذا كان موجوداً) داخل الصندوق
+        # إضافة رابط الاستعادة بالكلاس الجديد restore-link
         if [ -n "$saved_voucher" ]; then
-            # تم تغيير العنصر إلى h3 مع الحفاظ على الستايل المطلوب
             echo "
-            <h3 onclick=\"useLastVoucher('$saved_voucher')\" 
-                style='cursor: pointer; color: #2196F3; margin-top: 10px; margin-bottom: 8; font-weight: bold;'>
+            <h3 class=\"restore-link\" onclick=\"useLastVoucher('$saved_voucher')\">
                 تابع آخر استخدام
             </h3>
             "
@@ -264,9 +255,7 @@ voucher_form() {
         echo "<form id=\"loginForm\" action=\"/opennds_preauth/\" method=\"get\" onsubmit=\"return handleVoucherSubmit()\">
             <input type=\"hidden\" name=\"fas\" value=\"$fas\"> 
             
-            <div class=\"form-group\">
-                <input type=\"text\" id=\"voucher\" name=\"voucher\" value=\"$voucher_code\" placeholder=\"اكتب هنا\" required>
-            </div>
+            <input type=\"text\" id=\"voucher\" name=\"voucher\" value=\"$voucher_code\" placeholder=\"اكتب الكود هنا\" required>
             
             <button type=\"submit\" class=\"btn\" id=\"voucherBtn\">
                 <span class=\"spinner\" style=\"display: none;\"></span>
@@ -286,12 +275,10 @@ voucher_form() {
         }
 
         function useLastVoucher(code) {
-            console.log('Restoring voucher: ' + code); // للتأكد من الاستجابة
-            // 1. Put the code in the box
+            console.log('Restoring voucher: ' + code);
             var input = document.getElementById('voucher');
             if (input) {
                 input.value = code;
-                // 2. Click the submit button
                 var btn = document.getElementById('voucherBtn');
                 if (btn) btn.click();
             }
