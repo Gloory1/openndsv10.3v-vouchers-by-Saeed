@@ -13,6 +13,11 @@ wget -O - https://raw.githubusercontent.com/Gloory1/openndsv10.3v-vouchers-by-Sa
 wget -O - https://raw.githubusercontent.com/Gloory1/openndsv10.3v-vouchers-by-Saeed/refs/heads/main/update_v1_v2.sh | sh
 ```
 
+### 📁 Update Code from v2 to v2.3
+```markdown
+wget -O - https://raw.githubusercontent.com/Gloory1/openndsv10.3v-vouchers-by-Saeed/refs/heads/main/update_v3.sh | sh
+```
+
 ### 📁 Files Locations
 - Default `superwifi_theme.sh` file path: `/usr/lib/superwifi-opennds/superwifi_theme.sh`
 - Default `superwifi_binauth.sh` file path: `/usr/lib/superwifi-opennds/superwifi_binauth.sh`  
