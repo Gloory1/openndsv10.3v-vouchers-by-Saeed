@@ -38,7 +38,7 @@ header() {
     <div class=\"offset\">
         <div class="arabic-style">
             <div class="logo-container floating">
-                <img class="logo" src="https://cdn-icons-png.flaticon.com/512/93/93158.png" alt="Splash Page">
+                <img class=\"logo\" src=\"$gatewayurl""$imagepath\" alt=\"Splash Page\">
             </div>
 
             <h1>سوبر واي فاي</h1>
