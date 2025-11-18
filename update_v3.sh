@@ -57,6 +57,7 @@ $BASE_RAW/usr/lib/superwifi-opennds/superwifi_theme.sh|$DEST_DIR/superwifi_theme
 $BASE_RAW/usr/lib/superwifi-opennds/superwifi_binauth.sh|$DEST_DIR/superwifi_binauth.sh
 $BASE_RAW/usr/lib/superwifi-opennds/superwifi_database_manager.sh|$DEST_DIR/superwifi_database_manager.sh
 $BASE_RAW/usr/lib/superwifi-opennds/superwifi_quota_tracking.sh|$DEST_DIR/superwifi_quota_tracking.sh
+$BASE_RAW/etc/opennds/htdocs/splash.css|$UI_DIR/splash.css
 "
 
 
