@@ -145,7 +145,7 @@ img,
     transition: all 0.5s ease;
     background-color: white;
     animation: float 3s ease-in-out infinite;
-    display: block;
+    float:left;
 }
 
 img:hover {
