@@ -7,12 +7,15 @@
     padding: 0;
     box-sizing: border-box;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    /* تحسين خطوط لتقليل الحمل */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
 html, body {
     width: 100%;
     height: 100%;
-    overflow-x: hidden !important; /* منع السكرول العرضي */
+    overflow-x: hidden !important;
 }
 
 body {
@@ -39,14 +42,21 @@ body {
     min-width: 300px;
     padding: 15px;
     position: relative;
-    overflow: hidden; /* عشان الخلفيات المايلة متخرجش */
+    overflow: hidden;
     border: 1px solid rgba(255, 255, 255, 0.25);
     color: white;
     margin: 0 auto;
     z-index: 1;
+    
+    /* --- (1) أكواد تحسين الأداء (GPU Force) --- */
+    opacity: 0.99; /* خدعة لمنع الاختفاء */
+    transform: translateZ(0); /* تشغيل كارت الشاشة */
+    will-change: transform, opacity; /* حجز في الرامات */
+    perspective: 1000px; /* ثبات الـ 3D */
+    backface-visibility: hidden;
+    
     animation: slideUpFade 2.2s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
     
-    /* رجعنا العرض block عشان الـ Float يشتغل */
     display: block; 
 }
 
@@ -60,6 +70,11 @@ body {
     background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.3), transparent);
     transform: skewX(-20deg);
     z-index: -1;
+    
+    /* تحسين الأداء للأنيميشن المستمر */
+    will-change: transform;
+    transform: translateZ(0) skewX(-20deg); 
+    
     animation: pulseLeft 3s ease-in-out infinite;
 }
 
@@ -72,6 +87,10 @@ body {
     background: linear-gradient(to left, transparent, rgba(255, 255, 255, 0.3), transparent);
     transform: skewX(20deg);
     z-index: -1;
+    
+    will-change: transform;
+    transform: translateZ(0) skewX(20deg);
+    
     animation: pulseRight 3s ease-in-out infinite;
 }
 
@@ -85,17 +104,21 @@ body {
     border-radius: 15px;
     padding: 10px;
     backdrop-filter: blur(5px);
+    /* تحسين أداء الـ Blur */
+    -webkit-backdrop-filter: blur(5px);
+    transform: translateZ(0); 
+    
     margin-bottom: 15px;
     margin-top: 30px;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    clear: both; /* عشان ينزل تحت اللوجو وميدخلش فيه */
+    clear: both;
 }
 
-/* --- اللوجو (Float رجع زي الأول) --- */
+/* --- اللوجو (Float) --- */
 img,
 .logo {
     position: relative;
-    z-index: 2;
+    z-index: 5; /* رفعت الطبقة */
     width: 100px;
     height: 100px;
     margin: 10px;
@@ -105,9 +128,13 @@ img,
     box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
     transition: all 0.5s ease;
     background-color: white;
+    
+    /* تحسين الأداء */
+    will-change: transform;
+    transform: translateZ(0);
+    
     animation: float 3s ease-in-out infinite;
     
-    /* رجعنا الفلوت */
     display: block;
     float: left; 
 }
@@ -130,6 +157,9 @@ h1,
     animation: shine 3s linear infinite;
     text-align: center;
     text-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    
+    /* منع اختفاء النص */
+    transform: translateZ(0);
 }
 
 /* --- الحقول (Inputs) --- */
@@ -137,9 +167,9 @@ input[type='text'],
 input[type='password'],
 input[type='number'] {
     position: relative;
-    z-index: 5;
+    z-index: 10; /* رفعت الطبقة جداً */
     width: 100%;
-    height: 60px !important; /* الارتفاع الموحد */
+    height: 60px !important;
     padding: 0 15px;
     line-height: normal !important;
     border: none !important;
@@ -153,7 +183,10 @@ input[type='number'] {
     transition: all 0.3s ease;
     margin-bottom: 5px;
     
-    /* سنترة النص */
+    /* منع الرمشة عند الكتابة */
+    transform: translateZ(0);
+    will-change: transform;
+    
     display: flex;
     align-items: center;
     justify-content: center;
@@ -170,12 +203,13 @@ button,
 .btn,
 input[type='submit'] {
     position: relative;
-    z-index: 10;
+    z-index: 20 !important; /* أعلى عنصر في الصفحة */
+    
     background: linear-gradient(45deg, #1a1a1a, #2c3e50) !important;
     color: white !important;
     border: 1px solid rgba(255, 255, 255, 0.1);
     padding: 0;
-    height: 60px !important; /* نفس ارتفاع الـ input */
+    height: 60px !important;
     line-height: normal !important;
     font-size: 1.2rem;
     border-radius: 12px;
@@ -186,11 +220,13 @@ input[type='submit'] {
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.25);
     margin-top: 5px;
     
-    /* إصلاح الجليتش */
+    /* --- (2) أهم تصليح للزرار --- */
     overflow: visible; 
-    transform: translateZ(0);
+    opacity: 0.99; /* الخدعة السحرية */
+    transform: translateZ(0); /* GPU Force */
+    will-change: transform;
+    backface-visibility: hidden;
     
-    /* سنترة النص */
     display: flex;
     justify-content: center;
     align-items: center;
@@ -213,7 +249,7 @@ hr {
     clear: both;
 }
 
-/* --- Restore Link (رجع زي الأول) --- */
+/* --- Restore Link --- */
 .restore-link {
     cursor: pointer;
     color: #ffffff;
@@ -222,6 +258,10 @@ hr {
     transition: all 0.3s ease;
     display: inline-block;
     margin-top: 10px;
+    
+    /* منع الاختفاء */
+    position: relative;
+    z-index: 5;
 }
 
 .restore-link:hover {
@@ -283,5 +323,7 @@ copy-right {
         animation: none;
         opacity: 1;
         transform: none;
+        /* في حالة الكيبورد، بنشيل الـ 3D عشان الكتابة تبقى خفيفة */
+        perspective: none; 
     }
 }
