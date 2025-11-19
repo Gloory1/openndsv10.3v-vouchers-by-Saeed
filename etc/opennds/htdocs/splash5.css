@@ -1,24 +1,28 @@
 :root {
-    color-scheme: light only;
-    --bg-grad-1: #ff4e50;
-    --bg-grad-2: #f9d423;
-    --bg-grad-3: #ff416c;
-    --text-color: #fff;
+    color-scheme: dark only;
+    /* خلفية داكنة جداً */
+    --bg-grad-1: #000000;
+    --bg-grad-2: #0f0f0f;
+    --bg-grad-3: #1a1a1a;
+    --text-color: #e0e0e0;
 
-    --card-bg-1: #ff512f;
-    --card-bg-2: #dd2476;
-    --card-shadow: rgba(221, 36, 118, 0.4);
-    --card-border: rgba(255, 255, 255, 0.3);
+    /* الكارت أسود رمادي */
+    --card-bg-1: #1a1a1a;
+    --card-bg-2: #2d2d2d;
+    --card-shadow: rgba(0, 255, 0, 0.15);
+    --card-border: rgba(50, 205, 50, 0.3);
 
-    --h1-grad-1: #fff;
-    --h1-grad-2: #ffe0b2;
-    --h1-grad-3: #fff;
+    /* النصوص */
+    --h1-grad-1: #ffffff;
+    --h1-grad-2: #e0e0e0;
+    --h1-grad-3: #32cd32; /* لمسة خضراء */
 
-    --input-text: #d84315;
+    /* الحقول */
+    --input-text: #32cd32;
 
-    /* زر برتقالي غامق */
-    --btn-grad-1: #e65100;
-    --btn-grad-2: #ef6c00;
+    /* الزر أخضر فاقع */
+    --btn-grad-1: #32cd32;
+    --btn-grad-2: #228b22;
 }
 /* ====================================
    2. الكود الأصلي (بدون أي تغيير في الأبعاد)
