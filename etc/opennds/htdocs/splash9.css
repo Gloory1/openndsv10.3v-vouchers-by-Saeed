@@ -1,36 +1,33 @@
+
 /* ====================================
-   5. تصميم "Soft Coral" (مرجاني ناعم وهادئ)
-   ====================================
-*/
-/* ====================================
-   8. تصميم "Minimalist Ocean" (بحر هادئ)
+   10. تصميم "Futuristic Dark Teal" (أزرق داكن مستقبلي)
    ====================================
 */
 :root {
-    color-scheme: light only;
-    /* خلفية متدرجة من الأزرق السماوي الفاتح جداً */
-    --bg-grad-1: #E0F7FA; /* Cyan 50 */
-    --bg-grad-2: #B2EBF2; /* Cyan 100 */
-    --bg-grad-3: #80DEEA; /* Cyan 200 */
-    --text-color: #263238; /* Blue Grey 900 */
+    color-scheme: dark only;
+    /* خلفية متدرجة من الأزرق الداكن جداً */
+    --bg-grad-1: #0F1D2B; /* Very Dark Teal */
+    --bg-grad-2: #1A313C; /* Dark Teal */
+    --bg-grad-3: #223D48; /* Medium Dark Teal */
+    --text-color: #E0F2F7; /* Light Blue-Grey */
 
-    /* الكارت: أزرق فيروزي نقي مع شفافية بسيطة */
-    --card-bg-1: #00BCD4; /* Cyan 500 */
-    --card-bg-2: #00ACC1; /* Cyan 600 */
-    --card-shadow: rgba(0, 188, 212, 0.3);
-    --card-border: rgba(255, 255, 255, 0.7);
+    /* الكارت: أزرق تيل أعمق */
+    --card-bg-1: #264A57; /* Deep Teal */
+    --card-bg-2: #346370; /* Muted Teal */
+    --card-shadow: rgba(38, 74, 87, 0.4);
+    --card-border: rgba(255, 255, 255, 0.1);
 
-    /* النصوص: أبيض ناصع */
+    /* النصوص: أبيض نيون مع تدرج ساطع */
     --h1-grad-1: #ffffff;
-    --h1-grad-2: #f0f0f0;
+    --h1-grad-2: #CCFF90; /* Light Green Accent */
     --h1-grad-3: #ffffff;
     
-    /* الحقول: نص بلون أزرق داكن جداً */
-    --input-text: #006064; /* Cyan 900 */
+    /* الحقول: نص بلون أزرق تيل فاتح */
+    --input-text: #4DD0E1; /* Light Blue */
     
-    /* الأزرار: أزرق داكن لعمل تباين قوي */
-    --btn-grad-1: #263238; /* Blue Grey 900 */
-    --btn-grad-2: #37474F; /* Blue Grey 800 */
+    /* الأزرار: أخضر نيون ساطع لكسر حدة الألوان الداكنة */
+    --btn-grad-1: #69F0AE; /* Light Green A200 */
+    --btn-grad-2: #00E676; /* Green A400 */
 }
 /* ====================================
    2. الكود الأصلي (بدون أي تغيير في الأبعاد)
