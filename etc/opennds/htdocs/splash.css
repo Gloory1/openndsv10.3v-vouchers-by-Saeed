@@ -176,32 +176,50 @@ button,
 .btn,
 input[type='submit'],
 input[type='button'] {
-	position: relative;
-	z-index: 2;
-	background: linear-gradient(45deg, #1a1a1a, #2c3e50) !important;
-	color: white !important;
-	border: 1px solid rgba(255, 255, 255, 0.1);
-	padding: 15px;
-	height: auto !important;
-	line-height: normal !important;
-	font-size: 1.2rem;
-	border-radius: 12px;
-	cursor: pointer;
-	width: 100%;
-	font-weight: 700;
-	transition: all 0.3s ease;
-	box-shadow: 0 10px 20px rgba(0, 0, 0, 0.25);
-	overflow: hidden;
-	margin-top: 5px;
+    /* الترتيب والطبقات */
+    position: relative;
+    z-index: 10; /* رفعته عشان ميغطيهوش أي تأثير تاني */
+    
+    /* --- نفس ألوانك القديمة --- */
+    background: linear-gradient(45deg, #1a1a1a, #2c3e50) !important;
+    color: white !important;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+
+    /* الأبعاد والخطوط */
+    padding: 15px;
+    height: auto !important;
+    line-height: normal !important;
+    font-size: 1.2rem;
+    border-radius: 12px;
+    width: 100%;
+    font-weight: 700;
+    cursor: pointer;
+    margin-top: 5px;
+    
+    /* --- إصلاح مشكلة الاختفاء --- */
+    overflow: visible !important; /* ده أهم سطر عشان الظل ميكسرش الزرار */
+    transform: translateZ(0); /* بيجبر المتصفح يرسمه كطبقة صلبة */
+    backface-visibility: hidden;
+
+    /* الحركة والظل */
+    transition: all 0.3s ease;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.25);
 }
 
 button:hover,
 .btn:hover,
 input[type='submit']:hover,
 input[type='button']:hover {
-	transform: translateY(-3px);
-	box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
-	background: linear-gradient(45deg, #000, #1a1a1a) !important;
+    /* تأثير الهوفر بتاعك */
+    transform: translateY(-3px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
+    background: linear-gradient(45deg, #000, #1a1a1a) !important;
+}
+
+button:active,
+.btn:active {
+    transform: translateY(-1px);
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
 }
 
 med-blue {
