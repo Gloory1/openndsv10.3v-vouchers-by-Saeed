@@ -358,6 +358,21 @@ copy-right {
     direction: rtl !important;
     text-align: right !important;
 }
+
+.arabic-style h1,
+.arabic-style h2,
+.arabic-style h3,
+.arabic-style .insert>h1 {
+    text-align: right !important;
+}
+
+.arabic-style input[type='text'],
+.arabic-style input[type='password'],
+.arabic-style input[type='number'] {
+    text-align: right !important;
+    direction: rtl;
+}
+
 @media (max-height: 600px) {
     body {
         justify-content: flex-start;
