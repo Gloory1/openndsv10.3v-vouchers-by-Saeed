@@ -3,7 +3,7 @@
    ====================================
 */
 :root {
-    color-scheme: light;
+    color-scheme: light only;
     /* خلفية متدرجة من الوردي الباهت والبيج */
     --bg-grad-1: #F8E0E0; /* Light Pinkish */
     --bg-grad-2: #E8D3D3; /* Dusty Rose Light */
