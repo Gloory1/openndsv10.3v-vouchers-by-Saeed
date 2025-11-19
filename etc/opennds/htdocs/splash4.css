@@ -1,32 +1,32 @@
 /* ====================================
-   1. تصميم بأسلوب "Huawei" (أزرق/بنفسجي عميق وعصري)
+   2. تصميم "Emerald Elegance" (أخضر زمردي راقٍ)
    ====================================
 */
 :root {
     color-scheme: dark;
-    /* خلفية متدرجة عميقة مستوحاة من ألوان هواوي */
-    --bg-grad-1: #283593; /* Indigo Dark */
-    --bg-grad-2: #303f9f; /* Indigo Regular */
-    --bg-grad-3: #3f51b5; /* Indigo Light */
-    --text-color: #e8eaf6; /* Light Indigo */
+    /* خلفية متدرجة من الأخضر الداكن */
+    --bg-grad-1: #0A360A; /* Dark Olive */
+    --bg-grad-2: #1A4D2E; /* Emerald Green */
+    --bg-grad-3: #2A6A4E; /* Forest Green */
+    --text-color: #E8F5E9; /* Lightest Green */
 
-    /* الكارت: لون أزرق-بنفسجي معتم */
-    --card-bg-1: #3949ab; /* Indigo A700 */
-    --card-bg-2: #5c6bc0; /* Indigo A400 */
-    --card-shadow: rgba(48, 63, 159, 0.4);
-    --card-border: rgba(255, 255, 255, 0.3);
+    /* الكارت: تدرج أخضر أغمق قليلاً */
+    --card-bg-1: #154F3A; /* Dark Emerald */
+    --card-bg-2: #2E7D32; /* Rich Green */
+    --card-shadow: rgba(21, 79, 58, 0.5);
+    --card-border: rgba(255, 255, 255, 0.2);
 
-    /* النصوص: تدرج أبيض مع لمسة خفيفة */
-    --h1-grad-1: #ffffff;
-    --h1-grad-2: #e0e0e0;
-    --h1-grad-3: #c5cae9; /* Light Indigo for contrast */
+    /* النصوص: تدرج ذهبي ناعم أو أبيض كريمي */
+    --h1-grad-1: #FFFDD0; /* Creamy White */
+    --h1-grad-2: #FFD700; /* Gold */
+    --h1-grad-3: #FFFDD0; /* Creamy White */
     
-    /* الحقول: نص بلون أزرق-بنفسجي عميق */
-    --input-text: #1a237e; /* Darker Indigo */
+    /* الحقول: نص بلون أخضر داكن للقراءة */
+    --input-text: #1B5E20; /* Darker Green */
     
-    /* الأزرار: أزرق سماوي ناعم لكسر حدة الألوان الغامقة */
-    --btn-grad-1: #00bcd4; /* Cyan */
-    --btn-grad-2: #00acc1; /* Darker Cyan */
+    /* الأزرار: ذهبي مطفأ ليعطي لمسة فاخرة */
+    --btn-grad-1: #C2A700; /* Muted Gold */
+    --btn-grad-2: #A58B00; /* Darker Muted Gold */
 }
 /* ====================================
    2. الكود الأصلي (بدون أي تغيير في الأبعاد)
