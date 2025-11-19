@@ -1,32 +1,32 @@
 /* ====================================
-   3. تصميم "Subtle Lavender" (بنفسجي فاتح وهادئ)
+   2. تصميم "Emerald Elegance" (أخضر زمردي راقٍ)
    ====================================
 */
 :root {
-    color-scheme: light;
-    /* خلفية متدرجة من البنفسجي الفاتح والوردي الباستيل */
-    --bg-grad-1: #EDE7F6; /* Lightest Lavender */
-    --bg-grad-2: #D1C4E9; /* Light Lavender */
-    --bg-grad-3: #B39DDB; /* Medium Lavender */
-    --text-color: #424242; /* Dark Gray */
+    color-scheme: dark only;
+    /* خلفية متدرجة من الأخضر الداكن */
+    --bg-grad-1: #0A360A; /* Dark Olive */
+    --bg-grad-2: #1A4D2E; /* Emerald Green */
+    --bg-grad-3: #2A6A4E; /* Forest Green */
+    --text-color: #E8F5E9; /* Lightest Green */
 
-    /* الكارت: بنفسجي أغمق قليلاً مع شفافية بسيطة */
-    --card-bg-1: #9575CD; /* Medium Purple */
-    --card-bg-2: #7E57C2; /* Darker Purple */
-    --card-shadow: rgba(149, 117, 205, 0.3);
-    --card-border: rgba(255, 255, 255, 0.5);
+    /* الكارت: تدرج أخضر أغمق قليلاً */
+    --card-bg-1: #154F3A; /* Dark Emerald */
+    --card-bg-2: #2E7D32; /* Rich Green */
+    --card-shadow: rgba(21, 79, 58, 0.5);
+    --card-border: rgba(255, 255, 255, 0.2);
 
-    /* النصوص: تدرج أبيض نقي */
-    --h1-grad-1: #ffffff;
-    --h1-grad-2: #f0f0f0;
-    --h1-grad-3: #ffffff;
+    /* النصوص: تدرج ذهبي ناعم أو أبيض كريمي */
+    --h1-grad-1: #FFFDD0; /* Creamy White */
+    --h1-grad-2: #FFD700; /* Gold */
+    --h1-grad-3: #FFFDD0; /* Creamy White */
     
-    /* الحقول: نص بلون بنفسجي عميق */
-    --input-text: #4527A0; /* Deep Purple */
+    /* الحقول: نص بلون أخضر داكن للقراءة */
+    --input-text: #1B5E20; /* Darker Green */
     
-    /* الأزرار: رمادي أزرق هادئ للموازنة */
-    --btn-grad-1: #607D8B; /* Blue Grey */
-    --btn-grad-2: #455A64; /* Dark Blue Grey */
+    /* الأزرار: ذهبي مطفأ ليعطي لمسة فاخرة */
+    --btn-grad-1: #C2A700; /* Muted Gold */
+    --btn-grad-2: #A58B00; /* Darker Muted Gold */
 }
 /* ====================================
    2. الكود الأصلي (بدون أي تغيير في الأبعاد)
