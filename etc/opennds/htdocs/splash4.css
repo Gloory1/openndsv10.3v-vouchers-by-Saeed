@@ -1,6 +1,6 @@
-/* === THEME 4: AURORA (PASTEL GLASS) === */
+/* === THEME 4: SPOTIFY STYLE (BLACK & GREEN) === */
  :root {
-     color-scheme: light only;
+     color-scheme: dark only;
 }
  * {
      margin: 0;
@@ -16,32 +16,29 @@
      overflow-x: hidden !important;
 }
  body {
-    /* خلفية باستيل ناعمة */
-     background: linear-gradient(135deg, #ff9a9e, #fad0c4, #a18cd1);
-     background-size: 400% 400%;
-     animation: gradientBG 10s ease infinite;
+     background: #121212;
+    /* أسود سبوتيفاي */
      min-height: 100vh;
      padding: 10px;
      display: flex;
      justify-content: center;
      align-items: center;
      text-align: center;
-     color: #333;
+     color: #fff;
 }
  .card, .offset {
-    /* كارت أبيض شفاف (Glass Effect) */
-     background: linear-gradient(135deg, rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0.2)) !important;
+     background: #282828 !important;
+    /* رمادي غامق */
      border-radius: 25px;
-     box-shadow: 0 20px 60px rgba(161, 140, 209, 0.25);
+     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7);
      width: 100%;
      max-width: 500px;
      min-width: 300px;
      padding: 10px 15px;
      position: relative;
      overflow: hidden;
-     border: 1px solid rgba(255, 255, 255, 0.6);
-     color: #444;
-    /* النص غامق عشان يبان */
+     border: 1px solid rgba(255, 255, 255, 0.1);
+     color: white;
      margin: 0 auto;
      z-index: 1;
      display: block;
@@ -52,7 +49,7 @@
      backface-visibility: hidden;
      animation: slideUpFade 2.2s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
 }
-/* خلفيات مايلة بيضاء */
+/* تأثيرات خضراء خفيفة */
  .card::before, .offset::before {
      content: '';
      position: absolute;
@@ -60,7 +57,7 @@
      left: 0;
      width: 60%;
      height: 100%;
-     background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.4), transparent);
+     background: linear-gradient(to right, transparent, rgba(29, 185, 84, 0.1), transparent);
      transform: skewX(-20deg);
      z-index: -1;
      will-change: transform;
@@ -74,7 +71,7 @@
      right: 0;
      width: 60%;
      height: 100%;
-     background: linear-gradient(to left, transparent, rgba(255, 255, 255, 0.4), transparent);
+     background: linear-gradient(to left, transparent, rgba(29, 185, 84, 0.1), transparent);
      transform: skewX(20deg);
      z-index: -1;
      will-change: transform;
@@ -84,8 +81,8 @@
  .info, .insert {
      position: relative;
      z-index: 2;
-     background: rgba(255, 255, 255, 0.5) !important;
-     border: 1px solid rgba(255, 255, 255, 0.7) !important;
+     background: rgba(255, 255, 255, 0.1) !important;
+     border: 1px solid rgba(255, 255, 255, 0.1) !important;
      border-radius: 15px;
      padding: 10px;
      backdrop-filter: blur(5px);
@@ -93,21 +90,16 @@
      transform: translateZ(0);
      margin-bottom: 15px;
      margin-top: 30px;
-     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
      clear: both;
 }
  h1, .insert>h1 {
      font-size: 2.2rem;
      margin: 10px 0 15px;
      font-weight: 800;
-    /* نص بلون غامق */
-     background: linear-gradient(to right, #333, #555, #333);
-     background-size: 200% auto;
-     color: #333;
-     -webkit-background-clip: text;
-     -webkit-text-fill-color: transparent;
-     animation: shine 3s linear infinite;
+     color: #fff;
      text-align: center;
+     text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
      transform: translateZ(0);
 }
  img, .logo {
@@ -118,10 +110,11 @@
      margin: 10px;
      border-radius: 50%;
      object-fit: cover;
-     border: 4px solid #fff;
-     box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+     border: 3px solid #1DB954;
+    /* برواز أخضر */
+     box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
      transition: all 0.5s ease;
-     background-color: white;
+     background-color: #121212;
      will-change: transform;
      transform: translateZ(0);
      animation: float 3s ease-in-out infinite;
@@ -139,13 +132,13 @@
      padding: 0 15px;
      border: none !important;
      border-radius: 12px;
-     background: #fff !important;
+     background: #3E3E3E !important;
+    /* رمادي فاتح شوية */
      font-size: 1.4rem;
      font-weight: 700;
      text-align: center;
-     color: #a18cd1 !important;
-    /* لون الكتابة موف */
-     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+     color: #fff !important;
+     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
      transition: all 0.3s ease;
      margin-bottom: 5px;
      transform: translateZ(0);
@@ -157,24 +150,27 @@
  input:focus {
      outline: none;
      transform: scale(1.02);
-     box-shadow: 0 10px 25px rgba(161, 140, 209, 0.2);
+     box-shadow: 0 10px 25px rgba(29, 185, 84, 0.2);
+     border: 1px solid #1DB954 !important;
 }
-/* زرار متدرج (Cyan to Purple) */
+/* زرار أخضر سبوتيفاي */
  button, .btn, input[type='submit'] {
      position: relative;
      z-index: 20 !important;
-     background: linear-gradient(45deg, #89f7fe, #66a6ff) !important;
+     background: #1DB954 !important;
+    /* أخضر صافي */
      color: white !important;
-     border: 1px solid rgba(255, 255, 255, 0.4);
+     border: none;
      padding: 0;
      height: 60px !important;
      font-size: 1.2rem;
-     border-radius: 12px;
+     border-radius: 30px;
+    /* زرار دائري */
      cursor: pointer;
      width: 100%;
      font-weight: 700;
      transition: all 0.3s ease;
-     box-shadow: 0 10px 20px rgba(102, 166, 255, 0.3);
+     box-shadow: 0 10px 20px rgba(29, 185, 84, 0.4);
      margin-top: 5px;
      overflow: visible;
      opacity: 0.99;
@@ -186,21 +182,21 @@
      align-items: center;
 }
  button:hover, .btn:hover {
-     transform: translateY(-3px);
-     box-shadow: 0 15px 30px rgba(102, 166, 255, 0.5);
-     background: linear-gradient(45deg, #66a6ff, #89f7fe) !important;
+     transform: translateY(-3px) scale(1.02);
+     box-shadow: 0 15px 30px rgba(29, 185, 84, 0.6);
+     background: #1ed760 !important;
 }
 /* Extras */
  hr {
      border: 0;
      height: 1px;
-     background: linear-gradient(to right, transparent, rgba(0,0,0,0.1), transparent);
+     background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.3), transparent);
      margin: 15px 0;
      clear: both;
 }
  .restore-link {
      cursor: pointer;
-     color: #555;
+     color: #b3b3b3;
      font-weight: 700;
      text-decoration: underline;
      transition: all 0.3s ease;
@@ -211,18 +207,18 @@
 }
  .restore-link:hover {
      transform: scale(1.05);
-     color: #333;
+     color: #fff;
 }
  med-blue {
      font-size: 1.2em;
-     color: #333 !important;
+     color: #fff !important;
      font-weight: bold;
      display: block;
      margin: 5px 0;
 }
  copy-right {
      font-size: 0.85rem;
-     color: rgba(0, 0, 0, 0.5);
+     color: #b3b3b3;
      font-weight: 600;
      display: block;
      margin-top: 15px;
@@ -235,27 +231,27 @@
      margin: 15px 0;
      font-size: 1.1rem;
      font-weight: 700;
-     background: white;
-     color: #333;
-     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+     background: #333;
+     color: #fff;
+     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
      transform: translateZ(0);
      will-change: transform, opacity;
      clear: both;
      display: block;
 }
  .success {
-     border-left: 5px solid #27ae60;
-     color: #27ae60;
+     border-left: 5px solid #1DB954;
+     color: #1DB954;
 }
  .error {
-     border-left: 5px solid #c0392b;
-     color: #c0392b;
+     border-left: 5px solid #e74c3c;
+     color: #e74c3c;
 }
  .spinner {
      display: none;
      width: 25px;
      height: 25px;
-     border: 3px solid rgba(255, 255, 255, 0.5);
+     border: 3px solid rgba(255, 255, 255, 0.3);
      border-radius: 50%;
      border-top-color: #fff;
      animation: spin 1s ease-in-out infinite;
@@ -265,38 +261,6 @@
 }
  .btn-loading .spinner {
      display: block !important;
-}
- @keyframes gradientBG {
-     0% {
-         background-position: 0% 50%;
-    }
-     50% {
-         background-position: 100% 50%;
-    }
-     100% {
-         background-position: 0% 50%;
-    }
-}
- @keyframes shine {
-     to {
-         background-position: 200% center;
-    }
-}
- @keyframes float {
-     0% {
-         transform: translateY(0px);
-    }
-     50% {
-         transform: translateY(-10px);
-    }
-     100% {
-         transform: translateY(0px);
-    }
-}
- @keyframes spin {
-     to {
-         transform: rotate(360deg);
-    }
 }
  @keyframes slideUpFade {
      0% {
@@ -334,6 +298,22 @@
      100% {
          right: -50%;
          opacity: 0;
+    }
+}
+ @keyframes float {
+     0% {
+         transform: translateY(0px);
+    }
+     50% {
+         transform: translateY(-10px);
+    }
+     100% {
+         transform: translateY(0px);
+    }
+}
+ @keyframes spin {
+     to {
+         transform: rotate(360deg);
     }
 }
  .arabic-style {
