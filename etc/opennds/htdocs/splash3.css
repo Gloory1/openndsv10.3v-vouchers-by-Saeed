@@ -1,994 +1,452 @@
 :root {
-
     color-scheme: light only;
 
-    
-
-    /* الخلفية */
-
-    --bg-grad-1: #1a1a1a;
-
-    --bg-grad-2: #1a1a1a;
-
-    --bg-grad-3: #1a1a1a;
-
-    --text-color: #333;
-
-
-
-    /* الكارت */
-
-    --card-bg-1: #d31027;
-
-    --card-bg-2: #ea384d;
-
-    --card-shadow: rgba(211, 16, 39, 0.35);
-
-    --card-border: rgba(255, 255, 255, 0.25);
-
-
-
-    /* النصوص */
-
-    --h1-grad-1: #ffffff;
-
-    --h1-grad-2: #fff9c4;
-
-    --h1-grad-3: #ffffff;
-
-    
-
-    /* الحقول */
-
-    --input-text: #d31027;
-
-    
-
-    /* الأزرار */
-
-    --btn-grad-1: #1a1a1a;
-
-    --btn-grad-2: #2c3e50;
-
-}
-
-
-
-/* ====================================
-
-   2. الكود الأصلي (بدون تغيير في الأبعاد)
-
-   ====================================
-
-*/
-
-* {
-
-    margin: 0;
-
-    padding: 0;
-
-    box-sizing: border-box;
-
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-
-}
-
-
-
-body {
-
-    background: linear-gradient(135deg, var(--bg-grad-1), var(--bg-grad-2), var(--bg-grad-3));
-
-    background-size: 400% 400%;
-
-    animation: gradientBG 10s ease infinite;
-
-    min-height: 100vh;
-
-    padding: 10px;
-
-    display: flex;
-
-    justify-content: center;
-
-    align-items: center;
-
-    text-align: center;
-
-    color: var(--text-color);
-
-}
-
-
-
-.card,
-
-.offset {
-
-    background: linear-gradient(135deg, var(--card-bg-1), var(--card-bg-2)) !important;
-
-    border-radius: 25px;
-
-    box-shadow: 0 20px 60px var(--card-shadow);
-
-    width: 100%;
-
-    max-width: 500px;
-
-    min-width: 300px;
-
-    padding: 10px;
-
-    position: relative;
-
-    overflow: hidden;
-
-    border: 1px solid var(--card-border);
-
-    color: white;
-
-    margin-left: auto;
-
-    margin-right: auto;
-
-    z-index: 1;
-
-    animation: slideUpFade 2.2s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
-
-}
-
-
-
-.card::before,
-
-.offset::before {
-
-    content: '';
-
-    position: absolute;
-
-    top: 0;
-
-    left: 0;
-
-    width: 60%;
-
-    height: 100%;
-
-    background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.3), transparent);
-
-    transform: skewX(-20deg);
-
-    z-index: -1;
-
-    animation: pulseLeft 3s ease-in-out infinite;
-
-}
-
-
-
-.card::after,
-
-.offset::after {
-
-    content: '';
-
-    position: absolute;
-
-    top: 0;
-
-    right: 0;
-
-    width: 60%;
-
-    height: 100%;
-
-    background: linear-gradient(to left, transparent, rgba(255, 255, 255, 0.3), transparent);
-
-    transform: skewX(20deg);
-
-    z-index: -1;
-
-    animation: pulseRight 3s ease-in-out infinite;
-
-}
-
-
-
-.info,
-
-.insert {
-
-    position: relative;
-
-    z-index: 2;
-
-    background: rgba(255, 255, 255, 0.15) !important;
-
-    border: 1px solid rgba(255, 255, 255, 0.3) !important;
-
-    border-radius: 15px;
-
-    padding: 5px;
-
-    backdrop-filter: blur(5px);
-
-    margin-bottom: 15px;
-
-    margin-top: 35px;
-
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-
-}
-
-
-
-h1,
-
-.insert>h1 {
-
-    font-size: 2.2rem;
-
-    margin: 10px 0 15px;
-
-    font-weight: 800;
-
-    background: linear-gradient(to right, var(--h1-grad-1) 20%, var(--h1-grad-2) 50%, var(--h1-grad-3) 80%);
-
-    background-size: 200% auto;
-
-    color: #fff;
-
-    -webkit-background-clip: text;
-
-    -webkit-text-fill-color: transparent;
-
-    animation: shine 3s linear infinite;
-
-    text-align: center;
-
-    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-
-}
-
-
-
-h2 {
-
-    font-size: 1.2rem;
-
-    margin-bottom: 25px;
-
-    font-weight: 600;
-
-    color: rgba(255, 255, 255, 0.95);
-
-    position: relative;
-
-    z-index: 2;
-
-}
-
-
-
-h3 {
-
-    font-size: 1.1rem;
-
-    padding: 5px;
-
-    font-weight: 600;
-
-    color: white;
-
-    position: relative;
-
-}
-
-
-
-img,
-
-.logo {
-
-    position: relative;
-
-    z-index: 2;
-
-    width: 90px;
-
-    height: 90px;
-
-    margin: 10px auto;
-
-    border-radius: 50%;
-
-    object-fit: cover;
-
-    border: 4px solid #fff;
-
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
-
-    transition: all 0.5s ease;
-
-    background-color: white;
-
-    animation: float 3s ease-in-out infinite;
-
-    display: block;
-
-    float: left; 
-
-}
-
-
-
-img:hover {
-
-    transform: scale(1.05) rotate(5deg);
-
-}
-
-
-
-input[type='text'],
-
-input[type='email'],
-
-input[type='password'],
-
-input[type='number'],
-
-input[type='tel'] {
-
-    position: relative;
-
-    z-index: 2;
-
-    width: 100%;
-
-    padding: 18px 20px;
-
-    height: auto !important;
-
-    line-height: normal !important;
-
-    border: none !important;
-
-    border-radius: 12px;
-
-    background: #fff !important;
-
-    font-size: 1.4rem;
-
-    font-weight: 700;
-
-    text-align: center;
-
-    color: var(--input-text) !important;
-
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-
-    transition: all 0.3s ease;
-
-    margin-bottom: 5px;
-
-}
-
-
-
-input:focus {
-
-    outline: none;
-
-    transform: scale(1.02);
-
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-
-}
-
-
-
-button,
-
-.btn,
-
-input[type='submit'],
-
-input[type='button'] {
-
-    position: relative;
-
-    z-index: 2;
-
-    background: linear-gradient(45deg, var(--btn-grad-1), var(--btn-grad-2)) !important;
-
-    color: white !important;
-
-    border: 1px solid rgba(255, 255, 255, 0.1);
-
-    padding: 15px;
-
-    height: auto !important;
-
-    line-height: normal !important;
-
-    font-size: 1.2rem;
-
-    border-radius: 12px;
-
-    cursor: pointer;
-
-    width: 100%;
-
-    font-weight: 700;
-
-    transition: all 0.3s ease;
-
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.25);
-
-    overflow: hidden;
-
-    margin-top: 5px;
-
-}
-
-
-
-button:hover,
-
-.btn:hover,
-
-input[type='submit']:hover,
-
-input[type='button']:hover {
-
-    transform: translateY(-3px);
-
-    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
-
-    background: linear-gradient(45deg, #000, #1a1a1a) !important;
-
-}
-
-
-
-med-blue {
-
-    font-size: 1.2em;
-
-    color: #dff9fb !important;
-
-    font-weight: bold;
-
-    display: block;
-
-    margin: 5px 0;
-
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
-
-}
-
-
-
-big-red {
-
-    font-size: 1.5em;
-
-    color: #ffffff !important;
-
-    font-weight: 800;
-
-    display: block;
-
-    margin: 5px 0;
-
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-
-}
-
-
-
-italic-black {
-
-    font-size: 1em;
-
-    color: rgba(255, 255, 255, 0.9) !important;
-
-    font-weight: bold;
-
-    font-style: italic;
-
-    margin-bottom: 10px;
-
-    display: block;
-
-}
-
-
-
-copy-right {
-
-    font-size: 0.85rem;
-
-    color: rgba(255, 255, 255, 0.7);
-
-    font-weight: 600;
-
-    display: block;
-
-    margin-top: 15px;
-
-}
-
-
-
-hr {
-
-    border: 0;
-
-    height: 1px;
-
-    background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.7), transparent);
-
-    margin: 15px 0;
-
-    border-style: none !important;
-
-}
-
-
-
-.restore-link {
-
-    cursor: pointer;
-
-    color: #ffffff;
-
-    /* margin-top: 5px; */
-
-    font-weight: 700;
-
-    text-decoration: underline;
-
-    transition: all 0.3s ease;
-
-    display: inline-block;
-
-}
-
-
-
-.restore-link:hover {
-
-    transform: scale(1.05);
-
-    text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
-
-}
-
-
-
-.spinner {
-
-    display: inline-block;
-
-    width: 25px;
-
-    height: 25px;
-
-    border: 4px solid rgba(255, 255, 255, .3);
-
-    border-radius: 50%;
-
-    border-top-color: #fff;
-
-    animation: spin 1s ease-in-out infinite;
-
-    vertical-align: middle;
-
-    margin-right: 10px;
-
-}
-
-
-
-.btn-loading .btn-text {
-
-    display: none;
-
-}
-
-
-
-.btn-loading .spinner {
-
-    display: inline-block !important;
-
-}
-
-
-
-.status {
-
-    padding: 15px;
-
-    border-radius: 12px;
-
-    margin: 15px 0;
-
-    font-size: 1.1rem;
-
-    background: white;
-
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-
-    position: relative;
-
-    z-index: 2;
-
-    color: #333;
-
-}
-
-
-
-.success {
-
-    border-left: 5px solid #27ae60;
-
-    color: #27ae60;
-
-}
-
-
-
-.error {
-
-    border-left: 5px solid #c0392b;
-
-    color: #c0392b;
-
-}
-
-
-
-@keyframes gradientBG {
-
-    0% {
-
-        background-position: 0% 50%;
-
-    }
-
-
-
-    50% {
-
-        background-position: 100% 50%;
-
-    }
-
-
-
-    100% {
-
-        background-position: 0% 50%;
-
-    }
-
-}
-
-
-
-@keyframes rotateGradient {
-
-    0% {
-
-        transform: rotate(0deg);
-
-    }
-
-
-
-    100% {
-
-        transform: rotate(360deg);
-
-    }
-
-}
-
-
-
-@keyframes shine {
-
-    to {
-
-        background-position: 200% center;
-
-    }
-
-}
-
-
-
-@keyframes float {
-
-    0% {
-
-        transform: translateY(0px);
-
-    }
-
-
-
-    50% {
-
-        transform: translateY(-10px);
-
-    }
-
-
-
-    100% {
-
-        transform: translateY(0px);
-
-    }
-
-}
-
-
-
-@keyframes spin {
-
-    to {
-
-        transform: rotate(360deg);
-
-    }
-
-}
-
-
-
-@keyframes slideUpFade {
-
-    0% {
-
-        opacity: 0;
-
-        transform: translateY(100px) scale(0.9);
-
-    }
-
-
-
-    100% {
-
-        opacity: 1;
-
-        transform: translateY(0) scale(1);
-
-    }
-
-}
-
-
-
-@keyframes pulseLeft {
-
-    0% {
-
-        left: -50%;
-
-        opacity: 0;
-
-    }
-
-
-
-    50% {
-
-        left: -10%;
-
-        opacity: 1;
-
-    }
-
-
-
-    100% {
-
-        left: -50%;
-
-        opacity: 0;
-
-    }
-
-}
-
-
-
-@keyframes pulseRight {
-
-    0% {
-
-        right: -50%;
-
-        opacity: 0;
-
-    }
-
-
-
-    50% {
-
-        right: -10%;
-
-        opacity: 1;
-
-    }
-
-
-
-    100% {
-
-        right: -50%;
-
-        opacity: 0;
-
-    }
-
-}
-
-
-
-.arabic-style {
-
-    direction: rtl !important;
-
-    text-align: right !important;
-
-}
-
-
-
-.arabic-style h1,
-
-.arabic-style h2,
-
-.arabic-style h3,
-
-.arabic-style .insert>h1 {
-
-    text-align: right !important;
-
-}
-
-
-
-.arabic-style input[type='text'],
-
-.arabic-style input[type='password'],
-
-.arabic-style input[type='number'] {
-
-    text-align: right !important;
-
-    direction: rtl;
-
-}
-
-
-
-
-
-أدني نفس الcssبالميلي بس غير
-
-/* ====================================
-
-   1. منطقة التحكم بالألوان (ROOT)
-
-   نفس الأكواد الأصلية تم وضعها هنا
-
-   ====================================
-
-*/
-
-:root {
-
-    color-scheme: light only;
-
-    
-
-    /* الخلفية */
-
-    --bg-grad-1: #1a1a1a;
-
-    --bg-grad-2: #1a1a1a;
-
-    --bg-grad-3: #1a1a1a;
-
-    --text-color: #333;
-
-
-
-    /* الكارت */
-
-    --card-bg-1: #d31027;
-
-    --card-bg-2: #ea384d;
-
-    --card-shadow: rgba(211, 16, 39, 0.35);
-
-    --card-border: rgba(255, 255, 255, 0.25);
-
-
-
-    /* النصوص */
-
-    --h1-grad-1: #ffffff;
-
-    --h1-grad-2: #fff9c4;
-
-    --h1-grad-3: #ffffff;
-
-    
-
-    /* الحقول */
-
-    --input-text: #d31027;
-
-    
-
-    /* الأزرار */
-
-    --btn-grad-1: #1a1a1a;
-
-    --btn-grad-2: #2c3e50;
-
-}
-
-
-
-
-
-بس بالألوان العصرية المبهجة كدا
-
-تفضل، هذا هو الكود بنفس الأبعاد والقياسات (بالميلي) كما طلبت تماماً، قمت فقط بتغيير منطقة :root لاستخدام ألوان عصرية "Fresh & Vibrant" (مزيج من الأزرق السماوي اللامع، والبنفسجي الهادئ، مع أزرار بلون مرجاني مبهج) لتعطي انطباعاً بالحداثة والراحة النفسية بدلاً من الألوان الداكنة.
-
-CSS
-/* ====================================
-   1. منطقة التحكم بالألوان (ROOT) - تم التعديل لألوان عصرية مبهجة
-   ====================================
-*/
-:root {
-    color-scheme: light only;
-    
     /* الخلفية: تدرج ألوان فاتح ومريح (باستيل) */
-    --bg-grad-1: #a18cd1;       /* بنفسجي فاتح */
-    --bg-grad-2: #fbc2eb;       /* وردي هادئ */
-    --bg-grad-3: #8fd3f4;       /* أزرق سماوي */
+    --bg-grad-1: #a18cd1;
+    /* بنفسجي فاتح */
+    --bg-grad-2: #fbc2eb;
+    /* وردي هادئ */
+    --bg-grad-3: #8fd3f4;
+    /* أزرق سماوي */
     --text-color: #333;
 
     /* الكارت: أزرق عصري لامع (Vibrant Blue) */
-    --card-bg-1: #4facfe;       /* أزرق كهربائي */
-    --card-bg-2: #00f2fe;       /* سماوي لامع */
-    --card-shadow: rgba(0, 242, 254, 0.4); /* ظل سماوي */
+    --card-bg-1: #4facfe;
+    /* أزرق كهربائي */
+    --card-bg-2: #00f2fe;
+    /* سماوي لامع */
+    --card-shadow: rgba(0, 242, 254, 0.4);
+    /* ظل سماوي */
     --card-border: rgba(255, 255, 255, 0.45);
 
     /* النصوص داخل الكارت */
     --h1-grad-1: #ffffff;
-    --h1-grad-2: #fff1eb;       /* أبيض مائل للوردي */
+    --h1-grad-2: #fff1eb;
+    /* أبيض مائل للوردي */
     --h1-grad-3: #ffffff;
-    
+
     /* الحقول: نص بلون الكارت ليكون متناسقاً */
-    --input-text: #0072ff;      /* أزرق غامق للقراءة */
-    
+    --input-text: #0072ff;
+    /* أزرق غامق للقراءة */
+
     /* الأزرار: لون "غروب الشمس" لعمل تباين مبهج مع الأزرق */
-    --btn-grad-1: #f093fb;      /* بنفسجي زهري */
-    --btn-grad-2: #f5576c;      /* أحمر مرجاني */
+    --btn-grad-1: #f093fb;
+    /* بنفسجي زهري */
+    --btn-grad-2: #f5576c;
+    /* أحمر مرجاني */
+}
+
+/* ====================================
+   2. الكود الأصلي (بدون أي تغيير في الأبعاد)
+   ====================================
+*/
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background: linear-gradient(135deg, var(--bg-grad-1), var(--bg-grad-2), var(--bg-grad-3));
+    background-size: 400% 400%;
+    animation: gradientBG 10s ease infinite;
+    min-height: 100vh;
+    padding: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    color: var(--text-color);
+}
+
+.card,
+.offset {
+    background: linear-gradient(135deg, var(--card-bg-1), var(--card-bg-2)) !important;
+    border-radius: 25px;
+    box-shadow: 0 20px 60px var(--card-shadow);
+    width: 100%;
+    max-width: 500px;
+    min-width: 300px;
+    padding: 10px;
+    position: relative;
+    overflow: hidden;
+    border: 1px solid var(--card-border);
+    color: white;
+    margin-left: auto;
+    margin-right: auto;
+    z-index: 1;
+    animation: slideUpFade 2.2s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+.card::before,
+.offset::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 60%;
+    height: 100%;
+    background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.3), transparent);
+    transform: skewX(-20deg);
+    z-index: -1;
+    animation: pulseLeft 3s ease-in-out infinite;
+}
+
+.card::after,
+.offset::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 60%;
+    height: 100%;
+    background: linear-gradient(to left, transparent, rgba(255, 255, 255, 0.3), transparent);
+    transform: skewX(20deg);
+    z-index: -1;
+    animation: pulseRight 3s ease-in-out infinite;
+}
+
+.info,
+.insert {
+    position: relative;
+    z-index: 2;
+    background: rgba(255, 255, 255, 0.15) !important;
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    border-radius: 15px;
+    padding: 5px;
+    backdrop-filter: blur(5px);
+    margin-bottom: 15px;
+    margin-top: 35px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+h1,
+.insert>h1 {
+    font-size: 2.2rem;
+    margin: 10px 0 15px;
+    font-weight: 800;
+    background: linear-gradient(to right, var(--h1-grad-1) 20%, var(--h1-grad-2) 50%, var(--h1-grad-3) 80%);
+    background-size: 200% auto;
+    color: #fff;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: shine 3s linear infinite;
+    text-align: center;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+h2 {
+    font-size: 1.2rem;
+    margin-bottom: 25px;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.95);
+    position: relative;
+    z-index: 2;
+}
+
+h3 {
+    font-size: 1.1rem;
+    padding: 5px;
+    font-weight: 600;
+    color: white;
+    position: relative;
+}
+
+img,
+.logo {
+    position: relative;
+    z-index: 2;
+    width: 90px;
+    height: 90px;
+    margin: 10px auto;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 4px solid #fff;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+    transition: all 0.5s ease;
+    background-color: white;
+    animation: float 3s ease-in-out infinite;
+    display: block;
+    float: left;
+}
+
+img:hover {
+    transform: scale(1.05) rotate(5deg);
+}
+
+input[type='text'],
+input[type='email'],
+input[type='password'],
+input[type='number'],
+input[type='tel'] {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    padding: 18px 20px;
+    height: auto !important;
+    line-height: normal !important;
+    border: none !important;
+    border-radius: 12px;
+    background: #fff !important;
+    font-size: 1.4rem;
+    font-weight: 700;
+    text-align: center;
+    color: var(--input-text) !important;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    margin-bottom: 5px;
+}
+
+input:focus {
+    outline: none;
+    transform: scale(1.02);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+
+button,
+.btn,
+input[type='submit'],
+input[type='button'] {
+    position: relative;
+    z-index: 2;
+    background: linear-gradient(45deg, var(--btn-grad-1), var(--btn-grad-2)) !important;
+    color: white !important;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 15px;
+    height: auto !important;
+    line-height: normal !important;
+    font-size: 1.2rem;
+    border-radius: 12px;
+    cursor: pointer;
+    width: 100%;
+    font-weight: 700;
+    transition: all 0.3s ease;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.25);
+    overflow: hidden;
+    margin-top: 5px;
+}
+
+button:hover,
+.btn:hover,
+input[type='submit']:hover,
+input[type='button']:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
+    background: linear-gradient(45deg, #000, #1a1a1a) !important;
+}
+
+med-blue {
+    font-size: 1.2em;
+    color: #dff9fb !important;
+    font-weight: bold;
+    display: block;
+    margin: 5px 0;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+big-red {
+    font-size: 1.5em;
+    color: #ffffff !important;
+    font-weight: 800;
+    display: block;
+    margin: 5px 0;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+italic-black {
+    font-size: 1em;
+    color: rgba(255, 255, 255, 0.9) !important;
+    font-weight: bold;
+    font-style: italic;
+    margin-bottom: 10px;
+    display: block;
+}
+
+copy-right {
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.7);
+    font-weight: 600;
+    display: block;
+    margin-top: 15px;
+}
+
+hr {
+    border: 0;
+    height: 1px;
+    background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.7), transparent);
+    margin: 15px 0;
+    border-style: none !important;
+}
+
+.restore-link {
+    cursor: pointer;
+    color: #ffffff;
+    /* margin-top: 5px; */
+    font-weight: 700;
+    text-decoration: underline;
+    transition: all 0.3s ease;
+    display: inline-block;
+}
+
+.restore-link:hover {
+    transform: scale(1.05);
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+}
+
+.spinner {
+    display: inline-block;
+    width: 25px;
+    height: 25px;
+    border: 4px solid rgba(255, 255, 255, .3);
+    border-radius: 50%;
+    border-top-color: #fff;
+    animation: spin 1s ease-in-out infinite;
+    vertical-align: middle;
+    margin-right: 10px;
+}
+
+.btn-loading .btn-text {
+    display: none;
+}
+
+.btn-loading .spinner {
+    display: inline-block !important;
+}
+
+.status {
+    padding: 15px;
+    border-radius: 12px;
+    margin: 15px 0;
+    font-size: 1.1rem;
+    background: white;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    position: relative;
+    z-index: 2;
+    color: #333;
+}
+
+.success {
+    border-left: 5px solid #27ae60;
+    color: #27ae60;
+}
+
+.error {
+    border-left: 5px solid #c0392b;
+    color: #c0392b;
+}
+
+@keyframes gradientBG {
+    0% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+@keyframes rotateGradient {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes shine {
+    to {
+        background-position: 200% center;
+    }
+}
+
+@keyframes float {
+    0% {
+        transform: translateY(0px);
+    }
+
+    50% {
+        transform: translateY(-10px);
+    }
+
+    100% {
+        transform: translateY(0px);
+    }
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes slideUpFade {
+    0% {
+        opacity: 0;
+        transform: translateY(100px) scale(0.9);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+@keyframes pulseLeft {
+    0% {
+        left: -50%;
+        opacity: 0;
+    }
+
+    50% {
+        left: -10%;
+        opacity: 1;
+    }
+
+    100% {
+        left: -50%;
+        opacity: 0;
+    }
+}
+
+@keyframes pulseRight {
+    0% {
+        right: -50%;
+        opacity: 0;
+    }
+
+    50% {
+        right: -10%;
+        opacity: 1;
+    }
+
+    100% {
+        right: -50%;
+        opacity: 0;
+    }
+}
+
+.arabic-style {
+    direction: rtl !important;
+    text-align: right !important;
+}
+
+.arabic-style h1,
+.arabic-style h2,
+.arabic-style h3,
+.arabic-style .insert>h1 {
+    text-align: right !important;
+}
+
+.arabic-style input[type='text'],
+.arabic-style input[type='password'],
+.arabic-style input[type='number'] {
+    text-align: right !important;
+    direction: rtl;
 }
