@@ -39,7 +39,7 @@ body {
     width: 100%;
     max-width: 400px; /* عرض مناسب للموبايل */
     border-radius: 25px;
-    padding: 25px 20px;
+    padding: 15px 10px;
     
     /* نظام الترتيب (Flexbox) - ده اللي بيمنع الزرار يرحل */
     display: flex;
