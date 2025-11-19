@@ -309,29 +309,27 @@ copy-right {
    LOADING SPINNER LOGIC (إضافة السبينر)
    ============================================================ */
 
-/* 1. شكل السبينر نفسه */
+/* 1. شكل الدائرة اللي بتلف */
 .spinner {
-    display: none; /* مخفي افتراضياً */
+    display: none; /* مخفي طول ما مفيش تحميل */
     width: 25px;
     height: 25px;
-    border: 3px solid rgba(255, 255, 255, 0.3);
-    border-radius: 50%;
-    border-top-color: #fff;
-    animation: spin 1s ease-in-out infinite;
+    border: 3px solid rgba(255, 255, 255, 0.3); /* لون باهت */
+    border-radius: 50%; /* دايرة */
+    border-top-color: #fff; /* لون أبيض ساطع من فوق عشان يبان بيلف */
+    animation: spin 1s ease-in-out infinite; /* أمر الدوران */
 }
 
-/* 2. لما الزرار ياخد كلاس btn-loading */
-.btn-loading {
-    pointer-events: none; /* منع الضغط مرتين */
-    opacity: 0.9;
-}
-
-/* اخفي الكلام */
+/* 2. لما الزرار يبقى في حالة التحميل */
 .btn-loading .btn-text {
-    display: none;
+    display: none; /* اخفي كلمة تسجيل الدخول */
 }
 
-/* اظهر السبينر */
 .btn-loading .spinner {
-    display: block !important;
+    display: block !important; /* اظهر السبينر */
+}
+
+/* أمر الدوران نفسه */
+@keyframes spin {
+    to { transform: rotate(360deg); }
 }
