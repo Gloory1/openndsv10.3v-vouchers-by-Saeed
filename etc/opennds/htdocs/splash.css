@@ -15,50 +15,37 @@
 }
 
 body {
-    /* خلفية الصفحة - غامقة */
     background: linear-gradient(135deg, #1a1a1a, #0f0f0f, #290a0a);
     background-size: 400% 400%;
     animation: gradientBG 10s ease infinite;
     min-height: 100vh;
     padding: 15px;
-    
-    /* سنترة الكارت في منتصف الشاشة */
     display: flex;
     justify-content: center;
     align-items: center;
     color: #333;
 }
 
-/* --- تنسيق الكارت (الإصلاح الجذري) --- */
+/* --- الكارت --- */
 .card,
 .offset {
-    /* لون الورد (Rose) */
     background: linear-gradient(135deg, var(--primary-red), var(--secondary-red)) !important;
-    
-    /* الأبعاد والحدود */
     width: 100%;
-    max-width: 400px; /* عرض مناسب للموبايل */
+    max-width: 400px;
     border-radius: 25px;
-    padding: 15px 10px;
-    
-    /* نظام الترتيب (Flexbox) - ده اللي بيمنع الزرار يرحل */
+    padding: 25px 20px; /* زودت البادينج شوية عشان الشكل */
     display: flex;
     flex-direction: column;
     align-items: center;
     text-align: center;
-    
-    /* تأثيرات بصرية */
     box-shadow: 0 20px 60px rgba(211, 16, 39, 0.35);
     border: 1px solid rgba(255, 255, 255, 0.2);
     position: relative;
-    
-    /* تحسين الأداء ومنع الاختفاء */
     animation: slideUpFade 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
     color: white;
     z-index: 1;
 }
 
-/* الخلفية المتحركة الخفيفة ورا الكارت */
 .card::before {
     content: '';
     position: absolute;
@@ -71,7 +58,6 @@ body {
     z-index: -1;
 }
 
-/* --- المحتوى الداخلي --- */
 .info,
 .insert {
     width: 100%;
@@ -84,22 +70,20 @@ body {
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
 
-/* --- الصور واللوجو --- */
 img,
 .logo {
     width: 90px;
     height: 90px;
-    margin: 0 auto 15px auto; /* توسيط */
+    margin: 0 auto 15px auto;
     border-radius: 50%;
     object-fit: cover;
     border: 4px solid #fff;
     box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
     background-color: white;
     animation: float 3s ease-in-out infinite;
-    display: block; /* إلغاء float */
+    display: block;
 }
 
-/* --- النصوص --- */
 h1 {
     font-size: 2rem;
     margin-bottom: 10px;
@@ -121,7 +105,8 @@ input[type='text'],
 input[type='password'],
 input[type='number'] {
     width: 100%;
-    padding: 15px;
+    height: 60px; /* ارتفاع ثابت وموحد */
+    padding: 0 15px; /* بادينج جانبي فقط */
     border: none !important;
     border-radius: 12px;
     background: #fff !important;
@@ -130,8 +115,11 @@ input[type='number'] {
     text-align: center;
     color: var(--primary-red) !important;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-    margin-bottom: 10px;
+    margin-bottom: 15px; /* مسافة بينه وبين الزرار */
     transition: transform 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 input:focus {
@@ -139,31 +127,37 @@ input:focus {
     transform: scale(1.02);
 }
 
-/* --- الأزرار (تم حل مشكلة الاختفاء والترحيل) --- */
+/* --- الأزرار (Button) --- */
 button,
 .btn,
 input[type='submit'] {
-    /* التأكد من الظهور فوق العناصر */
     position: relative;
     z-index: 10;
-    
-    /* الألوان الغامقة كما طلبت */
     background: linear-gradient(45deg, var(--dark-btn-1), var(--dark-btn-2)) !important;
     color: white !important;
     
-    /* الأبعاد والتنسيق */
+    /* الأبعاد */
     width: 100%;
-    padding: 15px;
+    height: 60px; /* نفس ارتفاع الـ Input بالظبط */
+    
+    /* تنسيق النص داخل الزر */
+    display: flex;
+    align-items: center; /* توسيط عمودي */
+    justify-content: center; /* توسيط أفقي */
+    
     font-size: 1.2rem;
     font-weight: 700;
     border-radius: 12px;
     border: 1px solid rgba(255, 255, 255, 0.15);
     cursor: pointer;
-    margin-top: 10px;
     
-    /* إصلاحات الجرافيك (Glitch Fixes) */
-    overflow: visible; /* مهم جداً عشان الظل */
-    transform: translateZ(0); /* يمنع الرمشة */
+    /* المسافات */
+    margin-top: 5px;
+    margin-bottom: 20px; /* مسافة تحت الزرار عشان النفس */
+    
+    /* الجرافيك */
+    overflow: visible;
+    transform: translateZ(0);
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
     transition: all 0.3s ease;
 }
@@ -200,7 +194,6 @@ button:active {
     to { background-position: 200% center; }
 }
 
-/* --- تحسينات اللغة العربية --- */
 .arabic-style {
     direction: rtl;
 }
