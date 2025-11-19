@@ -2,31 +2,35 @@
    5. تصميم "Soft Coral" (مرجاني ناعم وهادئ)
    ====================================
 */
+/* ====================================
+   8. تصميم "Minimalist Ocean" (بحر هادئ)
+   ====================================
+*/
 :root {
-    color-scheme: light only;
-    /* خلفية متدرجة من الخوخي والمرجاني الفاتح */
-    --bg-grad-1: #FFE0B2; /* Light Orange */
-    --bg-grad-2: #FFCCBC; /* Lighter Orange */
-    --bg-grad-3: #FFAB91; /* Peach */
-    --text-color: #5D4037; /* Brownish Grey */
+    color-scheme: light;
+    /* خلفية متدرجة من الأزرق السماوي الفاتح جداً */
+    --bg-grad-1: #E0F7FA; /* Cyan 50 */
+    --bg-grad-2: #B2EBF2; /* Cyan 100 */
+    --bg-grad-3: #80DEEA; /* Cyan 200 */
+    --text-color: #263238; /* Blue Grey 900 */
 
-    /* الكارت: مرجاني أغمق قليلاً */
-    --card-bg-1: #FF8A65; /* Deep Peach */
-    --card-bg-2: #FF7043; /* Coral */
-    --card-shadow: rgba(255, 138, 101, 0.3);
-    --card-border: rgba(255, 255, 255, 0.6);
+    /* الكارت: أزرق فيروزي نقي مع شفافية بسيطة */
+    --card-bg-1: #00BCD4; /* Cyan 500 */
+    --card-bg-2: #00ACC1; /* Cyan 600 */
+    --card-shadow: rgba(0, 188, 212, 0.3);
+    --card-border: rgba(255, 255, 255, 0.7);
 
-    /* النصوص: تدرج أبيض دافئ */
+    /* النصوص: أبيض ناصع */
     --h1-grad-1: #ffffff;
-    --h1-grad-2: #fff8e1;
+    --h1-grad-2: #f0f0f0;
     --h1-grad-3: #ffffff;
     
-    /* الحقول: نص بلون بني داكن */
-    --input-text: #4E342E; /* Dark Brown */
+    /* الحقول: نص بلون أزرق داكن جداً */
+    --input-text: #006064; /* Cyan 900 */
     
-    /* الأزرار: أزرق بحري هادئ لعمل تباين أنيق */
-    --btn-grad-1: #4DD0E1; /* Light Blue */
-    --btn-grad-2: #26C6DA; /* Medium Blue */
+    /* الأزرار: أزرق داكن لعمل تباين قوي */
+    --btn-grad-1: #263238; /* Blue Grey 900 */
+    --btn-grad-2: #37474F; /* Blue Grey 800 */
 }
 /* ====================================
    2. الكود الأصلي (بدون أي تغيير في الأبعاد)
