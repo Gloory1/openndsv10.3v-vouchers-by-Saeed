@@ -10,7 +10,7 @@
 }
 
 body {
-	background: linear-gradient(135deg, #ffffff, #fcfcfc, #f1f2f6);
+	background: linear-gradient(135deg, ##1a1a1a, ##1a1a1a, ##1a1a1a);
 	background-size: 400% 400%;
 	animation: gradientBG 10s ease infinite;
 	min-height: 100vh;
@@ -30,7 +30,7 @@ body {
 	width: 100%;
 	max-width: 500px;
 	min-width: 300px;
-	padding: 20px;
+	padding: 12px;
 	position: relative;
 	overflow: hidden;
 	border: 1px solid rgba(255, 255, 255, 0.25);
@@ -82,10 +82,10 @@ body {
 	background: rgba(255, 255, 255, 0.15) !important;
 	border: 1px solid rgba(255, 255, 255, 0.3) !important;
 	border-radius: 15px;
-	padding: 15px;
+	padding: 5px;
 	backdrop-filter: blur(5px);
 	margin-bottom: 15px;
-	margin-top: 35px;
+	margin-top: 30px;
 	box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
 
@@ -250,7 +250,6 @@ hr {
 .restore-link {
 	cursor: pointer;
 	color: #ffffff;
-	margin-top: 5px;
 	font-weight: 700;
 	text-decoration: underline;
 	transition: all 0.3s ease;
