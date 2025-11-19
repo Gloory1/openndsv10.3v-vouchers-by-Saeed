@@ -19,7 +19,8 @@ html, body {
 }
 
 body {
-    background: linear-gradient(135deg, #1a1a1a, #1a1a1a, #1a1a1a);
+    /* خلفية غامقة بلمسة زرقاء خفيفة جداً */
+    background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
     background-size: 400% 400%;
     animation: gradientBG 10s ease infinite;
     min-height: 100vh;
@@ -31,12 +32,14 @@ body {
     color: #333;
 }
 
-/* --- الكارت (Card) --- */
+/* --- الكارت (Card) - تغيير اللون للأزرق الفيروزي --- */
 .card,
 .offset {
-    background: linear-gradient(135deg, #d31027, #ea384d) !important;
+    /* التغيير هنا: ألوان التركواز/الأزرق */
+    background: linear-gradient(135deg, #02aab0, #00cdac) !important;
     border-radius: 25px;
-    box-shadow: 0 20px 60px rgba(211, 16, 39, 0.35);
+    /* تغيير لون الظل ليتماشى مع الكارت */
+    box-shadow: 0 20px 60px rgba(0, 205, 172, 0.35);
     width: 100%;
     max-width: 500px;
     min-width: 300px;
@@ -157,7 +160,8 @@ h1,
     font-size: 2.2rem;
     margin: 10px 0 15px;
     font-weight: 800;
-    background: linear-gradient(to right, #ffffff 20%, #fff9c4 50%, #ffffff 80%);
+    /* تغيير لون اللمعة للأبيض المزرق */
+    background: linear-gradient(to right, #ffffff 20%, #e0f7fa 50%, #ffffff 80%);
     background-size: 200% auto;
     color: #fff;
     -webkit-background-clip: text;
@@ -184,7 +188,8 @@ input[type='number'] {
     font-size: 1.4rem;
     font-weight: 700;
     text-align: center;
-    color: #d31027 !important;
+    /* التغيير هنا: لون النص أزرق غامق بدل الأحمر */
+    color: #00838f !important; 
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
     transition: all 0.3s ease;
     margin-bottom: 5px;
@@ -207,6 +212,7 @@ button,
 input[type='submit'] {
     position: relative;
     z-index: 20 !important;
+    /* حافظت على الزرار غامق لأنه يليق مع أي لون */
     background: linear-gradient(45deg, #1a1a1a, #2c3e50) !important;
     color: white !important;
     border: 1px solid rgba(255, 255, 255, 0.1);
@@ -270,7 +276,7 @@ hr {
 
 med-blue {
     font-size: 1.2em;
-    color: #dff9fb !important;
+    color: #e0f7fa !important; /* أزرق ثلجي */
     font-weight: bold;
     display: block;
     margin: 5px 0;
@@ -306,54 +312,26 @@ copy-right {
 }
 
 /* ============================================================
-   LOADING SPINNER LOGIC (إضافة السبينر)
+   LOADING SPINNER LOGIC
    ============================================================ */
-
-/* 1. شكل الدائرة اللي بتلف */
 .spinner {
-    display: none; /* مخفي طول ما مفيش تحميل */
+    display: none; 
     width: 25px;
     height: 25px;
-    border: 3px solid rgba(255, 255, 255, 0.3); /* لون باهت */
-    border-radius: 50%; /* دايرة */
-    border-top-color: #fff; /* لون أبيض ساطع من فوق عشان يبان بيلف */
-    animation: spin 1s ease-in-out infinite; /* أمر الدوران */
+    border: 3px solid rgba(255, 255, 255, 0.3); 
+    border-radius: 50%; 
+    border-top-color: #fff; 
+    animation: spin 1s ease-in-out infinite; 
 }
 
-/* 2. لما الزرار يبقى في حالة التحميل */
 .btn-loading .btn-text {
-    display: none; /* اخفي كلمة تسجيل الدخول */
+    display: none; 
 }
 
 .btn-loading .spinner {
-    display: block !important; /* اظهر السبينر */
+    display: block !important; 
 }
 
-/* أمر الدوران نفسه */
-@keyframes spin {
-    to { transform: rotate(360deg); }
-}
-/* 1. شكل الدائرة اللي بتلف */
-.spinner {
-    display: none; /* مخفي طول ما مفيش تحميل */
-    width: 25px;
-    height: 25px;
-    border: 3px solid rgba(255, 255, 255, 0.3); /* لون باهت */
-    border-radius: 50%; /* دايرة */
-    border-top-color: #fff; /* لون أبيض ساطع من فوق عشان يبان بيلف */
-    animation: spin 1s ease-in-out infinite; /* أمر الدوران */
-}
-
-/* 2. لما الزرار يبقى في حالة التحميل */
-.btn-loading .btn-text {
-    display: none; /* اخفي كلمة تسجيل الدخول */
-}
-
-.btn-loading .spinner {
-    display: block !important; /* اظهر السبينر */
-}
-
-/* أمر الدوران نفسه */
 @keyframes spin {
     to { transform: rotate(360deg); }
 }
