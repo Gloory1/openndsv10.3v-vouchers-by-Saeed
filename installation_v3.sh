@@ -89,8 +89,11 @@ if [ -f /etc/init.d/superwifi ]; then
 fi
 
 # Set provider name safely
-provider_name="${1:-${PROVIDER_NAME:-$DEFAULT_PROVIDER}}"
-echo "Using provider name: $provider_name"
+echo -n "Enter Provider Name: "
+read provider_name < /dev/tty
+if [ -z "$provider_name" ]; then
+    provider_name="Super Wifi"
+fi
 
 # Configure OpenNDS
 if uci show opennds >/dev/null 2>&1; then
