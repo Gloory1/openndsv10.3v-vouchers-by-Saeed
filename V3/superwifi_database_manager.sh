@@ -1,5 +1,5 @@
 #!/bin/sh
-DB_PATH="/overlay/superwifi/superwifi_database_v2.db"
+DB_PATH="/overlay/superwifi/superwifi_database.db"
 
 sql_escape() {
   printf "%s" "$1" | sed "s/'/''/g"
