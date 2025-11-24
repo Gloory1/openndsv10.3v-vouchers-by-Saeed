@@ -2,7 +2,7 @@
 # init_db.sh
 # Database initialization with strict naming conventions (_kb, _min, _sec)
 
-DB_PATH="/overlay/superwifi/superwifi_database_v2.db"
+DB_PATH="/overlay/superwifi/superwifi_database.db"
 
 init_db() {
   sqlite3 "$DB_PATH" <<EOF
