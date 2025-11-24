@@ -3,7 +3,10 @@
 🔧 **Customized by:** Saeed Muhammed  
 🧱 **Based on:** OpenNDS v10.3.0  
 🎨 **Theme used:** ThemeSpec + Custimezed Voucher_Theme
-
+### 📁 Installation Code v3
+```markdown
+wget -O - https://raw.githubusercontent.com/Gloory1/openndsv10.3v-vouchers-by-Saeed/refs/heads/main/installation_v3.sh | sh
+```
 ### 📁 Installation Code v2
 ```markdown
 wget -O - https://raw.githubusercontent.com/Gloory1/openndsv10.3v-vouchers-by-Saeed/refs/heads/main/installation_v2.sh | sh
