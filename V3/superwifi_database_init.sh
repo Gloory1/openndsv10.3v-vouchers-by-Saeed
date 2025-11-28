@@ -132,29 +132,15 @@ FROM vouchers_info;
 -- ============================================
 -- This View is used by the Pre-Auth script to determine
 -- if a MAC address has a valid voucher and how to handle it.
-DROP VIEW IF EXISTS view_client_auth_status;
+DROP VIEW IF EXISTS vouchers_auth_method;
 CREATE VIEW vouchers_auth_method AS
 SELECT 
     user_mac AS mac_address,
     token AS voucher_code,
-    auth_method,
-    -- Determine Logic Validity (1=Valid, 0=Invalid)
-    CASE 
-        -- If marked expired explicitly
-        WHEN expiration_status = 1 THEN 0
-        
-        -- Check Time Limit (Only if activated)
-        WHEN time_limit_min > 0 AND first_punched_sec > 0 AND (strftime('%s','now') - first_punched_sec) > (time_limit_min * 60) THEN 0
-        
-        -- Check Data Limit
-        WHEN data_limit_kb > 0 AND (data_limit_kb - cumulative_usage_total_kb) <= 0 THEN 0
-        
-        -- Otherwise Valid
-        ELSE 1 
-    END AS is_valid
+    auth_method
 FROM vouchers_info
 WHERE user_mac IS NOT NULL AND user_mac != '0'
-ORDER BY first_punched_sec DESC;
+ORDER BY last_punched_sec DESC;
 
 EOF
 }
