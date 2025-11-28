@@ -100,10 +100,11 @@ get_voucher_auth_method() {
     local mac_raw="$1"
     local mac=$(sql_escape "$mac_raw")
     
-    sqlite3 "$DB_PATH" "
-      SELECT voucher_code, auth_method 
+    sqlite3 -separator "|" "$DB_PATH" "
+      SELECT token, auth_method 
       FROM vouchers_auth_method 
-      WHERE mac_address='$mac' LIMIT 1;
+      WHERE mac_address='$mac' 
+      LIMIT 1;
     "
 }
 
