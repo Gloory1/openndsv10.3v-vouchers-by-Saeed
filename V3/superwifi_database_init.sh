@@ -130,18 +130,15 @@ FROM vouchers_info;
 -- ============================================
 -- 3) view_client_auth_status VIEW (NEW)
 -- ============================================
--- This View is used by the Pre-Auth script to determine
--- if a MAC address has a valid voucher and how to handle it.
 DROP VIEW IF EXISTS vouchers_auth_method;
 CREATE VIEW vouchers_auth_method AS
 SELECT 
     user_mac AS mac_address,
-    token AS voucher_code,
+    token,
     auth_method
 FROM vouchers_info
 WHERE user_mac IS NOT NULL AND user_mac != '0'
 ORDER BY last_punched_sec DESC;
-
 EOF
 }
 
