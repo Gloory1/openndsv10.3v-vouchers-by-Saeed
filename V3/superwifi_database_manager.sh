@@ -11,7 +11,7 @@ sql_escape() {
 get_auth_voucher() {
   local token_raw="$1"
   local token=$(sql_escape "$token_raw")
-  # الفيو (View) تم تحديثه مسبقاً ليعيد الأسماء الجديدة، فلا توجد مشكلة هنا
+  # The View was updated previously to return the new names, so there is no issue here
   sqlite3 "$DB_PATH" "SELECT * FROM vouchers_auth_details WHERE token = '$token' LIMIT 1;"
 }
 
@@ -30,7 +30,7 @@ update_punch() {
   local token=$(sql_escape "$token_raw")
   local mac=$(sql_escape "$mac_raw")
 
-  # تم تعديل أسماء الأعمدة لتنتهي بـ _sec
+  # Column names have been modified to end with _sec
   sqlite3 "$DB_PATH" <<EOF
 UPDATE vouchers_info
 SET
@@ -54,17 +54,17 @@ update_accumulated_usage_by_mac() {
   local season_upload_kb="${2:-0}"
   local season_download_kb="${3:-0}"
   
-  # جمع الاستهلاك (رفع + تحميل) بالكيلوبايت
+  # Calculate total usage (upload + download) in KB
   local season_usage_kb=$(( season_upload_kb + season_download_kb ))
 
-  # البحث عن الكارت باستخدام الاسم الجديد للعمود (last_punched_sec)
+  # Search for the voucher using the new column name (last_punched_sec)
   local token=$(sqlite3 "$DB_PATH" "SELECT token FROM vouchers_info WHERE user_mac = '$user_mac' ORDER BY last_punched_sec DESC LIMIT 1;")
 
   [ -z "$token" ] && return 0
 
   local quota_finished=$(
     sqlite3 "$DB_PATH" <<EOF
--- 1. تحديث العدادات (KB)
+-- 1. Update counters (KB)
 UPDATE vouchers_info
 SET
   cumulative_usage_total_kb = cumulative_usage_total_kb +
@@ -76,10 +76,10 @@ SET
   last_punched_sec = strftime('%s','now')
 WHERE token = '$token';
 
--- 2. التحقق هل انتهت الباقة؟ (مقارنة data_limit_kb مع cumulative_usage_total_kb)
+-- 2. Check if quota exceeded? (Compare data_limit_kb with cumulative_usage_total_kb)
 SELECT
   CASE
-    WHEN data_limit_kb = 0 THEN 0  -- 0 يعني غير محدود
+    WHEN data_limit_kb = 0 THEN 0  -- 0 means unlimited
     WHEN cumulative_usage_total_kb >= data_limit_kb THEN 1
     ELSE 0
   END
@@ -89,7 +89,7 @@ LIMIT 1;
 EOF
   )
   
-  # إرجاع 1 لو خلصت، 0 لو لسه
+  # Return 1 if finished, 0 if still valid
   echo "$quota_finished"
 }
  
