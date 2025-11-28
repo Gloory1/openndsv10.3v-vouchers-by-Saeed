@@ -94,18 +94,17 @@ EOF
 }
  
 # ----------------------
-# Get LAST voucher ONLY if membership = 1 (VIP Auto-Login)
+# Get LAST voucher auth method by mac
 # ----------------------
-get_last_vip_voucher_for_mac() {
-  local mac_raw="$1"
-  local mac=$(sql_escape "$mac_raw")
-  
-  sqlite3 "$DB_PATH" "
-    SELECT token FROM vouchers_info
-    WHERE user_mac = '$mac' AND membership = '1'
-    ORDER BY last_punched_sec DESC
-    LIMIT 1;
-  "
+get_voucher_auth_method() {
+    local mac_raw="$1"
+    local mac=$(sql_escape "$mac_raw")
+    
+    sqlite3 "$DB_PATH" "
+      SELECT voucher_code, auth_method 
+      FROM vouchers_auth_method 
+      WHERE mac_address='$mac' LIMIT 1;
+    "
 }
 
 # ----------------------
