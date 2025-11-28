@@ -35,64 +35,47 @@ MSG_ATTEMPTS_LIMITED="عدد المحاولات محدود"
 # 3. Logic & Decision Functions
 #-----------------------------------------------------------------------#
 
-check_preauth_status() {
-    local mac="$1"
-    
-    # 1. جلب البيانات (الكود + الطريقة)
-    local db_result=$(get_voucher_auth_method "$mac")
-
-    # لو مفيش نتيجة، يبقى مستخدم جديد
-    if [ -z "$db_result" ]; then
-        echo "NEW_USER"
-        return
-    fi
-
-    local code=$(echo "$db_result" | awk -F "|" '{print $1}')
-    local method=$(echo "$db_result" | awk -F "|" '{print $2}')
-
-    # 2. التوجيه المباشر بدون فحص صلاحية
-    case $method in
-        0) 
-            echo "MANUAL_ONLY" 
-            ;;
-        1) 
-            echo "SHOW_RESTORE|$code" 
-            ;;
-        2) 
-            # الوضع التلقائي:
-            # هنرجع أمر الدخول فوراً، والتحقق هيتم لاحقاً في دالة login_with_voucher
-            echo "AUTO_LOGIN|$code"
-            ;;
-        *) 
-            echo "NEW_USER" 
-            ;;
-    esac
-}
-
 generate_splash_sequence() {
-    # 1. الأولوية للكود المكتوب يدوياً في الرابط
+    # 1. Priority: Manual Code (URL query or Form Submit)
+    # If 'voucher' is set, it means the user submitted the form or used a direct link.
+    # We skip the auto-check logic and proceed to login validation immediately.
     if [ -n "$voucher" ]; then
         login_with_voucher
         return
     fi
 
-    # 2. اسأل دالة المنطق (Smart Auth)
-    local decision_string=$(check_preauth_status)
-    local action=$(echo "$decision_string" | awk -F "|" '{print $1}')
-    local saved_code=$(echo "$decision_string" | awk -F "|" '{print $2}')
+    # 2. Database Lookup (Smart Auth)
+    # Fetch the last auth method and code for this MAC address.
+    # The View is ordered by time, so this returns the latest status.
+    local db_result=$(get_voucher_auth_method "$clientmac")
 
-    # 3. تنفيذ القرار
-    case "$action" in
-        AUTO_LOGIN)
+    # If no result found, treat as a New User (Show empty form)
+    if [ -z "$db_result" ]; then
+        voucher_form ""
+        return
+    fi
+
+    # 3. Parse Data
+    local saved_code=$(echo "$db_result" | awk -F "|" '{print $1}')
+    local method=$(echo "$db_result" | awk -F "|" '{print $2}')
+
+    # 4. Execute Decision
+    case "$method" in
+        2)
+            # Auto Login: Attempt to login immediately using the saved code.
+            # Validation happens inside 'login_with_voucher'.
+            # If expired, the user will see the error page naturally.
             voucher="$saved_code"
             login_with_voucher
-            ;;  
-        SHOW_RESTORE)
-            # مرر الكود للدالة عشان ترسم زر الاستعادة
+            ;;
+            
+        1)
+            # Show Restore: Display the form with a "Continue Previous Session" button.
             voucher_form "$saved_code"
-            ;;   
+            ;;
+            
         *)
-            # (NEW_USER or MANUAL_ONLY) - فورم فاضي
+            # Method 0 or others: Manual entry only. Show empty form.
             voucher_form ""
             ;;
     esac
@@ -262,22 +245,19 @@ try_again_btn() {
 }
 
 voucher_form() {
-    # استقبال كود الاستعادة (إن وجد) من المتغير الأول
+    # Receive the restore code (if any) as the first argument
     local restore_code="$1"
     
     # 1. Get info from query (for new inputs)
     voucher_code=$(echo "$cpi_query" | awk -F "voucher%3d" '{printf "%s", $2}' | awk -F "%26" '{printf "%s", $1}')
     
-    # Header logic is handled before calling this, usually by binauth script, 
-    # but here we rely on standard sequence. Need to ensure header() is called if needed.
-    # Note: In openNDS theme specs, header is usually called by the main loop. 
-    # We will assume header() was called at start of execution or we call it here.
+    # Ensure header is called
     header
 
     echo "<div class=\"insert\">
         <h3>$MSG_INSERT_TITLE</h3>"
 
-    # زر الاستعادة يظهر فقط لو تم تمرير كود للدالة
+    # Only show the restore link if a restore_code was passed
     if [ -n "$restore_code" ]; then
         echo "
         <h3 class=\"restore-link\" onclick=\"useLastVoucher('$restore_code')\">
@@ -320,9 +300,7 @@ voucher_form() {
     }
     </script>
     "
-    # Footer is called at the end of function in previous code, 
-    # but good practice is to return and let main loop handle it, 
-    # or keep it as is.
+    # Call footer
     footer
 }
 
