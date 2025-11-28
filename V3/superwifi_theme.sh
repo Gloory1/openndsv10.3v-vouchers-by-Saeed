@@ -35,12 +35,10 @@ MSG_ATTEMPTS_LIMITED="عدد المحاولات محدود"
 # 3. Logic & Decision Functions
 #-----------------------------------------------------------------------#
 
-# هذه الدالة تتواصل مع الداتابيز وتقرر ماذا تفعل مع العميل
 check_preauth_status() {
     local mac="$1"
     
-    # استدعاء الدالة من الـ database_manager بدلاً من كتابة SQL هنا
-    # النتيجة المتوقعة: code|auth_method|is_valid
+    # 1. جلب البيانات (الكود + الطريقة)
     local db_result=$(get_voucher_auth_method "$mac")
 
     # لو مفيش نتيجة، يبقى مستخدم جديد
@@ -51,20 +49,23 @@ check_preauth_status() {
 
     local code=$(echo "$db_result" | awk -F "|" '{print $1}')
     local method=$(echo "$db_result" | awk -F "|" '{print $2}')
-    local valid=$(echo "$db_result" | awk -F "|" '{print $3}')
 
-    # تطبيق القواعد (0, 1, 2)
+    # 2. التوجيه المباشر بدون فحص صلاحية
     case $method in
-        0) echo "MANUAL_ONLY" ;; # وضع يدوي فقط
-        1) echo "SHOW_RESTORE|$code" ;; # إظهار زر الاستعادة
-        2) 
-            if [ "$valid" -eq 1 ]; then
-                echo "AUTO_LOGIN|$code" # دخول تلقائي
-            else
-                echo "SHOW_RESTORE|$code" # الكارت خلص، اعرضه للتجديد
-            fi
+        0) 
+            echo "MANUAL_ONLY" 
             ;;
-        *) echo "NEW_USER" ;;
+        1) 
+            echo "SHOW_RESTORE|$code" 
+            ;;
+        2) 
+            # الوضع التلقائي:
+            # هنرجع أمر الدخول فوراً، والتحقق هيتم لاحقاً في دالة login_with_voucher
+            echo "AUTO_LOGIN|$code"
+            ;;
+        *) 
+            echo "NEW_USER" 
+            ;;
     esac
 }
 
@@ -76,7 +77,7 @@ generate_splash_sequence() {
     fi
 
     # 2. اسأل دالة المنطق (Smart Auth)
-    local decision_string=$(check_preauth_status "$clientmac")
+    local decision_string=$(check_preauth_status)
     local action=$(echo "$decision_string" | awk -F "|" '{print $1}')
     local saved_code=$(echo "$decision_string" | awk -F "|" '{print $2}')
 
