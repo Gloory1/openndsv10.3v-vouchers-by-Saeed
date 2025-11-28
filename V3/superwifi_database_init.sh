@@ -3,7 +3,7 @@
 # Database initialization with strict naming conventions (_kb, _min, _sec)
 # Copyright (C) Saeed & BlueWave Projects 2025
 
-DB_PATH="/overlay/superwifi/superwifi_database_v2.db"
+DB_PATH="/overlay/superwifi/superwifi_database.db"
 
 init_db() {
   sqlite3 "$DB_PATH" <<EOF
