@@ -45,12 +45,14 @@ if ! command -v sqlite3 >/dev/null 2>&1; then
   exit 1
 fi
 
-echo "🛠️ Preparing openNDS in 15 seconds..."
+echo "🛠️ Preparing openNDS in 5 seconds..."
 echo -n "⏳ Progress: ["
-for i in $(seq 1 15); do
+
+for i in $(seq 1 50); do
     echo -n "#"
-    sleep 1
+    sleep 0.1
 done
+
 echo "] ✅ Now It's ready..."
 
 # Download helper
