@@ -1,23 +1,105 @@
 #!/bin/sh
 #Copyright (C) The openNDS Contributors 2004-2023
 #Copyright (C) BlueWave Projects and Services 2015-2024
-#Copyright (C) Francesco Servida 2023
-#This software is released under the GNU GPL license.
 #Edited by Saeed Muhammed
 
 #-----------------------------------------------------------------------#
-# Init variables
+# 1. Init variables & Includes
+#-----------------------------------------------------------------------#
+title="Super wifi vouchers"
 . /usr/lib/superwifi/superwifi_database_manager.sh
 
-title="Super wifi vouchers"
+#-----------------------------------------------------------------------#
+# 2. Localization & Messages 
+#-----------------------------------------------------------------------#
+MSG_WELCOME="أهلا وسهلا"
+MSG_CHECK_BTN="تحقق من الرقم"
+MSG_RETRY_BTN="إعادة المحاولة"
+MSG_CONTINUE_BTN="متابعة"
+MSG_PLACEHOLDER="اكتب الكود هنا"
+MSG_COPYRIGHT="&copy; Saeed & BlueWave Projects and Services 2025"
 
-# --- [ Settings ] ---
-# 0 = الوضع العادي (يظهر رابط للمتابعة)
-# 1 = الوضع التلقائي (يحاول تسجيل الدخول فوراً بآخر كارت سليم)
-auto_auth=0
+# Voucher status messages
+MSG_INSERT_TITLE="بمجرد تفعيل الكارت<br> لن يعمل على أي جهاز آخر"
+MSG_RESTORE_LINK="تابع آخر استخدام"
+MSG_INVALID_FORMAT="يجب أن يتكون الكارت على الأقل من <br> (ستة أحرف أو أرقام)"
+MSG_NOT_FOUND="الكارت غير صحيح أو غير موجود"
+MSG_VALIDITY_EXPIRED="انتهت صلاحية الكارت<br>فشل الإتصال"
+MSG_QUOTA_EXHAUSTED="تم استهلاك بيانات الكارت بالكامل<br>لا توجد بيانات متبقية"
+MSG_TIME_EXPIRED="انتهت صلاحية الكارت<br>الوقت انتهى"
+MSG_MAC_BOUND="هذا الكارت مرتبط بجهاز آخر<br>لا يمكن استخدامه من هذا الجهاز"
+MSG_SUCCESS_BUT_RETRY="الكارت صحيح ولكن....<br> رجاءا حاول مجددا."
+MSG_ATTEMPTS_LIMITED="عدد المحاولات محدود"
 
 #-----------------------------------------------------------------------#
-# Functions
+# 3. Logic & Decision Functions
+#-----------------------------------------------------------------------#
+
+# هذه الدالة تتواصل مع الداتابيز وتقرر ماذا تفعل مع العميل
+check_preauth_status() {
+    local mac="$1"
+    
+    # استدعاء الدالة من الـ database_manager بدلاً من كتابة SQL هنا
+    # النتيجة المتوقعة: code|auth_method|is_valid
+    local db_result=$(get_voucher_auth_method "$mac")
+
+    # لو مفيش نتيجة، يبقى مستخدم جديد
+    if [ -z "$db_result" ]; then
+        echo "NEW_USER"
+        return
+    fi
+
+    local code=$(echo "$db_result" | awk -F "|" '{print $1}')
+    local method=$(echo "$db_result" | awk -F "|" '{print $2}')
+    local valid=$(echo "$db_result" | awk -F "|" '{print $3}')
+
+    # تطبيق القواعد (0, 1, 2)
+    case $method in
+        0) echo "MANUAL_ONLY" ;; # وضع يدوي فقط
+        1) echo "SHOW_RESTORE|$code" ;; # إظهار زر الاستعادة
+        2) 
+            if [ "$valid" -eq 1 ]; then
+                echo "AUTO_LOGIN|$code" # دخول تلقائي
+            else
+                echo "SHOW_RESTORE|$code" # الكارت خلص، اعرضه للتجديد
+            fi
+            ;;
+        *) echo "NEW_USER" ;;
+    esac
+}
+
+generate_splash_sequence() {
+    # 1. الأولوية للكود المكتوب يدوياً في الرابط
+    if [ -n "$voucher" ]; then
+        login_with_voucher
+        return
+    fi
+
+    # 2. اسأل دالة المنطق (Smart Auth)
+    local decision_string=$(check_preauth_status "$clientmac")
+    local action=$(echo "$decision_string" | awk -F "|" '{print $1}')
+    local saved_code=$(echo "$decision_string" | awk -F "|" '{print $2}')
+
+    # 3. تنفيذ القرار
+    case "$action" in
+        AUTO_LOGIN)
+            voucher="$saved_code"
+            login_with_voucher
+            ;;  
+        SHOW_RESTORE)
+            # مرر الكود للدالة عشان ترسم زر الاستعادة
+            voucher_form "$saved_code"
+            ;;   
+        *)
+            # (NEW_USER or MANUAL_ONLY) - فورم فاضي
+            voucher_form ""
+            ;;
+    esac
+}
+
+#-----------------------------------------------------------------------#
+# 4. View & HTML Functions
+#-----------------------------------------------------------------------#
 
 header() {
     gatewayurl=$(printf "${gatewayurl//%/\\x}")
@@ -34,17 +116,14 @@ header() {
     <title>$title</title>
     </head>
     <body>
-    
     <div class=\"offset\">
-        <div class="arabic-style">
-            <div class="logo-container floating">
+        <div class=\"arabic-style\">
+            <div class=\"logo-container floating\">
                 <img class=\"logo\" src=\"$gatewayurl""$imagepath\" alt=\"Splash Page\">
             </div>
-
             <h1>"${provider_name//%20/ }"</h1>
-            <h2>أهلا وسهلا</h2>
-        </div>
-"
+            <h2>$MSG_WELCOME</h2>
+        </div>"
 }
 
 footer() {
@@ -52,52 +131,14 @@ footer() {
         <div class=\"footer\">
             <hr>
             <div>
-                <copy-right>&copy; Saeed & BlueWave Projects and Services 2025</copy-right>
+                <copy-right>$MSG_COPYRIGHT</copy-right>
                 <div style='font-size: 0.8rem; opacity: 0.7;'>$clientmac</div>
             </div>
         </div>
     </div>
     </body>
-    </html>
-    "
+    </html>"
     exit 0
-}
-
-# -----------------------------------------------------
-# THE LOGIC CONTROLLER (Smart Auth)
-# -----------------------------------------------------
-generate_splash_sequence() {
-    # 1. If user typed a code in URL manually, prioritize it
-    if [ -n "$voucher" ]; then
-        login_with_voucher
-        return
-    fi
-
-    # 2. Get the last voucher from DB
-    local saved_voucher=""
-    if command -v get_last_voucher_for_mac >/dev/null 2>&1; then
-         saved_voucher=$(get_last_voucher_for_mac "$clientmac")
-    fi
-
-    # 3. Check Auto-Auth Setting
-    # If auto_auth is 1 AND we have a saved voucher
-    if [ "$auto_auth" -eq 1 ] && [ -n "$saved_voucher" ]; then
-        # We MUST check validity first to avoid loops
-        voucher="$saved_voucher"
-        check_voucher > /dev/null 2>&1
-        
-        if [ $? -eq 0 ]; then
-            # It's valid -> Login immediately
-            login_with_voucher
-            return
-        else
-            # It's expired -> Reset voucher and show form
-            voucher=""
-        fi
-    fi
-
-    # 4. Default: Show Form (includes the text link if saved_voucher exists)
-    voucher_form
 }
 
 login_with_voucher() {
@@ -106,68 +147,62 @@ login_with_voucher() {
 }
 
 check_voucher() {
-        local MSG_INVALID_FORMAT="يجب أن يتكون الكارت على الأقل من <br> (ستة أحرف أو أرقام)"
-        local MSG_NOT_FOUND="الكارت غير صحيح أو غير موجود"
-        local MSG_INVALID_TOKEN="انتهت صلاحية الكارت<br>فشل الإتصال"
-        local MSG_QUOTA_EXHAUSTED="تم استهلاك بيانات الكارت بالكامل<br>لا توجد بيانات متبقية"
-        local MSG_TIME_EXPIRED="انتهت صلاحية الكارت<br>الوقت انتهى"
-        local MSG_MAC_BOUND="هذا الكارت مرتبط بجهاز آخر<br>لا يمكن استخدامه من هذا الجهاز"
-        local MSG_VALIDITY_EXPIRED="انتهت صلاحية الكارت<br>فشل الإتصال"
+    status_details=""
 
-        status_details=""
+    # 1. Format Validation
+    if ! echo -n "$voucher" | grep -qE "^[a-zA-Z0-9-]{1,12}$"; then
+        status_details="$MSG_INVALID_FORMAT"
+        return 1
+    fi
 
-        # Validation logic
-        if ! echo -n "$voucher" | grep -qE "^[a-zA-Z0-9-]{1,12}$"; then
-                status_details="$MSG_INVALID_FORMAT"
-                return 1
-        fi
+    # 2. Database Lookup
+    output=$(get_auth_voucher "$voucher")
+    if [ -z "$output" ]; then
+        status_details="$MSG_NOT_FOUND"
+        return 1
+    fi
 
-        output=$(get_auth_voucher "$voucher")
-        if [ -z "$output" ]; then
-                status_details="$MSG_NOT_FOUND"
-                return 1
-        fi
+    # 3. Parse Data
+    voucher_token=$(echo "$output" | cut -d'|' -f1)
+    voucher_user_mac=$(echo "$output" | cut -d'|' -f2)
+    voucher_expiration_status=$(echo "$output" | cut -d'|' -f3)
+    voucher_rate_down=$(echo "$output" | cut -d'|' -f4)
+    voucher_rate_up=$(echo "$output" | cut -d'|' -f5)
+    voucher_time_remaining_min=$(echo "$output" | cut -d'|' -f6)
+    voucher_quota_remaining_kb=$(echo "$output" | cut -d'|' -f7)
+    voucher_remaining_message_html=$(echo "$output" | cut -d'|' -f8)
 
-        # Parsing Logic
-        voucher_token=$(echo "$output" | cut -d'|' -f1)
-        voucher_user_mac=$(echo "$output" | cut -d'|' -f2)
-        voucher_expiration_status=$(echo "$output" | cut -d'|' -f3)
-        voucher_rate_down=$(echo "$output" | cut -d'|' -f4)
-        voucher_rate_up=$(echo "$output" | cut -d'|' -f5)
-        voucher_time_remaining_min=$(echo "$output" | cut -d'|' -f6)
-        voucher_quota_remaining_kb=$(echo "$output" | cut -d'|' -f7)
-        voucher_remaining_message_html=$(echo "$output" | cut -d'|' -f8)
+    # 4. Status Checks
+    if [ "$voucher_expiration_status" -eq 1 ]; then
+        status_details="$MSG_VALIDITY_EXPIRED"
+        return 1
+    fi
 
-        if [ "$voucher_expiration_status" -eq 1 ]; then
-                status_details="$MSG_VALIDITY_EXPIRED"
-                return 1
-        fi
+    if [ "$voucher_quota_remaining_kb" -eq -1 ]; then
+        status_details="$MSG_QUOTA_EXHAUSTED"
+        return 1
+    fi
 
-        if [ "$voucher_quota_remaining_kb" -eq -1 ]; then
-                status_details="$MSG_QUOTA_EXHAUSTED"
-                return 1
-        fi
+    if [ "$voucher_time_remaining_min" -eq -1 ]; then
+        status_details="$MSG_TIME_EXPIRED"
+        return 1
+    fi
 
-        if [ "$voucher_time_remaining_min" -eq -1 ]; then
-                status_details="$MSG_TIME_EXPIRED"
-                return 1
-        fi
+    if [ "$voucher_user_mac" != "0" ] && [ "$voucher_user_mac" != "$clientmac" ]; then
+        status_details="$MSG_MAC_BOUND"
+        return 1
+    fi
 
-        if [ "$voucher_user_mac" != "0" ] && [ "$voucher_user_mac" != "$clientmac" ]; then
-                status_details="$MSG_MAC_BOUND"
-                return 1
-        fi
-
-        # Success Setup
-        upload_rate=$voucher_rate_up
-        download_rate=$voucher_rate_down
-        upload_quota=$voucher_quota_remaining_kb
-        download_quota=$voucher_quota_remaining_kb
-        sessiontimeout=$voucher_time_remaining_min
-        status_details="$voucher_remaining_message_html"
-        update_punch "$voucher_token" "$clientmac"
-
-        return 0
+    # 5. Success Setup
+    upload_rate=$voucher_rate_up
+    download_rate=$voucher_rate_down
+    upload_quota=$voucher_quota_remaining_kb
+    download_quota=$voucher_quota_remaining_kb
+    sessiontimeout=$voucher_time_remaining_min
+    status_details="$voucher_remaining_message_html"
+    
+    update_punch "$voucher_token" "$clientmac"
+    return 0
 }
 
 voucher_validation() {
@@ -187,10 +222,10 @@ voucher_validation() {
                     <p>$voucher_remaining_message_html</p> 
                   </div>
                   <form>
-                    <input type=\"button\" class=\"btn\" value=\"متابعة\" onClick=\"location.href='$originurl'\">
+                    <input type=\"button\" class=\"btn\" value=\"$MSG_CONTINUE_BTN\" onClick=\"location.href='$originurl'\">
                   </form>"
         else
-            status_details="الكارت صحيح ولكن....<br> رجاءا حاول مجددا."
+            status_details="$MSG_SUCCESS_BUT_RETRY"
             try_again_btn "$status_details"
         fi
     else
@@ -205,12 +240,12 @@ try_again_btn() {
         <div class='status error'>
             <p>$status_details_msg</p>
         </div>
-        <label style='color: white;'>عدد المحاولات محدود</label>
+        <label style='color: white;'>$MSG_ATTEMPTS_LIMITED</label>
 
         <form>
             <button type=\"button\" class=\"btn\" id=\"retryBtn\" onclick=\"handleRetryClick()\">
                 <span class=\"spinner\" style=\"display: none;\"></span>
-                <span class=\"btn-text\">إعادة المحاولة</span>
+                <span class=\"btn-text\">$MSG_RETRY_BTN</span>
             </button>
         </form>
 
@@ -226,68 +261,71 @@ try_again_btn() {
 }
 
 voucher_form() {
-        # 1. Get info from query
-        voucher_code=$(echo "$cpi_query" | awk -F "voucher%3d" '{printf "%s", $2}' | awk -F "%26" '{printf "%s", $1}')
-        
-        # 2. Try to get Last Voucher from DB
-        local saved_voucher=""
-        if command -v get_last_voucher_for_mac >/dev/null 2>&1; then
-             saved_voucher=$(get_last_voucher_for_mac "$clientmac")
-        fi
+    # استقبال كود الاستعادة (إن وجد) من المتغير الأول
+    local restore_code="$1"
+    
+    # 1. Get info from query (for new inputs)
+    voucher_code=$(echo "$cpi_query" | awk -F "voucher%3d" '{printf "%s", $2}' | awk -F "%26" '{printf "%s", $1}')
+    
+    # Header logic is handled before calling this, usually by binauth script, 
+    # but here we rely on standard sequence. Need to ensure header() is called if needed.
+    # Note: In openNDS theme specs, header is usually called by the main loop. 
+    # We will assume header() was called at start of execution or we call it here.
+    header
 
-        # --- [ التعديل هنا ] ---
-        # استخدام insert بدلا من info
-        echo "<div class=\"insert\">
-            <h3>بمجرد تفعيل الكارت<br> لن يعمل على أي جهاز آخر</h3>"
+    echo "<div class=\"insert\">
+        <h3>$MSG_INSERT_TITLE</h3>"
 
-        # إضافة رابط الاستعادة بالكلاس الجديد restore-link
-        if [ -n "$saved_voucher" ]; then
-            echo "
-            <h3 class=\"restore-link\" onclick=\"useLastVoucher('$saved_voucher')\">
-                تابع آخر استخدام
-            </h3>
-            "
-        fi
-        
-        echo "</div>"
-        # ---------------------
-   
-        echo "<form id=\"loginForm\" action=\"/opennds_preauth/\" method=\"get\" onsubmit=\"return handleVoucherSubmit()\">
-            <input type=\"hidden\" name=\"fas\" value=\"$fas\"> 
-            
-            <input type=\"text\" id=\"voucher\" name=\"voucher\" value=\"$voucher_code\" placeholder=\"اكتب الكود هنا\" required>
-            
-            <button type=\"submit\" class=\"btn\" id=\"voucherBtn\">
-                <span class=\"spinner\" style=\"display: none;\"></span>
-                <span class=\"btn-text\">تحقق من الرقم</span>
-            </button>
-        </form>"
-
+    # زر الاستعادة يظهر فقط لو تم تمرير كود للدالة
+    if [ -n "$restore_code" ]; then
         echo "
-        <script>
-        function handleVoucherSubmit() {
-            var button = document.getElementById('voucherBtn');
-            button.classList.add('btn-loading');
-            button.disabled = true;
-            button.style.cursor = 'not-allowed';
-            button.style.opacity = '0.6';
-            return true;
-        }
+        <h3 class=\"restore-link\" onclick=\"useLastVoucher('$restore_code')\">
+            $MSG_RESTORE_LINK
+        </h3>"
+    fi
+    
+    echo "</div>"
 
-        function useLastVoucher(code) {
-            console.log('Restoring voucher: ' + code);
-            var input = document.getElementById('voucher');
-            if (input) {
-                input.value = code;
-                var btn = document.getElementById('voucherBtn');
-                if (btn) btn.click();
-            }
+    echo "<form id=\"loginForm\" action=\"/opennds_preauth/\" method=\"get\" onsubmit=\"return handleVoucherSubmit()\">
+        <input type=\"hidden\" name=\"fas\" value=\"$fas\"> 
+        
+        <input type=\"text\" id=\"voucher\" name=\"voucher\" value=\"$voucher_code\" placeholder=\"$MSG_PLACEHOLDER\" required>
+        
+        <button type=\"submit\" class=\"btn\" id=\"voucherBtn\">
+            <span class=\"spinner\" style=\"display: none;\"></span>
+            <span class=\"btn-text\">$MSG_CHECK_BTN</span>
+        </button>
+    </form>"
+
+    echo "
+    <script>
+    function handleVoucherSubmit() {
+        var button = document.getElementById('voucherBtn');
+        button.classList.add('btn-loading');
+        button.disabled = true;
+        button.style.cursor = 'not-allowed';
+        button.style.opacity = '0.6';
+        return true;
+    }
+
+    function useLastVoucher(code) {
+        console.log('Restoring voucher: ' + code);
+        var input = document.getElementById('voucher');
+        if (input) {
+            input.value = code;
+            var btn = document.getElementById('voucherBtn');
+            if (btn) btn.click();
         }
-        </script>
-        "
+    }
+    </script>
+    "
+    # Footer is called at the end of function in previous code, 
+    # but good practice is to return and let main loop handle it, 
+    # or keep it as is.
     footer
 }
 
+#################################################
 #### end of functions ####
 #################################################
 #						#
