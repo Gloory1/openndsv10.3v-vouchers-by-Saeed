@@ -39,46 +39,60 @@ auto_auth_token=''
 auto_auth_method=''
 
 generate_splash_sequence() {
-    # 1. Extract voucher from URL (Crucial for manual input)
+    # 1. Loop Prevention: Extract voucher from URL query immediately
     if [ -z "$voucher" ]; then
         voucher=$(echo "$cpi_query" | awk -F "voucher%3d" '{printf "%s", $2}' | awk -F "%26" '{printf "%s", $1}')
     fi
 
-    # 2. Priority: If manual voucher exists, execute immediately
+    # 2. Priority: If a voucher code exists (Manual entry), execute login immediately
     if [ -n "$voucher" ]; then
         login_with_voucher
         return
     fi
 
-    # 3. Smart Fetch & Execute (One-time block)
+    # 3. Smart Fetch: Fetch Data ONLY if flag is 0
+    # If flag is 1, it skips this block and proceeds to logic using existing variables
     if [ "$IS_FIRST_CHECK_DONE" -eq 0 ]; then
-        IS_FIRST_CHECK_DONE=1
-        
-        # Fetch Data
         local db_result=$(get_voucher_auth_method "$clientmac")
         auto_auth_token=$(echo "$db_result" | awk -F "|" '{print $1}')
         auto_auth_method=$(echo "$db_result" | awk -F "|" '{print $2}')
-
-        # Logic Execution (Directly inside the block)
-        if [ -n "$auto_auth_token" ]; then
-            case "$auto_auth_method" in
-                2)
-                    # Auto Login (Direct attempt, no silent check)
-                    voucher="$auto_auth_token"
-                    login_with_voucher
-                    return
-                    ;;
-                1)
-                    # Restore Mode
-                    voucher_form "$auto_auth_token"
-                    return
-                    ;;
-            esac
-        fi
+        IS_FIRST_CHECK_DONE=1
     fi
 
-    # 4. Fallback: Show Manual Form (New User or No Data)
-    voucher_form
+    # 4. If no data found (New User), show manual form
+    if [ -z "$auto_auth_token" ]; then
+        voucher_form
+        return
+    fi
+   
+    # 5. Smart Decision Logic
+    case "$auto_auth_method" in
+        2)
+            # --- [ Auto Login Optimized ] ---
+            voucher="$auto_auth_token"
+            
+            # Check validity to prevent infinite loop on expired cards
+            check_voucher > /dev/null 2>&1
+            
+            if [ $? -eq 0 ]; then
+                # Token Valid -> Login
+                login_with_voucher
+            else
+                # Token Expired -> Show Restore Form
+                voucher_form "$auto_auth_token"
+            fi
+            ;;
+            
+        1)
+            # Restore Mode
+            voucher_form "$auto_auth_token"
+            ;;
+            
+        *)
+            # Manual Mode
+            voucher_form
+            ;;
+    esac
 }
 
 
@@ -190,7 +204,7 @@ check_voucher() {
 voucher_validation() {
     originurl=$(printf "${originurl//%/\\x}")
 
-    # HEADER (Required here for auto-login screens)
+    # HEADER
     header
 
     check_voucher
@@ -216,13 +230,11 @@ voucher_validation() {
     else
         try_again_btn "$status_details"
     fi
-    
     footer
 }
 
 try_again_btn() {
     local status_details_msg="$1"
-    
     echo "
         <div class='status error'>
             <p>$status_details_msg</p>
@@ -254,7 +266,7 @@ voucher_form() {
     # 2. Get voucher info from query for display only
     local display_voucher=$(echo "$cpi_query" | awk -F "voucher%3d" '{printf "%s", $2}' | awk -F "%26" '{printf "%s", $1}')
 
-    # HEADER (Required here for manual screens)
+    # HEADER
     header
 
     echo "<div class=\"insert\">
