@@ -39,34 +39,15 @@ auto_auth_token=''
 auto_auth_method=''
 
 generate_splash_sequence() {
-    # 1. Loop Prevention: Extract voucher from URL query immediately
-    if [ -z "$voucher" ]; then
-        voucher=$(echo "$cpi_query" | awk -F "voucher%3d" '{printf "%s", $2}' | awk -F "%26" '{printf "%s", $1}')
-    fi
-
-    # 2. Priority: If a voucher code exists (Manual entry), execute login immediately
-    if [ -n "$voucher" ]; then
-        login_with_voucher
-        return
-    fi
-
-    # 3. Smart Fetch: Fetch Data ONLY if flag is 0
     # If flag is 1, it skips this block and proceeds to logic using existing variables
     if [ "$IS_FIRST_CHECK_DONE" -eq 0 ]; then
+        IS_FIRST_CHECK_DONE=1
+
         local db_result=$(get_voucher_auth_method "$clientmac")
         auto_auth_token=$(echo "$db_result" | awk -F "|" '{print $1}')
         auto_auth_method=$(echo "$db_result" | awk -F "|" '{print $2}')
-        IS_FIRST_CHECK_DONE=1
-    fi
-
-    # 4. If no data found (New User), show manual form
-    if [ -z "$auto_auth_token" ]; then
-        voucher_form
-        return
-    fi
-   
-    # 5. Smart Decision Logic
-    case "$auto_auth_method" in
+         
+        case "$auto_auth_method" in
         2)
             # --- [ Auto Login Optimized ] ---
             voucher="$auto_auth_token"
@@ -93,6 +74,14 @@ generate_splash_sequence() {
             voucher_form
             ;;
     esac
+    fi
+
+    # 2. Priority: If a voucher code exists (Manual entry), execute login immediately
+    if [ -n "$voucher" ]; then
+        login_with_voucher
+        return
+    fi
+    voucher_form
 }
 
 
@@ -203,10 +192,6 @@ check_voucher() {
 
 voucher_validation() {
     originurl=$(printf "${originurl//%/\\x}")
-
-    # HEADER
-    header
-
     check_voucher
     if [ $? -eq 0 ]; then
         quotas="$sessiontimeout $upload_rate $download_rate $upload_quota $download_quota"
