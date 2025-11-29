@@ -39,60 +39,72 @@ auto_auth_token=''
 auto_auth_method=''
 
 generate_splash_sequence() {
-    # 1. Loop Prevention: Extract voucher from URL query immediately
+    # 1. Extract voucher from URL (Just to have it ready)
     if [ -z "$voucher" ]; then
         voucher=$(echo "$cpi_query" | awk -F "voucher%3d" '{printf "%s", $2}' | awk -F "%26" '{printf "%s", $1}')
     fi
 
-    # 2. Priority: If a voucher code exists (Manual entry), execute login immediately
+    # 2. PRIORITY #1: Smart Fetch & DB Logic
+    # We check DB status first as requested.
+    if [ "$IS_FIRST_CHECK_DONE" -eq 0 ]; then
+        IS_FIRST_CHECK_DONE=1
+        
+        local db_result=$(get_voucher_auth_method "$clientmac")
+        auto_auth_token=$(echo "$db_result" | awk -F "|" '{print $1}')
+        auto_auth_method=$(echo "$db_result" | awk -F "|" '{print $2}')
+    fi
+
+    # 3. Execute DB Logic (If data exists)
+    if [ -n "$auto_auth_token" ]; then
+        case "$auto_auth_method" in
+            2)
+                # --- [ Auto Login with Silent Check ] ---
+                # Save manual voucher temporarily
+                local manual_voucher="$voucher"
+                
+                # Set voucher to token for checking
+                voucher="$auto_auth_token"
+                
+                # Silent Check (Redirect output to null)
+                check_voucher > /dev/null 2>&1
+                
+                if [ $? -eq 0 ]; then
+                    # Valid -> Login immediately (Priority over manual)
+                    login_with_voucher
+                    return
+                else
+                    # Expired -> Fallback
+                    # Restore the manual voucher input (if any)
+                    voucher="$manual_voucher"
+                    
+                    # If user typed a code manually, let it pass to next check
+                    # If not, show the Restore Form to break the loop
+                    if [ -z "$voucher" ]; then
+                        voucher_form "$auto_auth_token"
+                        return
+                    fi
+                fi
+                ;;
+                
+            1)
+                # Restore Mode
+                # If manual code is present, skip to Priority #2
+                if [ -z "$voucher" ]; then
+                    voucher_form "$auto_auth_token"
+                    return
+                fi
+                ;;
+        esac
+    fi
+
+    # 4. PRIORITY #2: Manual Input Check
     if [ -n "$voucher" ]; then
         login_with_voucher
         return
     fi
 
-    # 3. Smart Fetch: Fetch Data ONLY if flag is 0
-    # If flag is 1, it skips this block and proceeds to logic using existing variables
-    if [ "$IS_FIRST_CHECK_DONE" -eq 0 ]; then
-        local db_result=$(get_voucher_auth_method "$clientmac")
-        auto_auth_token=$(echo "$db_result" | awk -F "|" '{print $1}')
-        auto_auth_method=$(echo "$db_result" | awk -F "|" '{print $2}')
-        IS_FIRST_CHECK_DONE=1
-    fi
-
-    # 4. If no data found (New User), show manual form
-    if [ -z "$auto_auth_token" ]; then
-        voucher_form
-        return
-    fi
-   
-    # 5. Smart Decision Logic
-    case "$auto_auth_method" in
-        2)
-            # --- [ Auto Login Optimized ] ---
-            voucher="$auto_auth_token"
-            
-            # Check validity to prevent infinite loop on expired cards
-            check_voucher > /dev/null 2>&1
-            
-            if [ $? -eq 0 ]; then
-                # Token Valid -> Login
-                login_with_voucher
-            else
-                # Token Expired -> Show Restore Form
-                voucher_form "$auto_auth_token"
-            fi
-            ;;
-            
-        1)
-            # Restore Mode
-            voucher_form "$auto_auth_token"
-            ;;
-            
-        *)
-            # Manual Mode
-            voucher_form
-            ;;
-    esac
+    # 5. Default: Show Form
+    voucher_form
 }
 
 
@@ -230,11 +242,13 @@ voucher_validation() {
     else
         try_again_btn "$status_details"
     fi
+    
     footer
 }
 
 try_again_btn() {
     local status_details_msg="$1"
+    
     echo "
         <div class='status error'>
             <p>$status_details_msg</p>
