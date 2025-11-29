@@ -4,13 +4,7 @@
 #Edited by Saeed Muhammed
 
 #-----------------------------------------------------------------------#
-# 1. Init variables & Includes
-#-----------------------------------------------------------------------#
-title="Super wifi vouchers"
-. /usr/lib/superwifi/superwifi_database_manager.sh
-
-#-----------------------------------------------------------------------#
-# 2. Localization & Messages 
+# 1. Localization & Messages (Arabic)
 #-----------------------------------------------------------------------#
 MSG_WELCOME="أهلا وسهلا"
 MSG_CHECK_BTN="تحقق من الرقم"
@@ -18,10 +12,10 @@ MSG_RETRY_BTN="إعادة المحاولة"
 MSG_CONTINUE_BTN="متابعة"
 MSG_PLACEHOLDER="اكتب الكود هنا"
 MSG_COPYRIGHT="&copy; Saeed & BlueWave Projects and Services 2025"
-
-# Voucher status messages
 MSG_INSERT_TITLE="بمجرد تفعيل الكارت<br> لن يعمل على أي جهاز آخر"
 MSG_RESTORE_LINK="تابع آخر استخدام"
+
+# Error Messages
 MSG_INVALID_FORMAT="يجب أن يتكون الكارت على الأقل من <br> (ستة أحرف أو أرقام)"
 MSG_NOT_FOUND="الكارت غير صحيح أو غير موجود"
 MSG_VALIDITY_EXPIRED="انتهت صلاحية الكارت<br>فشل الإتصال"
@@ -32,57 +26,78 @@ MSG_SUCCESS_BUT_RETRY="الكارت صحيح ولكن....<br> رجاءا حاو�
 MSG_ATTEMPTS_LIMITED="عدد المحاولات محدود"
 
 #-----------------------------------------------------------------------#
-# 3. Logic & Decision Functions
+# 2. Init variables
 #-----------------------------------------------------------------------#
+. /usr/lib/superwifi/superwifi_database_manager.sh
+title="Super wifi vouchers"
+
+# -----------------------------------------------------
+# THE LOGIC CONTROLLER (Smart Auth)
+# -----------------------------------------------------
+IS_FIRST_CHECK_DONE=0
+auto_auth_token=''
+auto_auth_method=''
 
 generate_splash_sequence() {
-    # 1. Priority: Manual Code (URL query or Form Submit)
-    # If 'voucher' is set, it means the user submitted the form or used a direct link.
-    # We skip the auto-check logic and proceed to login validation immediately.
+    # 1. Loop Prevention: Extract voucher from URL query immediately
+    if [ -z "$voucher" ]; then
+        voucher=$(echo "$cpi_query" | awk -F "voucher%3d" '{printf "%s", $2}' | awk -F "%26" '{printf "%s", $1}')
+    fi
+
+    # 2. Priority: If a voucher code exists (Manual entry), execute login immediately
     if [ -n "$voucher" ]; then
         login_with_voucher
         return
     fi
 
-    # 2. Database Lookup (Smart Auth)
-    # Fetch the last auth method and code for this MAC address.
-    # The View is ordered by time, so this returns the latest status.
-    local db_result=$(get_voucher_auth_method "$clientmac")
-
-    # If no result found, treat as a New User (Show empty form)
-    if [ -z "$db_result" ]; then
-        voucher_form ""
-        return
+    # 3. Smart Fetch: Fetch Data ONLY if flag is 0
+    # If flag is 1, it skips this block and proceeds to logic using existing variables
+    if [ "$IS_FIRST_CHECK_DONE" -eq 0 ]; then
+        local db_result=$(get_voucher_auth_method "$clientmac")
+        auto_auth_token=$(echo "$db_result" | awk -F "|" '{print $1}')
+        auto_auth_method=$(echo "$db_result" | awk -F "|" '{print $2}')
+        IS_FIRST_CHECK_DONE=1
     fi
 
-    # 3. Parse Data
-    local saved_code=$(echo "$db_result" | awk -F "|" '{print $1}')
-    local method=$(echo "$db_result" | awk -F "|" '{print $2}')
-
-    # 4. Execute Decision
-    case "$method" in
+    # 4. If no data found (New User), show manual form
+    if [ -z "$auto_auth_token" ]; then
+        voucher_form
+        return
+    fi
+   
+    # 5. Smart Decision Logic
+    case "$auto_auth_method" in
         2)
-            # Auto Login: Attempt to login immediately using the saved code.
-            # Validation happens inside 'login_with_voucher'.
-            # If expired, the user will see the error page naturally.
-            voucher="$saved_code"
-            login_with_voucher
+            # --- [ Auto Login Optimized ] ---
+            voucher="$auto_auth_token"
+            
+            # Check validity to prevent infinite loop on expired cards
+            check_voucher > /dev/null 2>&1
+            
+            if [ $? -eq 0 ]; then
+                # Token Valid -> Login
+                login_with_voucher
+            else
+                # Token Expired -> Show Restore Form
+                voucher_form "$auto_auth_token"
+            fi
             ;;
             
         1)
-            # Show Restore: Display the form with a "Continue Previous Session" button.
-            voucher_form "$saved_code"
+            # Restore Mode
+            voucher_form "$auto_auth_token"
             ;;
             
         *)
-            # Method 0 or others: Manual entry only. Show empty form.
-            voucher_form ""
+            # Manual Mode
+            voucher_form
             ;;
     esac
 }
 
+
 #-----------------------------------------------------------------------#
-# 4. View & HTML Functions
+# Functions (Views)
 #-----------------------------------------------------------------------#
 
 header() {
@@ -127,26 +142,24 @@ footer() {
 
 login_with_voucher() {
     voucher_validation
-    footer
 }
 
 check_voucher() {
     status_details=""
 
-    # 1. Format Validation
+    # Validation logic
     if ! echo -n "$voucher" | grep -qE "^[a-zA-Z0-9-]{1,12}$"; then
         status_details="$MSG_INVALID_FORMAT"
         return 1
     fi
 
-    # 2. Database Lookup
     output=$(get_auth_voucher "$voucher")
     if [ -z "$output" ]; then
         status_details="$MSG_NOT_FOUND"
         return 1
     fi
 
-    # 3. Parse Data
+    # Parsing Logic
     voucher_token=$(echo "$output" | cut -d'|' -f1)
     voucher_user_mac=$(echo "$output" | cut -d'|' -f2)
     voucher_expiration_status=$(echo "$output" | cut -d'|' -f3)
@@ -156,7 +169,6 @@ check_voucher() {
     voucher_quota_remaining_kb=$(echo "$output" | cut -d'|' -f7)
     voucher_remaining_message_html=$(echo "$output" | cut -d'|' -f8)
 
-    # 4. Status Checks
     if [ "$voucher_expiration_status" -eq 1 ]; then
         status_details="$MSG_VALIDITY_EXPIRED"
         return 1
@@ -177,20 +189,23 @@ check_voucher() {
         return 1
     fi
 
-    # 5. Success Setup
+    # Success Setup
     upload_rate=$voucher_rate_up
     download_rate=$voucher_rate_down
     upload_quota=$voucher_quota_remaining_kb
     download_quota=$voucher_quota_remaining_kb
     sessiontimeout=$voucher_time_remaining_min
     status_details="$voucher_remaining_message_html"
-    
     update_punch "$voucher_token" "$clientmac"
+
     return 0
 }
 
 voucher_validation() {
     originurl=$(printf "${originurl//%/\\x}")
+
+    # HEADER
+    header
 
     check_voucher
     if [ $? -eq 0 ]; then
@@ -245,32 +260,33 @@ try_again_btn() {
 }
 
 voucher_form() {
-    # Receive the restore code (if any) as the first argument
+    # 1. Get restore code (if passed as argument)
     local restore_code="$1"
-    
-    # 1. Get info from query (for new inputs)
-    voucher_code=$(echo "$cpi_query" | awk -F "voucher%3d" '{printf "%s", $2}' | awk -F "%26" '{printf "%s", $1}')
-    
-    # Ensure header is called
+
+    # 2. Get voucher info from query for display only
+    local display_voucher=$(echo "$cpi_query" | awk -F "voucher%3d" '{printf "%s", $2}' | awk -F "%26" '{printf "%s", $1}')
+
+    # HEADER
     header
 
     echo "<div class=\"insert\">
         <h3>$MSG_INSERT_TITLE</h3>"
 
-    # Only show the restore link if a restore_code was passed
+    # Show restore link if restore_code is available
     if [ -n "$restore_code" ]; then
         echo "
         <h3 class=\"restore-link\" onclick=\"useLastVoucher('$restore_code')\">
             $MSG_RESTORE_LINK
-        </h3>"
+        </h3>
+        "
     fi
     
     echo "</div>"
-
+   
     echo "<form id=\"loginForm\" action=\"/opennds_preauth/\" method=\"get\" onsubmit=\"return handleVoucherSubmit()\">
         <input type=\"hidden\" name=\"fas\" value=\"$fas\"> 
         
-        <input type=\"text\" id=\"voucher\" name=\"voucher\" value=\"$voucher_code\" placeholder=\"$MSG_PLACEHOLDER\" required>
+        <input type=\"text\" id=\"voucher\" name=\"voucher\" value=\"$display_voucher\" placeholder=\"$MSG_PLACEHOLDER\" required>
         
         <button type=\"submit\" class=\"btn\" id=\"voucherBtn\">
             <span class=\"spinner\" style=\"display: none;\"></span>
@@ -300,37 +316,21 @@ voucher_form() {
     }
     </script>
     "
-    # Call footer
     footer
 }
 
-#################################################
 #### end of functions ####
 #################################################
-#						#
-#  Start - Main entry point for this Theme	#
-#						#
-#  Parameters set here overide those		#
-#  set in libopennds.sh			#
-#						#
+#                       #
+#  Start - Main entry point for this Theme  #
+#                       #
+#  Parameters set here overide those        #
+#  set in libopennds.sh         #
+#                       #
 #################################################
 
 # Quotas and Data Rates
-#########################################
-# Set length of session in minutes (eg 24 hours is 1440 minutes - if set to 0 then defaults to global sessiontimeout value):
-# eg for 100 mins:
-# sessiontimeout="100"
-#
-# eg for 20 hours:
-# sessiontimeout=$((20*60))
-#
-# eg for 20 hours and 30 minutes:
-# sessiontimeout=$((20*60+30))
 sessiontimeout="0"
-
-# Set Rate and Quota values for the client
-# The session length, rate and quota values could be determined by this script, on a per client basis.
-# rates are in kb/s, quotas are in kB. - if set to 0 then defaults to global value).
 upload_rate="0"
 download_rate="0"
 upload_quota="0"
@@ -338,18 +338,13 @@ download_quota="0"
 
 quotas="$sessiontimeout $upload_rate $download_rate $upload_quota $download_quota"
 
-# Define the list of Parameters we expect to be sent sent from openNDS ($ndsparamlist):
-# Note you can add custom parameters to the config file and to read them you must also add them here.
-# Custom parameters are "Portal" information and are the same for all clients eg "admin_email" and "location"
+# Define the list of Parameters
 ndscustomparams=""
 ndscustomimages=""
 ndscustomfiles=""
 
 ndsparamlist="$ndsparamlist $ndscustomparams $ndscustomimages $ndscustomfiles"
 
-# The list of FAS Variables used in the Login Dialogue generated by this script is $fasvarlist and defined in libopennds.sh
-#
-# Additional custom FAS variables defined in this theme should be added to $fasvarlist here.
+# The list of FAS Variables
 additionalthemevars="tos voucher"
-
 fasvarlist="$fasvarlist $additionalthemevars"
