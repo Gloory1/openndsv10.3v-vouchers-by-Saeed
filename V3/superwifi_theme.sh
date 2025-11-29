@@ -216,9 +216,6 @@ check_voucher() {
 voucher_validation() {
     originurl=$(printf "${originurl//%/\\x}")
 
-    # HEADER
-    header
-
     check_voucher
     if [ $? -eq 0 ]; then
         quotas="$sessiontimeout $upload_rate $download_rate $upload_quota $download_quota"
@@ -229,7 +226,9 @@ voucher_validation() {
         auth_log
 
         if [ "$ndsstatus" = "authenticated" ]; then
+            update_punch "$voucher_token" "$clientmac"
             echo "<div class='status success'>
+                    <p>$voucher_token</p> 
                     <p>$voucher_remaining_message_html</p> 
                   </div>
                   <form>
@@ -251,6 +250,7 @@ try_again_btn() {
     
     echo "
         <div class='status error'>
+            <p>$voucher_token</p>
             <p>$status_details_msg</p>
         </div>
         <label style='color: white;'>$MSG_ATTEMPTS_LIMITED</label>
@@ -279,9 +279,6 @@ voucher_form() {
 
     # 2. Get voucher info from query for display only
     local display_voucher=$(echo "$cpi_query" | awk -F "voucher%3d" '{printf "%s", $2}' | awk -F "%26" '{printf "%s", $1}')
-
-    # HEADER
-    header
 
     echo "<div class=\"insert\">
         <h3>$MSG_INSERT_TITLE</h3>"
@@ -333,14 +330,8 @@ voucher_form() {
     footer
 }
 
-#### end of functions ####
 #################################################
-#                       #
-#  Start - Main entry point for this Theme  #
-#                       #
-#  Parameters set here overide those        #
-#  set in libopennds.sh         #
-#                       #
+#### end of functions ####
 #################################################
 
 # Quotas and Data Rates
