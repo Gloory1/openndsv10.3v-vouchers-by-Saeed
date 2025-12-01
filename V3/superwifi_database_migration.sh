@@ -1,28 +1,34 @@
 #!/bin/sh
 set -e
-==========================================
-إعدادات المسارات (تأكد من صحتها لديك)
-==========================================
-المصدر: القاعدة القديمة (التي تحتوي على الداتا الحالية)
+
+# ==========================================
+# إعدادات المسارات (تأكد من صحتها لديك)
+# ==========================================
+# المصدر: القاعدة القديمة (التي تحتوي على الداتا الحالية)
 SOURCE_DB="/overlay/superwifi/superwifi_database_v2.db"
-الهدف: القاعدة الجديدة (التي سننقل إليها الداتا)
+
+# الهدف: القاعدة الجديدة (التي سننقل إليها الداتا)
 TARGET_DB="/overlay/superwifi/superwifi_database.db"
-ملف مؤقت لتجنب مشاكل القفل (Database Locking)
+
+# ملف مؤقت لتجنب مشاكل القفل (Database Locking)
 TMP_COPY="/tmp/source_db_copy.db"
-==========================================
-1. النسخ الاحتياطي (الأمان أولاً)
-==========================================
+
+# ==========================================
+# 1. النسخ الاحتياطي (الأمان أولاً)
+# ==========================================
 echo "Starting Backup..."
 [ -f "$SOURCE_DB" ] && cp -v "$SOURCE_DB" "${SOURCE_DB}.bak_$(date +%s)"
 [ -f "$TARGET_DB" ] && cp -v "$TARGET_DB" "${TARGET_DB}.bak_$(date +%s)"
-==========================================
-2. التجهيز
-==========================================
-نسخ القاعدة القديمة لمكان مؤقت للعمل عليها
+
+# ==========================================
+# 2. التجهيز
+# ==========================================
+# نسخ القاعدة القديمة لمكان مؤقت للعمل عليها
 echo "Copying source DB to temp..."
 cp -f "$SOURCE_DB" "$TMP_COPY"
-التأكد من إنشاء الجدول في القاعدة الجديدة (لو مش موجود)
-نستخدم السكربت السابق init_db لإنشاء الهيكلية، أو ننشئها يدوياً هنا للأمان
+
+# التأكد من إنشاء الجدول في القاعدة الجديدة (لو مش موجود)
+# نستخدم السكربت السابق init_db لإنشاء الهيكلية، أو ننشئها يدوياً هنا للأمان
 echo "Ensuring target schema exists..."
 sqlite3 "$TARGET_DB" <<EOF
 CREATE TABLE IF NOT EXISTS vouchers_info (
@@ -50,13 +56,16 @@ CREATE TABLE IF NOT EXISTS vouchers_info (
 CREATE INDEX IF NOT EXISTS idx_vouchers_token ON vouchers_info(token);
 CREATE INDEX IF NOT EXISTS idx_vouchers_mac ON vouchers_info(user_mac);
 EOF
-==========================================
-3. عملية النقل (The Migration Logic)
-==========================================
+
+# ==========================================
+# 3. عملية النقل (The Migration Logic)
+# ==========================================
 echo "Migrating data from Old Schema to New Schema..."
+
 sqlite3 "$TARGET_DB" <<EOF
 -- ربط القاعدة المؤقتة (القديمة)
 ATTACH DATABASE '$TMP_COPY' AS source_db;
+
 -- نقل البيانات مع تغيير أسماء الأعمدة (Mapping)
 INSERT OR IGNORE INTO vouchers_info (
     token, 
@@ -90,12 +99,15 @@ SELECT
     last_punched AS last_punched_sec,
     expiration_status
 FROM source_db.vouchers_info;
+
 DETACH DATABASE source_db;
 EOF
-==========================================
-4. التنظيف والتقرير
-==========================================
+
+# ==========================================
+# 4. التنظيف والتقرير
+# ==========================================
 rm -f "$TMP_COPY"
+
 echo "------------------------------------------------"
 echo "Migration Completed Successfully!"
 echo "New Database Path: $TARGET_DB"
