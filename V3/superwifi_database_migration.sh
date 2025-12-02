@@ -88,7 +88,7 @@ SELECT
     user_mac,
     package_id,
     membership,
-    0 AS auth_method, -- الافتراضي للكروت القديمة (يدوي)
+    1 AS auth_method, -- الافتراضي للكروت القديمة (يدوي)
     time_limit AS time_limit_min,
     rate_down AS rate_down_kb,
     rate_up AS rate_up_kb,
