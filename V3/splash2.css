@@ -1,6 +1,6 @@
 /* === THEME 9 MODIFIED: PURE CALM SKY (BLUE TONES ONLY) === */
 :root {
-    color-scheme: light;
+    color-scheme: light only;
 }
 * {
     margin: 0;
