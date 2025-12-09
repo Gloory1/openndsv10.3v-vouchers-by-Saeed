@@ -1,7 +1,6 @@
-/* === THEME 8 MODIFIED: CALM SUNSET (COLOR CHANGE ONLY) === */
+/* === THEME 9 MODIFIED: PURE CALM SKY (BLUE TONES ONLY) === */
 :root {
-    /* تغيير نظام الألوان ليدعم الفاتح والغامق */
-    color-scheme: light dark;
+    color-scheme: light;
 }
 * {
     margin: 0;
@@ -17,10 +16,10 @@ html, body {
     overflow-x: hidden !important;
 }
 body {
-    /* خلفية متدرجة هادئة (غروب) مثل صورة أبو يوسف */
-    background: linear-gradient(135deg, #FF9A9E, #FECFEF, #a18cd1, #6a85b6);
+    /* خلفية سماوية هادئة جداً متدرجة من الفاتح للأغمق قليلاً */
+    background: linear-gradient(135deg, #E0F7FA, #B2EBF2, #81D4FA, #4FC3F7);
     background-size: 400% 400%;
-    animation: gradientBG 15s ease infinite;
+    animation: gradientBG 20s ease infinite; /* حركة أبطأ للهدوء */
     min-height: 100vh;
     padding: 10px;
     display: flex;
@@ -31,18 +30,19 @@ body {
 }
 /* --- الكارت --- */
 .card, .offset {
-    /* كارت زجاجي متدرج من الأبيض الشفاف إلى الأزرق/البنفسجي */
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.2) 0%, rgba(106, 133, 182, 0.6) 50%, rgba(68, 86, 120, 0.9) 100%) !important;
+    /* كارت زجاجي سماوي شفاف ونقي */
+    background: linear-gradient(180deg, rgba(225, 245, 254, 0.4) 0%, rgba(129, 212, 250, 0.6) 50%, rgba(3, 155, 229, 0.7) 100%) !important;
     border-radius: 25px;
-    box-shadow: 0 0 30px rgba(106, 133, 182, 0.4);
+    /* ظل أزرق خفيف */
+    box-shadow: 0 10px 30px rgba(3, 169, 244, 0.2);
     width: 100%;
     max-width: 500px;
     min-width: 300px;
     padding: 10px 15px;
     position: relative;
     overflow: hidden;
-    /* حدود شفافة بيضاء بدلاً من الأخضر */
-    border: 1px solid rgba(255, 255, 255, 0.4);
+    /* حدود سماوية فاتحة جداً */
+    border: 1px solid rgba(225, 245, 254, 0.5);
     color: white;
     margin: 0 auto;
     z-index: 1;
@@ -55,7 +55,7 @@ body {
     animation: slideUpFade 2.2s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
     display: block;
 }
-/* --- الخلفيات المايلة --- */
+/* --- الخلفيات المايلة (تأثيرات ضوئية بيضاء) --- */
 .card::before, .offset::before {
     content: '';
     position: absolute;
@@ -63,13 +63,12 @@ body {
     left: 0;
     width: 60%;
     height: 100%;
-    /* تأثير ضوئي أبيض خفيف */
-    background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.1), transparent);
+    background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.2), transparent);
     transform: skewX(-20deg);
     z-index: -1;
     will-change: transform;
     transform: translateZ(0) skewX(-20deg);
-    animation: pulseLeft 3s ease-in-out infinite;
+    animation: pulseLeft 4s ease-in-out infinite; /* حركة أبطأ */
 }
 .card::after, .offset::after {
     content: '';
@@ -78,20 +77,20 @@ body {
     right: 0;
     width: 60%;
     height: 100%;
-    /* تأثير ضوئي أبيض خفيف */
-    background: linear-gradient(to left, transparent, rgba(255, 255, 255, 0.1), transparent);
+    background: linear-gradient(to left, transparent, rgba(255, 255, 255, 0.2), transparent);
     transform: skewX(20deg);
     z-index: -1;
     will-change: transform;
     transform: translateZ(0) skewX(20deg);
-    animation: pulseRight 3s ease-in-out infinite;
+    animation: pulseRight 4s ease-in-out infinite; /* حركة أبطأ */
 }
 /* --- Info Box --- */
 .info, .insert {
     position: relative;
     z-index: 2;
-    background: rgba(255, 255, 255, 0.1) !important;
-    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    /* خلفية زرقاء فاتحة جداً وشفافة */
+    background: rgba(225, 245, 254, 0.2) !important;
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
     border-radius: 15px;
     padding: 10px;
     backdrop-filter: blur(5px);
@@ -99,7 +98,7 @@ body {
     transform: translateZ(0);
     margin-bottom: 15px;
     margin-top: 30px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 15px rgba(3, 169, 244, 0.1);
     clear: both;
 }
 /* --- اللوجو --- */
@@ -111,11 +110,10 @@ img, .logo {
     margin: 0 15px 10px 0; 
     border-radius: 50%;
     object-fit: cover;
-    /* إطار أبيض ناعم بدلاً من الأخضر */
-    border: 3px solid rgba(255, 255, 255, 0.8);
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+    /* إطار أبيض/سماوي ناعم */
+    border: 3px solid rgba(225, 245, 254, 0.9);
+    box-shadow: 0 5px 20px rgba(3, 169, 244, 0.2);
     transition: all 0.5s ease;
-    /* خلفية شفافة أو بيضاء خفيفة */
     background-color: transparent;
     will-change: transform;
     transform: translateZ(0);
@@ -131,10 +129,10 @@ h1, .insert>h1 {
     font-size: 1.8rem;
     margin: 10px 0 15px;
     font-weight: 800;
-    /* لون كحلي غامق ليظهر بوضوح على الخلفية الفاتحة */
-    color: #1a2a6c;
+    /* لون أزرق محيطي غامق ليكون واضحاً وهادئاً */
+    color: #01579B;
     text-align: center;
-    text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+    text-shadow: 0 0 10px rgba(225, 245, 254, 0.6);
     transform: translateZ(0);
 }
 /* --- الحقول (Inputs) --- */
@@ -153,9 +151,9 @@ input[type='text'], input[type='password'], input[type='number'] {
     font-weight: 700;
     text-align: center;
     
-    /* لون النص رمادي غامق */
-    color: #333 !important;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    /* لون النص أزرق غامق */
+    color: #0277BD !important;
+    box-shadow: 0 5px 15px rgba(3, 169, 244, 0.1);
     transition: all 0.3s ease;
     margin-bottom: 5px;
     transform: translateZ(0);
@@ -167,15 +165,15 @@ input[type='text'], input[type='password'], input[type='number'] {
 input:focus {
     outline: none;
     transform: scale(1.02);
-    /* توهج أزرق سماوي عند الكتابة */
-    box-shadow: 0 0 15px rgba(106, 133, 182, 0.5);
+    /* توهج سماوي فاتح عند الكتابة */
+    box-shadow: 0 0 15px rgba(79, 195, 247, 0.6);
 }
 /* --- الأزرار --- */
 button, .btn, input[type='submit'] {
     position: relative;
     z-index: 20 !important;
-    /* تدرج بنفسجي وأزرق مثل الصور */
-    background: linear-gradient(90deg, #667eea, #764ba2) !important;
+    /* تدرج أزرق سماوي إلى أزرق محيطي */
+    background: linear-gradient(90deg, #00B4DB, #0083B0) !important;
     color: #fff !important;
     border: none;
     padding: 0;
@@ -189,7 +187,7 @@ button, .btn, input[type='submit'] {
     cursor: pointer;
     width: 100%;
     transition: all 0.3s ease;
-    box-shadow: 0 10px 20px rgba(118, 75, 162, 0.3);
+    box-shadow: 0 10px 20px rgba(0, 131, 176, 0.3);
     margin-top: 5px;
     overflow: visible;
     opacity: 0.99;
@@ -202,21 +200,23 @@ button, .btn, input[type='submit'] {
 }
 button:hover, .btn:hover {
     transform: translateY(-3px);
-    box-shadow: 0 15px 30px rgba(118, 75, 162, 0.5);
-    background: linear-gradient(90deg, #764ba2, #667eea) !important;
+    box-shadow: 0 15px 30px rgba(0, 131, 176, 0.5);
+    /* عكس التدرج عند التحويم */
+    background: linear-gradient(90deg, #0083B0, #00B4DB) !important;
 }
 /* --- Divider --- */
 hr {
     border: 0;
     height: 1px;
-    background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.5), transparent);
+    background: linear-gradient(to right, transparent, rgba(225, 245, 254, 0.6), transparent);
     margin: 15px 0;
     clear: both;
 }
 /* --- Restore Link --- */
 .restore-link {
     cursor: pointer;
-    color: #fff;
+    /* لون رابط سماوي فاتح */
+    color: #E1F5FE;
     font-weight: 700;
     text-decoration: underline;
     transition: all 0.3s ease;
@@ -227,7 +227,7 @@ hr {
 }
 .restore-link:hover {
     transform: scale(1.05);
-    text-shadow: 0 0 10px #fff;
+    text-shadow: 0 0 10px #E1F5FE;
 }
 /* --- Texts --- */
 med-blue {
@@ -239,7 +239,7 @@ med-blue {
 }
 copy-right {
     font-size: 0.75rem;
-    color: rgba(255, 255, 255, 0.8);
+    color: rgba(255, 255, 255, 0.9);
     font-weight: 600;
     display: block;
     margin-top: 15px;
@@ -261,9 +261,10 @@ copy-right {
     clear: both;
     display: block;
 }
+/* تعديل ألوان رسائل الحالة لتناسب الثيم الأزرق */
 .success {
-    border-left: 5px solid #2ecc71;
-    color: #27ae60;
+    border-left: 5px solid #00B4DB;
+    color: #0083B0;
 }
 .error {
     border-left: 5px solid #e74c3c;
