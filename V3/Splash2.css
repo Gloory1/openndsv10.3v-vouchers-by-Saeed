@@ -1,0 +1,389 @@
+/* === THEME 8 MODIFIED: CALM SUNSET (COLOR CHANGE ONLY) === */
+:root {
+    /* تغيير نظام الألوان ليدعم الفاتح والغامق */
+    color-scheme: light dark;
+}
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+html, body {
+    width: 100%;
+    height: 100%;
+    overflow-x: hidden !important;
+}
+body {
+    /* خلفية متدرجة هادئة (غروب) مثل صورة أبو يوسف */
+    background: linear-gradient(135deg, #FF9A9E, #FECFEF, #a18cd1, #6a85b6);
+    background-size: 400% 400%;
+    animation: gradientBG 15s ease infinite;
+    min-height: 100vh;
+    padding: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    color: #fff;
+}
+/* --- الكارت --- */
+.card, .offset {
+    /* كارت زجاجي متدرج من الأبيض الشفاف إلى الأزرق/البنفسجي */
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.2) 0%, rgba(106, 133, 182, 0.6) 50%, rgba(68, 86, 120, 0.9) 100%) !important;
+    border-radius: 25px;
+    box-shadow: 0 0 30px rgba(106, 133, 182, 0.4);
+    width: 100%;
+    max-width: 500px;
+    min-width: 300px;
+    padding: 10px 15px;
+    position: relative;
+    overflow: hidden;
+    /* حدود شفافة بيضاء بدلاً من الأخضر */
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    color: white;
+    margin: 0 auto;
+    z-index: 1;
+    /* Performance Hacks */
+    opacity: 0.99;
+    transform: translateZ(0);
+    will-change: transform, opacity;
+    perspective: 1000px;
+    backface-visibility: hidden;
+    animation: slideUpFade 2.2s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+    display: block;
+}
+/* --- الخلفيات المايلة --- */
+.card::before, .offset::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 60%;
+    height: 100%;
+    /* تأثير ضوئي أبيض خفيف */
+    background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.1), transparent);
+    transform: skewX(-20deg);
+    z-index: -1;
+    will-change: transform;
+    transform: translateZ(0) skewX(-20deg);
+    animation: pulseLeft 3s ease-in-out infinite;
+}
+.card::after, .offset::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 60%;
+    height: 100%;
+    /* تأثير ضوئي أبيض خفيف */
+    background: linear-gradient(to left, transparent, rgba(255, 255, 255, 0.1), transparent);
+    transform: skewX(20deg);
+    z-index: -1;
+    will-change: transform;
+    transform: translateZ(0) skewX(20deg);
+    animation: pulseRight 3s ease-in-out infinite;
+}
+/* --- Info Box --- */
+.info, .insert {
+    position: relative;
+    z-index: 2;
+    background: rgba(255, 255, 255, 0.1) !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    border-radius: 15px;
+    padding: 10px;
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    transform: translateZ(0);
+    margin-bottom: 15px;
+    margin-top: 30px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    clear: both;
+}
+/* --- اللوجو --- */
+img, .logo {
+    position: relative;
+    z-index: 5;
+    width: 100px;
+    height: 100px;
+    margin: 0 15px 10px 0; 
+    border-radius: 50%;
+    object-fit: cover;
+    /* إطار أبيض ناعم بدلاً من الأخضر */
+    border: 3px solid rgba(255, 255, 255, 0.8);
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+    transition: all 0.5s ease;
+    /* خلفية شفافة أو بيضاء خفيفة */
+    background-color: transparent;
+    will-change: transform;
+    transform: translateZ(0);
+    animation: float 3s ease-in-out infinite;
+    display: block;
+    float: left;
+}
+img:hover {
+    transform: scale(1.05) rotate(5deg);
+}
+/* --- العناوين --- */
+h1, .insert>h1 {
+    font-size: 1.8rem;
+    margin: 10px 0 15px;
+    font-weight: 800;
+    /* لون كحلي غامق ليظهر بوضوح على الخلفية الفاتحة */
+    color: #1a2a6c;
+    text-align: center;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+    transform: translateZ(0);
+}
+/* --- الحقول (Inputs) --- */
+input[type='text'], input[type='password'], input[type='number'] {
+    position: relative;
+    z-index: 10;
+    width: 100%;
+    height: 60px !important;
+    padding: 0 15px;
+    line-height: normal !important;
+    border: none !important;
+    border-radius: 12px;
+    background: #ffffff !important;
+    
+    font-size: 1.25rem;
+    font-weight: 700;
+    text-align: center;
+    
+    /* لون النص رمادي غامق */
+    color: #333 !important;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    margin-bottom: 5px;
+    transform: translateZ(0);
+    will-change: transform;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+input:focus {
+    outline: none;
+    transform: scale(1.02);
+    /* توهج أزرق سماوي عند الكتابة */
+    box-shadow: 0 0 15px rgba(106, 133, 182, 0.5);
+}
+/* --- الأزرار --- */
+button, .btn, input[type='submit'] {
+    position: relative;
+    z-index: 20 !important;
+    /* تدرج بنفسجي وأزرق مثل الصور */
+    background: linear-gradient(90deg, #667eea, #764ba2) !important;
+    color: #fff !important;
+    border: none;
+    padding: 0;
+    height: 60px !important;
+    line-height: normal !important;
+    
+    font-size: 1.1rem;
+    font-weight: 800;
+    
+    border-radius: 12px;
+    cursor: pointer;
+    width: 100%;
+    transition: all 0.3s ease;
+    box-shadow: 0 10px 20px rgba(118, 75, 162, 0.3);
+    margin-top: 5px;
+    overflow: visible;
+    opacity: 0.99;
+    transform: translateZ(0);
+    will-change: transform;
+    backface-visibility: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+button:hover, .btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 15px 30px rgba(118, 75, 162, 0.5);
+    background: linear-gradient(90deg, #764ba2, #667eea) !important;
+}
+/* --- Divider --- */
+hr {
+    border: 0;
+    height: 1px;
+    background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.5), transparent);
+    margin: 15px 0;
+    clear: both;
+}
+/* --- Restore Link --- */
+.restore-link {
+    cursor: pointer;
+    color: #fff;
+    font-weight: 700;
+    text-decoration: underline;
+    transition: all 0.3s ease;
+    display: inline-block;
+    margin-top: 10px;
+    position: relative;
+    z-index: 5;
+}
+.restore-link:hover {
+    transform: scale(1.05);
+    text-shadow: 0 0 10px #fff;
+}
+/* --- Texts --- */
+med-blue {
+    font-size: 1.1em;
+    color: #fff !important;
+    font-weight: bold;
+    display: block;
+    margin: 5px 0;
+}
+copy-right {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.8);
+    font-weight: 600;
+    display: block;
+    margin-top: 15px;
+}
+/* --- Status Messages --- */
+.status {
+    position: relative;
+    z-index: 10;
+    padding: 15px;
+    border-radius: 12px;
+    margin: 15px 0;
+    font-size: 1rem;
+    font-weight: 700;
+    background: #fff;
+    color: #333;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    transform: translateZ(0);
+    will-change: transform, opacity;
+    clear: both;
+    display: block;
+}
+.success {
+    border-left: 5px solid #2ecc71;
+    color: #27ae60;
+}
+.error {
+    border-left: 5px solid #e74c3c;
+    color: #c0392b;
+}
+/* --- Spinner --- */
+.spinner {
+    display: none;
+    width: 25px;
+    height: 25px;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top-color: #fff;
+    animation: spin 1s ease-in-out infinite;
+}
+.btn-loading .btn-text {
+    display: none;
+}
+.btn-loading .spinner {
+    display: block !important;
+}
+/* --- Animations & Media Query --- */
+@keyframes gradientBG {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+@keyframes shine {
+    to {
+        background-position: 200% center;
+    }
+}
+@keyframes float {
+    0% {
+        transform: translateY(0px);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+    100% {
+        transform: translateY(0px);
+    }
+}
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+@keyframes slideUpFade {
+    0% {
+        opacity: 0;
+        transform: translateY(100px) scale(0.9);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+@keyframes pulseLeft {
+    0% {
+        left: -50%;
+        opacity: 0;
+    }
+    50% {
+        left: -10%;
+        opacity: 1;
+    }
+    100% {
+        left: -50%;
+        opacity: 0;
+    }
+}
+@keyframes pulseRight {
+    0% {
+        right: -50%;
+        opacity: 0;
+    }
+    50% {
+        right: -10%;
+        opacity: 1;
+    }
+    100% {
+        right: -50%;
+        opacity: 0;
+    }
+}
+.arabic-style {
+    direction: rtl !important;
+    text-align: right !important;
+}
+
+.arabic-style h1,
+.arabic-style h2,
+.arabic-style h3,
+.arabic-style .insert>h1 {
+    text-align: right !important;
+}
+
+.arabic-style input[type='text'],
+.arabic-style input[type='password'],
+.arabic-style input[type='number'] {
+    text-align: right !important;
+    direction: rtl;
+}
+
+@media (max-height: 600px) {
+    body {
+        justify-content: flex-start;
+        padding-top: 20px;
+    }
+    .card {
+        animation: none;
+        opacity: 1;
+        transform: none;
+        perspective: none;
+    }
+}
