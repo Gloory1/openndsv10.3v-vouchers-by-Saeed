@@ -1,0 +1,15 @@
+
+config opennds
+	option faskey 'c66841d046c34c94eacad4fed4973de5bf4e778c2124f9555140ffdc05bb86a9'
+	option enabled '1'
+	option login_option_enabled '3'
+	option fas_secure_enabled '3'
+	option themespec_path '/usr/lib/superwifi/superwifi_theme.sh'
+	option binauth '/usr/lib/superwifi/superwifi_binauth.sh'
+	option preauthidletimeout '10'
+	option authidletimeout '30'
+	option sessiontimeout '360'
+	option checkinterval '60'
+	list fas_custom_variables_list 'provider_name=النيل كافيه'
+	list trustedmac '2c:16:bd:b2:f0:af'
+
